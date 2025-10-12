@@ -2,10 +2,9 @@
 
 namespace MongoDB\GridFS\Exception;
 
+use MongoDB\BSON\Document;
 use MongoDB\Exception\RuntimeException;
 
-use function MongoDB\BSON\fromPHP;
-use function MongoDB\BSON\toJSON;
 use function sprintf;
 use function stream_get_meta_data;
 
@@ -24,13 +23,12 @@ class StreamException extends RuntimeException
     }
 
     /**
-     * @param mixed    $id
      * @param resource $source
      * @param resource $destination
      */
-    public static function downloadFromIdFailed($id, $source, $destination): self
+    public static function downloadFromIdFailed(mixed $id, $source, $destination): self
     {
-        $idString = toJSON(fromPHP(['_id' => $id]));
+        $idString = Document::fromPHP(['_id' => $id])->toRelaxedExtendedJSON();
         $sourceMetadata = stream_get_meta_data($source);
         $destinationMetadata = stream_get_meta_data($destination);
 

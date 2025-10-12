@@ -19,6 +19,7 @@ namespace MongoDB;
 
 use Iterator;
 use MongoDB\BSON\Document;
+use MongoDB\BSON\Int64;
 use MongoDB\Codec\DocumentCodec;
 use MongoDB\Driver\CursorId;
 use MongoDB\Driver\Exception\ConnectionException;
@@ -32,6 +33,10 @@ use ReturnTypeWillChange;
 use function assert;
 use function call_user_func;
 use function in_array;
+use function sprintf;
+use function trigger_error;
+
+use const E_USER_DEPRECATED;
 
 /**
  * Iterator for a change stream.
@@ -75,8 +80,6 @@ class ChangeStream implements Iterator
     /** @var ResumeCallable|null */
     private $resumeCallable;
 
-    private ChangeStreamIterator $iterator;
-
     private int $key = 0;
 
     /**
@@ -84,8 +87,6 @@ class ChangeStream implements Iterator
      * to determine whether $key should be incremented after an iteration event.
      */
     private bool $hasAdvanced = false;
-
-    private ?DocumentCodec $codec;
 
     /**
      * @see https://php.net/iterator.current
@@ -105,10 +106,26 @@ class ChangeStream implements Iterator
         return $this->codec->decode($value);
     }
 
-    /** @return CursorId */
-    public function getCursorId()
+    /**
+     * @return CursorId|Int64
+     * @psalm-return ($asInt64 is true ? Int64 : CursorId)
+     */
+    #[ReturnTypeWillChange]
+    public function getCursorId(bool $asInt64 = false)
     {
-        return $this->iterator->getInnerIterator()->getId();
+        if (! $asInt64) {
+            @trigger_error(
+                sprintf(
+                    'The method "%s" will no longer return a "%s" instance in the future. Pass "true" as argument to change to the new behavior and receive a "%s" instance instead.',
+                    __METHOD__,
+                    CursorId::class,
+                    Int64::class,
+                ),
+                E_USER_DEPRECATED,
+            );
+        }
+
+        return $this->iterator->getInnerIterator()->getId($asInt64);
     }
 
     /**
@@ -189,11 +206,9 @@ class ChangeStream implements Iterator
      *
      * @param ResumeCallable $resumeCallable
      */
-    public function __construct(ChangeStreamIterator $iterator, callable $resumeCallable, ?DocumentCodec $codec = null)
+    public function __construct(private ChangeStreamIterator $iterator, callable $resumeCallable, private ?DocumentCodec $codec = null)
     {
-        $this->iterator = $iterator;
         $this->resumeCallable = $resumeCallable;
-        $this->codec = $codec;
 
         if ($codec) {
             $this->iterator->getInnerIterator()->setTypeMap(['root' => 'bson']);
@@ -240,7 +255,7 @@ class ChangeStream implements Iterator
          * have been received in the last response. Therefore, we can unset the
          * resumeCallable. This will free any reference to Watch as well as the
          * only reference to any implicit session created therein. */
-        if ((string) $this->getCursorId() === '0') {
+        if ((string) $this->getCursorId(true) === '0') {
             $this->resumeCallable = null;
         }
 
@@ -262,7 +277,7 @@ class ChangeStream implements Iterator
      */
     private function resume(): void
     {
-        if (! $this->resumeCallable) {
+        if ($this->resumeCallable === null) {
             throw new BadMethodCallException('Cannot resume a closed change stream.');
         }
 

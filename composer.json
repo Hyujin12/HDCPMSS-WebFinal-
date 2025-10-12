@@ -1,19 +1,19 @@
 {
-    "name": "administrator/new-hdcpmss",
-    "autoload": {
-        "psr-4": {
-            "Administrator\\NewHdcpmss\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "Hyujin12",
-            "email": "eugenedianito@gmai.com"
-        }
-    ],
-    "require": {
-        "mongodb/mongodb": "^1.17",
-        "vlucas/phpdotenv": "^5.6",
-        "resend/resend-php": "^0.21.0"
+  "name": "administrator/new-hdcpmss",
+  "autoload": {
+    "psr-4": {
+      "Administrator\\NewHdcpmss\\": "src/"
     }
+  },
+  "authors": [
+    {
+      "name": "Hyujin12",
+      "email": "eugenedianito@gmail.com"
+    }
+  ],
+  "require": {
+    "mongodb/mongodb": "^1.19",
+    "vlucas/phpdotenv": "^5.6",
+    "resend/resend-php": "^0.21.0"
+  }
 }

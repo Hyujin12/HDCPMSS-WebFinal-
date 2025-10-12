@@ -30,18 +30,15 @@ use Traversable;
  * @see \MongoDB\Database::listCollections()
  * @see https://github.com/mongodb/specifications/blob/master/source/enumerate-collections.rst
  * @see https://mongodb.com/docs/manual/reference/command/listCollections/
+ * @deprecated
  * @template-extends IteratorIterator<int, array, Traversable<int, array>>
  */
 class CollectionInfoCommandIterator extends IteratorIterator implements CollectionInfoIterator
 {
-    private ?string $databaseName = null;
-
     /** @param Traversable<int, array> $iterator */
-    public function __construct(Traversable $iterator, ?string $databaseName = null)
+    public function __construct(Traversable $iterator, private ?string $databaseName = null)
     {
         parent::__construct($iterator);
-
-        $this->databaseName = $databaseName;
     }
 
     /**

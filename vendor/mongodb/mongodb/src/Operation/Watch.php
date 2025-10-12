@@ -47,7 +47,6 @@ use function MongoDB\Driver\Monitoring\addSubscriber;
 use function MongoDB\Driver\Monitoring\removeSubscriber;
 use function MongoDB\is_document;
 use function MongoDB\select_server;
-use function MongoDB\server_supports_feature;
 
 /**
  * Operation for creating a change stream with the aggregate command.
@@ -57,6 +56,8 @@ use function MongoDB\server_supports_feature;
  *
  * @see \MongoDB\Collection::watch()
  * @see https://mongodb.com/docs/manual/changeStreams/
+ *
+ * @final extending this class will not be supported in v2.0.0
  */
 class Watch implements Executable, /* @internal */ CommandSubscriber
 {
@@ -69,15 +70,11 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
     public const FULL_DOCUMENT_BEFORE_CHANGE_WHEN_AVAILABLE = 'whenAvailable';
     public const FULL_DOCUMENT_BEFORE_CHANGE_REQUIRED = 'required';
 
-    private const WIRE_VERSION_FOR_START_AT_OPERATION_TIME = 7;
-
     private Aggregate $aggregate;
 
     private array $aggregateOptions;
 
     private array $changeStreamOptions;
-
-    private ?string $collectionName = null;
 
     private string $databaseName;
 
@@ -85,11 +82,7 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
 
     private bool $hasResumed = false;
 
-    private Manager $manager;
-
     private ?TimestampInterface $operationTime = null;
-
-    private array $pipeline;
 
     private ?object $postBatchResumeToken = null;
 
@@ -196,7 +189,7 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
      * @param array       $options        Command options
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
-    public function __construct(Manager $manager, ?string $databaseName, ?string $collectionName, array $pipeline, array $options = [])
+    public function __construct(private Manager $manager, ?string $databaseName, private ?string $collectionName, private array $pipeline, array $options = [])
     {
         if (isset($collectionName) && ! isset($databaseName)) {
             throw new InvalidArgumentException('$collectionName should also be null if $databaseName is null');
@@ -250,7 +243,7 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
         if (! isset($options['session'])) {
             try {
                 $options['session'] = $manager->startSession(['causalConsistency' => false]);
-            } catch (RuntimeException $e) {
+            } catch (RuntimeException) {
                 /* We can ignore the exception, as libmongoc likely cannot
                  * create its own session and there is no risk of a mismatch. */
             }
@@ -265,10 +258,7 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
             $this->changeStreamOptions['allChangesForCluster'] = true;
         }
 
-        $this->manager = $manager;
         $this->databaseName = $databaseName;
-        $this->collectionName = $collectionName;
-        $this->pipeline = $pipeline;
         $this->codec = $options['codec'] ?? null;
 
         $this->aggregate = $this->createAggregate();
@@ -327,7 +317,7 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
         }
 
         if (
-            $this->shouldCaptureOperationTime($event->getServer()) &&
+            $this->shouldCaptureOperationTime() &&
             isset($reply->operationTime) && $reply->operationTime instanceof TimestampInterface
         ) {
             $this->operationTime = $reply->operationTime;
@@ -406,15 +396,10 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
      * Resumes a change stream.
      *
      * @see https://github.com/mongodb/specifications/blob/master/source/change-streams/change-streams.rst#resume-process
-     * @param array|object|null $resumeToken
      * @throws InvalidArgumentException
      */
-    private function resume($resumeToken = null, bool $hasAdvanced = false): ChangeStreamIterator
+    private function resume(array|object|null $resumeToken = null, bool $hasAdvanced = false): ChangeStreamIterator
     {
-        if (isset($resumeToken) && ! is_array($resumeToken) && ! is_object($resumeToken)) {
-            throw InvalidArgumentException::invalidType('$resumeToken', $resumeToken, 'array or object');
-        }
-
         $this->hasResumed = true;
 
         /* Select a new server using the original read preference. While watch
@@ -448,7 +433,7 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
      *
      * @see https://github.com/mongodb/specifications/blob/master/source/change-streams/change-streams.rst#startatoperationtime
      */
-    private function shouldCaptureOperationTime(Server $server): bool
+    private function shouldCaptureOperationTime(): bool
     {
         if ($this->hasResumed) {
             return false;
@@ -467,10 +452,6 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
         }
 
         if ($this->postBatchResumeToken !== null) {
-            return false;
-        }
-
-        if (! server_supports_feature($server, self::WIRE_VERSION_FOR_START_AT_OPERATION_TIME)) {
             return false;
         }
 

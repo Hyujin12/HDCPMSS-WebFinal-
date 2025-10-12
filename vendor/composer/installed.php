@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'administrator/new-hdcpmss',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => null,
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '1bb7e357f152daa482a5f5203ca36dd476c8bb3b',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'administrator/new-hdcpmss' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => null,
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '1bb7e357f152daa482a5f5203ca36dd476c8bb3b',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -55,19 +55,16 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-        'jean85/pretty-package-versions' => array(
-            'pretty_version' => '2.1.1',
-            'version' => '2.1.1.0',
-            'reference' => '4d7aa5dab42e2a76d99559706022885de0e18e1a',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../jean85/pretty-package-versions',
-            'aliases' => array(),
+        'mongodb/builder' => array(
             'dev_requirement' => false,
+            'replaced' => array(
+                0 => '*',
+            ),
         ),
         'mongodb/mongodb' => array(
-            'pretty_version' => '1.17.1',
-            'version' => '1.17.1.0',
-            'reference' => '01d0840bf0678f519e72dc71b69c8a50a0856c2d',
+            'pretty_version' => '1.21.2',
+            'version' => '1.21.2.0',
+            'reference' => '0e80d179370b9d6338df4e62c292c3652e0a2396',
             'type' => 'library',
             'install_path' => __DIR__ . '/../mongodb/mongodb',
             'aliases' => array(),
@@ -187,15 +184,6 @@
             'reference' => '0cc9dd0f17f61d8131e7df6b84bd344899fe2608',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/polyfill-php80',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'symfony/polyfill-php81' => array(
-            'pretty_version' => 'v1.33.0',
-            'version' => '1.33.0.0',
-            'reference' => '4a4cfc2d253c21a5ad0e53071df248ed48c6ce5c',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../symfony/polyfill-php81',
             'aliases' => array(),
             'dev_requirement' => false,
         ),

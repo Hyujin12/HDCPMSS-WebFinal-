@@ -31,14 +31,12 @@ use function reset;
  * @internal
  * @see \MongoDB\Client::listDatabases()
  * @see https://mongodb.com/docs/manual/reference/command/listDatabases/
+ * @deprecated
  */
 class DatabaseInfoLegacyIterator implements DatabaseInfoIterator
 {
-    private array $databases;
-
-    public function __construct(array $databases)
+    public function __construct(private array $databases)
     {
-        $this->databases = $databases;
     }
 
     /**
