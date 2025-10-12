@@ -73,41 +73,45 @@ include 'service-grid.php'; // Make sure this is the PHP file with $services and
     </div>
     <div class="w-full md:w-1/2 flex justify-center relative">
       <div class="absolute w-64 h-64 bg-blue-100 rounded-full z-0 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 hidden md:block"></div>
-      <img src="images/doctor images.png" alt="Doctor" class="w-2/3 max-w-xs md:max-w-md lg:max-w-lg h-auto object-contain z-10 relative" />
+      <img src="/images/Doctor-image.png" alt="Doctor" class="w-2/3 max-w-xs md:max-w-md lg:max-w-lg h-auto object-contain z-10 relative" />
     </div>
   </div>
 
   <!-- Dental Services -->
-  <div class="px-4 md:px-12 mt-16">
-    <div class="text-center md:text-left mb-8">
-      <h2 class="text-2xl md:text-4xl font-bold mb-4">Our Dental Services</h2>
-      <p class="text-base md:text-lg mb-6">
-        "At Halili's Dental Clinic, we offer a comprehensive range of dental services to meet all your oral health needs. From routine check-ups to advanced cosmetic procedures, our team is dedicated to providing exceptional care tailored to you."
-      </p>
-    </div>
-
-    <div class="relative max-w-6xl mx-auto overflow-hidden">
-      <div id="serviceSlides" class="flex items-start transition-transform duration-500">
-        <?php
-          foreach ($services as $service) {
-              echo '<div class="service-card">';
-              echo '<img src="' . htmlspecialchars($service['image']) . '" alt="' . htmlspecialchars($service['title']) . '">';
-              echo '<h2 class="text-xl font-semibold mt-2 mb-2">' . htmlspecialchars($service['title']) . '</h2>';
-              echo '<p class="mb-4">' . htmlspecialchars($service['description']) . '</p>';
-              echo '<button class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">' . htmlspecialchars($service['btn']) . '</button>';
-              echo '</div>';
-          }
-        ?>
-      </div>
-
-      <button id="prevService" class="absolute -left-6 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-200">&#10094;</button>
-      <button id="nextService" class="absolute -right-6 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-200">&#10095;</button>
-    </div>
+<div class="px-4 md:px-12 mt-16">
+  <div class="text-center md:text-left mb-8">
+    <h2 class="text-2xl md:text-4xl font-bold mb-4">Our Dental Services</h2>
+    <p class="text-base md:text-lg mb-6">
+      "At Halili's Dental Clinic, we offer a comprehensive range of dental services to meet all your oral health needs. From routine check-ups to advanced cosmetic procedures, our team is dedicated to providing exceptional care tailored to you."
+    </p>
   </div>
 
+  <div class="relative max-w-6xl mx-auto">
+    
+
+  <div class="relative max-w-md mx-auto"> <!-- Container width for 1 card -->
+    <!-- Slider -->
+    <div id="serviceSlides" class="flex transition-transform duration-500">
+      <?php
+        foreach ($services as $service) {
+            echo '<div class="flex-shrink-0 w-full p-6 bg-gray-100 rounded-lg shadow hover:scale-105 transition-transform duration-300">';
+            echo '<img src="' . htmlspecialchars($service['image']) . '" alt="' . htmlspecialchars($service['title']) . '" class="w-full h-64 object-cover rounded mb-4">';
+            echo '<h2 class="text-2xl font-semibold mb-2">' . htmlspecialchars($service['title']) . '</h2>';
+            echo '<p class="text-base mb-4">' . htmlspecialchars($service['description']) . '</p>';
+            echo '<button class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">' . htmlspecialchars($service['btn']) . '</button>';
+            echo '</div>';
+        }
+      ?>
+    </div>
+
+    <!-- Slider Buttons -->
+    <button id="prevService" class="absolute -left-6 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-200">&#10094;</button>
+    <button id="nextService" class="absolute -right-6 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-200">&#10095;</button>
+  </div>
+</div>
   <!-- Halili's Info -->
   <div class="text-center mt-8">
-    <img src="images/Halili logo.png" alt="" class="w-1/5 h-2/6 mx-auto mt-8 mb-4">
+    <img src="/images/halili-logo.png" alt="" class="w-1/5 h-2/6 mx-auto mt-8 mb-4">
     <h1 class="text-1xl font-bold text-charcoal-500">Halili Dental Clinic by Dra Emily E Halili, Rodriguez, Philippines</h1>
   </div>
 
@@ -115,11 +119,11 @@ include 'service-grid.php'; // Make sure this is the PHP file with $services and
   <div class="mb-20">
     <div class="flex flex-row items-center justify-around relative">
       <div class="text-center mt-8 flex flex-row items-center justify-center relative gap-4 w-34">
-        <img src="images/telephone.png" alt="" class="w-8 mx-auto">
+        <img src="/images/telephone.png" alt="" class="w-8 mx-auto">
         <h1>Call Us: 0922 223 3688</h1>
       </div>
       <div class="text-center mt-8 flex flex-row items-center justify-center relative gap-4 w-34">
-        <img src="images/viber.png" alt="" class="w-8 mx-auto">
+        <img src="/images/viber.png" alt="" class="w-8 mx-auto">
         <h1>Viber: +63 922 223 3688</h1>
       </div>
     </div>
@@ -153,24 +157,37 @@ include 'service-grid.php'; // Make sure this is the PHP file with $services and
     closeMenu.addEventListener("click", closeSidebar);
     overlay.addEventListener("click", closeSidebar);
 
-    const sliderContainer = document.querySelector("#serviceSlides");
-    const prevBtn = document.getElementById("prevService");
-    const nextBtn = document.getElementById("nextService");
-    let currentIndex = 0;
+const slider = document.getElementById('serviceSlides');
+const prevBtn = document.getElementById('prevService');
+const nextBtn = document.getElementById('nextService');
+const slides = slider.children;
+let currentIndex = 0; // start from the first slide
+const totalSlides = slides.length;
 
-    function updateSlider() {
-      sliderContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
-    }
+function updateSlider() {
+    const slideWidth = slides[0].offsetWidth;
+    slider.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+}
 
-    nextBtn.addEventListener("click", () => {
-      currentIndex = (currentIndex + 1) % sliderContainer.children.length;
-      updateSlider();
-    });
+// Next / Previous buttons
+nextBtn.addEventListener('click', () => {
+    currentIndex = (currentIndex + 1) % totalSlides;
+    updateSlider();
+});
 
-    prevBtn.addEventListener("click", () => {
-      currentIndex = (currentIndex - 1 + sliderContainer.children.length) % sliderContainer.children.length;
-      updateSlider();
-    });
+prevBtn.addEventListener('click', () => {
+    currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+    updateSlider();
+});
+
+// Auto-slide every 5 seconds
+setInterval(() => {
+    currentIndex = (currentIndex + 1) % totalSlides;
+    updateSlider();
+}, 2000);
+
+// Adjust on window resize
+window.addEventListener('resize', updateSlider);
   </script>
 </body>
-</html>s
+</html>
