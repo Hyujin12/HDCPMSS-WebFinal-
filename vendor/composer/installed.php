@@ -3,7 +3,7 @@
         'name' => 'administrator/new-hdcpmss',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '1bb7e357f152daa482a5f5203ca36dd476c8bb3b',
+        'reference' => 'a0fccaa2ef075f3edcc9a21369276b4f6a8b439a',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'administrator/new-hdcpmss' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '1bb7e357f152daa482a5f5203ca36dd476c8bb3b',
+            'reference' => 'a0fccaa2ef075f3edcc9a21369276b4f6a8b439a',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
