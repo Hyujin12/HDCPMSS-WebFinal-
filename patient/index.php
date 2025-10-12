@@ -48,7 +48,7 @@
     <div class="w-full md:w-1/2 text-center md:text-left mt-24" >
       <h1 class="text-3xl md:text-5xl font-bold mb-4">We Are Ready To Help & Take Care of Your Dental Health</h1>
       <p class="text-base md:text-lg mb-6">"Creating Miles of Smiles with Gentle Care, Expert Precision, and a Commitment to Your Perfect Dental Health."</p>
-      <a href="/patient/log-in.php" class="inline-block">
+      <a href="log-in.php" class="inline-block">
         <button  id="openLoginModal" class=" bg-gradient-to-r from-yellow-400 via-purple-400 to-pink-500 text-cyan-50 rounded-2xl font-bold py-3 px-6  hover:bg-blue-600 transition duration-300">Make an Appointment</button>
       </a>
     </div>
