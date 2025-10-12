@@ -23,4 +23,5 @@ RUN composer install --no-dev --optimize-autoloader
 EXPOSE 8080
 
 # Run the PHP server
-CMD ["php", "-S", "0.0.0.0:8080", "-t", "."]
+CMD ["php", "-S", "0.0.0.0:8080", "-t", "patient"]
+
