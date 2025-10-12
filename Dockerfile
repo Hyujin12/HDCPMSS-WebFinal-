@@ -4,8 +4,9 @@ FROM php:8.3-apache
 # Enable required PHP extensions
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
-# Install MongoDB extension
-RUN pecl install mongodb \
+# Install a compatible MongoDB extension
+RUN pecl uninstall mongodb \
+    && pecl install mongodb-1.21.2 \
     && docker-php-ext-enable mongodb
 
 # Copy app files
