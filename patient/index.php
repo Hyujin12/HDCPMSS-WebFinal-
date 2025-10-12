@@ -31,7 +31,7 @@ include 'service-grid.php'; // Make sure this is the PHP file with $services and
   <header class="px-12 py-2 mt-4 bg-blue-100 mx-16 rounded-3xl">
     <div class="flex justify-between items-center mx-4 md:-mx-4">
       <div class="flex items-start">
-        <img src="images/logodental.png" alt="Halili's Dental Clinic Logo" class="w-16 h-12 mr-2">
+        <img src="/images/logodental.png" alt="Halili's Dental Clinic Logo" class="w-16 h-12 mr-2">
         <h2 class="text-xl font-semibold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-transparent bg-clip-text">Halili's Dental Clinic</h2>
       </div>
       <button id="navToggle" class="md:hidden text-gray-700 focus:outline-none z-50">
@@ -73,7 +73,7 @@ include 'service-grid.php'; // Make sure this is the PHP file with $services and
     </div>
     <div class="w-full md:w-1/2 flex justify-center relative">
       <div class="absolute w-64 h-64 bg-blue-100 rounded-full z-0 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 hidden md:block"></div>
-      <img src="images/Doctor image.png" alt="Doctor" class="w-2/3 max-w-xs md:max-w-md lg:max-w-lg h-auto object-contain z-10 relative" />
+      <img src="images/doctor images.png" alt="Doctor" class="w-2/3 max-w-xs md:max-w-md lg:max-w-lg h-auto object-contain z-10 relative" />
     </div>
   </div>
 
