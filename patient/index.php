@@ -1,3 +1,6 @@
+<?php
+include 'service-grid.php'; // Make sure this is the PHP file with $services and renderServices()
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,18 +8,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Halili's Dental Clinic</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .service-card {
+      border: 1px solid #ddd;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 12px;
+      min-width: 250px;
+      flex-shrink: 0;
+      background-color: #f9f9f9;
+    }
+    .service-card img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+  </style>
 </head>
 <body class="bg-white text-gray-900">
 
   <!-- Responsive Header -->
   <header class="px-12 py-2 mt-4 bg-blue-100 mx-16 rounded-3xl">
     <div class="flex justify-between items-center mx-4 md:-mx-4">
-      <div class="flex  items-start">
-        <img src="/images/logodental.png" alt="Halili's Dental Clinic Logo" class="w-16 h-12 mr-2">
+      <div class="flex items-start">
+        <img src="images/logodental.png" alt="Halili's Dental Clinic Logo" class="w-16 h-12 mr-2">
         <h2 class="text-xl font-semibold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-transparent bg-clip-text">Halili's Dental Clinic</h2>
       </div>
       <button id="navToggle" class="md:hidden text-gray-700 focus:outline-none z-50">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
       </button>
@@ -45,16 +64,16 @@
 
   <!-- Hero Section -->
   <div class="flex flex-col-reverse md:flex-row items-start justify-between px-4 md:px-12 gap-8 mt-8">
-    <div class="w-full md:w-1/2 text-center md:text-left mt-24" >
+    <div class="w-full md:w-1/2 text-center md:text-left mt-24">
       <h1 class="text-3xl md:text-5xl font-bold mb-4">We Are Ready To Help & Take Care of Your Dental Health</h1>
       <p class="text-base md:text-lg mb-6">"Creating Miles of Smiles with Gentle Care, Expert Precision, and a Commitment to Your Perfect Dental Health."</p>
       <a href="log-in.php" class="inline-block">
-        <button  id="openLoginModal" class=" bg-gradient-to-r from-yellow-400 via-purple-400 to-pink-500 text-cyan-50 rounded-2xl font-bold py-3 px-6  hover:bg-blue-600 transition duration-300">Make an Appointment</button>
+        <button class="bg-gradient-to-r from-yellow-400 via-purple-400 to-pink-500 text-cyan-50 rounded-2xl font-bold py-3 px-6 hover:bg-blue-600 transition duration-300">Make an Appointment</button>
       </a>
     </div>
     <div class="w-full md:w-1/2 flex justify-center relative">
       <div class="absolute w-64 h-64 bg-blue-100 rounded-full z-0 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 hidden md:block"></div>
-      <img src="/images/Doctor image.png" alt="Doctor" class="w-2/3 max-w-xs md:max-w-md lg:max-w-lg h-auto object-contain z-10 relative" />
+      <img src="images/Doctor image.png" alt="Doctor" class="w-2/3 max-w-xs md:max-w-md lg:max-w-lg h-auto object-contain z-10 relative" />
     </div>
   </div>
 
@@ -67,43 +86,52 @@
       </p>
     </div>
 
-    <div class="relative max-w-6xl mx-auto">
-      <div id="serviceSlider" class="overflow-hidden relative">
-       <div id="serviceSlides" class="flex items-start transition-transform duration-500"></div>
+    <div class="relative max-w-6xl mx-auto overflow-hidden">
+      <div id="serviceSlides" class="flex items-start transition-transform duration-500">
+        <?php
+          foreach ($services as $service) {
+              echo '<div class="service-card">';
+              echo '<img src="' . htmlspecialchars($service['image']) . '" alt="' . htmlspecialchars($service['title']) . '">';
+              echo '<h2 class="text-xl font-semibold mt-2 mb-2">' . htmlspecialchars($service['title']) . '</h2>';
+              echo '<p class="mb-4">' . htmlspecialchars($service['description']) . '</p>';
+              echo '<button class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">' . htmlspecialchars($service['btn']) . '</button>';
+              echo '</div>';
+          }
+        ?>
       </div>
 
       <button id="prevService" class="absolute -left-6 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-200">&#10094;</button>
       <button id="nextService" class="absolute -right-6 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-200">&#10095;</button>
     </div>
   </div>
-<!-- Halili's Info -->
+
+  <!-- Halili's Info -->
   <div class="text-center mt-8">
-    <img src="/images/Halili logo.png" alt="" srcset="" class="w-1/5 h-2/6 mx-auto mt-8 mb-4">
+    <img src="images/Halili logo.png" alt="" class="w-1/5 h-2/6 mx-auto mt-8 mb-4">
     <h1 class="text-1xl font-bold text-charcoal-500">Halili Dental Clinic by Dra Emily E Halili, Rodriguez, Philippines</h1>
   </div>
-  <!--Contact Section -->
+
+  <!-- Contact Section -->
   <div class="mb-20">
-  <div class="flex flex-row items-center justify-around relative">
-    <div class ="text-center mt-8 flex flex-row items-center justify-center relative gap-4 w-34">
-      <img src="/images/telephone.png" alt="" srcset="" class="w-8 mx-auto  ">
-      <h1>Call Us: 0922 223 3688</h1>
+    <div class="flex flex-row items-center justify-around relative">
+      <div class="text-center mt-8 flex flex-row items-center justify-center relative gap-4 w-34">
+        <img src="images/telephone.png" alt="" class="w-8 mx-auto">
+        <h1>Call Us: 0922 223 3688</h1>
+      </div>
+      <div class="text-center mt-8 flex flex-row items-center justify-center relative gap-4 w-34">
+        <img src="images/viber.png" alt="" class="w-8 mx-auto">
+        <h1>Viber: +63 922 223 3688</h1>
+      </div>
     </div>
-     <div class="text-center mt-8 flex flex-row items-center justify-center relative gap-4 w-34">
-      <img src="/images/viber.png" alt="" srcset="" class="w-8 mx-auto">
-      <h1 class="text-center">Viber: +63 922 223 3688</h1>
-     </div>
-    
-  </div>
-  <div class=" flex items-center justify-around relative">
-   <div class="text-center mt-8 flex flex-row items-center justify-center relative gap-4 w-34">
-    <img src="/images/email.png" alt="" srcset="" class="w-8 mx-auto">
-    <h1>Email: halilidentalcare@gmail.com</h1>
-  </div>
-  </div>
+    <div class="flex items-center justify-around relative">
+      <div class="text-center mt-8 flex flex-row items-center justify-center relative gap-4 w-34">
+        <img src="images/email.png" alt="" class="w-8 mx-auto">
+        <h1>Email: halilidentalcare@gmail.com</h1>
+      </div>
+    </div>
   </div>
 
   <!-- Scripts -->
-  <script src="services.js"></script>
   <script>
     const navToggle = document.getElementById("navToggle");
     const mobileMenu = document.getElementById("mobileMenu");
@@ -125,8 +153,6 @@
     closeMenu.addEventListener("click", closeSidebar);
     overlay.addEventListener("click", closeSidebar);
 
-    renderServices();
-
     const sliderContainer = document.querySelector("#serviceSlides");
     const prevBtn = document.getElementById("prevService");
     const nextBtn = document.getElementById("nextService");
@@ -136,7 +162,6 @@
       sliderContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
     }
 
-    // Looping version
     nextBtn.addEventListener("click", () => {
       currentIndex = (currentIndex + 1) % sliderContainer.children.length;
       updateSlider();
@@ -146,9 +171,6 @@
       currentIndex = (currentIndex - 1 + sliderContainer.children.length) % sliderContainer.children.length;
       updateSlider();
     });
-
-    // Removed login, register, and verify modal JS code
-
   </script>
 </body>
-</html>
+</html>s
