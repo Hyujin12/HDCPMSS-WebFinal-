@@ -4,7 +4,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <!-- Mobile Navbar -->
 <div class="bg-blue-700 text-white flex items-center justify-between p-4 md:hidden">
   <h1 class="text-lg font-bold flex items-center gap-2">
-    <img src="../images/halili logo.png" alt="Halili Dental Logo" class="h-10 w-auto">
+    <img src="../images/halili-logo.png" alt="Halili Dental Logo" class="h-10 w-auto">
     Halili Dental Clinic
   </h1>
   <!-- Burger Button -->

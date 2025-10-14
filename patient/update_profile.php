@@ -1,17 +1,22 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_email'])) {
+if (!isset($_SESSION['email'])) {
     header("Location: log-in.php");
     exit;
 }
 
 require __DIR__ . '/../vendor/autoload.php';
 use MongoDB\Client;
-use MongoDB\BSON\ObjectId;
+use Dotenv\Dotenv;
 
-$mongo = new Client("mongodb://localhost:27017");
-$db = $mongo->HaliliDentalClinic;
+// Load .env
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
+
+$mongo = new Client($_ENV['MONGO_URI']);
+$db = $mongo->selectDatabase('HaliliDentalClinic');
+
 $users = $db->users;
 
 $id          = $_POST['id'];
@@ -84,7 +89,7 @@ $users->updateOne(
 );
 
 // Update session if email changed
-$_SESSION['user_email'] = $email;
+$_SESSION['email'] = $email;
 $_SESSION['update_success'] = true;
 
 header("Location: profile.php");
