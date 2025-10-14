@@ -6,7 +6,7 @@ if (!isset($_SESSION['email'])) {
 }
 
 $userEmail = $_SESSION['email'];
-$userFullName = $_SESSION['username'];s
+$userFullName = $_SESSION['username'];
 
 require __DIR__ . '/../vendor/autoload.php';
 use MongoDB\Client;
