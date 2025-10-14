@@ -16,7 +16,7 @@ $dotenv->load();
 
 $mongoClient = new Client($_ENV['MONGO_URI']);
 $db = $mongoClient->selectDatabase('HaliliDentalClinic');
-$usersCollection = $db->selectCollection('users');
+$users = $db->selectCollection('users'); 
 
 
 $id          = $_POST['id'];

@@ -151,6 +151,19 @@ body { background-color: #f3f4f6; }
             <label class="form-label">Email</label>
             <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($user->email ?? '') ?>" required>
           </div>
+          <div class="col-md-6">
+      <label class="form-label">Civil Status</label>
+     <input type="text" name="civil_status" class="form-control" value="<?= htmlspecialchars($user->civil_status ?? '') ?>">
+    </div>
+      <div class="col-md-6">
+       <label class="form-label">Occupation</label>
+  <input type="text" name="occupation" class="form-control" value="<?= htmlspecialchars($user->occupation ?? '') ?>">
+</div>
+<div class="col-md-6">
+  <label class="form-label">Nationality</label>
+  <input type="text" name="nationality" class="form-control" value="<?= htmlspecialchars($user->nationality ?? '') ?>">
+</div>
+
         </div>
       </div>
       <div class="modal-footer">
