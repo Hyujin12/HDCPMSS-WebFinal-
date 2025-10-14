@@ -22,7 +22,7 @@ function sendVerificationEmail($email, $username, $code) {
     $url = "https://api.resend.com/emails";
 
     $data = [
-        "from" => "no-reply@halilidentalclinic.com",
+        "from" => "Halili Dental Clinic <onboarding@resend.dev>",
         "to" => [$email],
         "subject" => "Verify Your Halili Dental Clinic Account",
         "html" => "
@@ -48,8 +48,9 @@ function sendVerificationEmail($email, $username, $code) {
     $error = curl_error($ch);
     curl_close($ch);
 
-    // 🔍 Debug output
-    file_put_contents(__DIR__ . '/../email_log.txt', "HTTP: $httpCode\nResponse: $response\nError: $error\n", FILE_APPEND);
+    // Log debug info
+    file_put_contents(__DIR__ . '/../email_log.txt', 
+        "HTTP: $httpCode\nResponse: $response\nError: $error\n\n", FILE_APPEND);
 
     return $httpCode >= 200 && $httpCode < 300;
 }
