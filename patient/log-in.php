@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = "Please verify your email first.";
         } else {
             // ✅ Store session data
-            $_SESSION['user_email'] = $email;
+            $_SESSION['email'] = $email;
             $_SESSION['username'] = $user['username'];
 
             // ✅ Redirect using PHP (no JS)
