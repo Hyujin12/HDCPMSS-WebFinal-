@@ -14,7 +14,7 @@ use Dotenv\Dotenv;
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
-$mongo = new Client($_ENV['MONGO_URI']);
+$mongoClient = new Client($_ENV['MONGO_URI']);
 $db = $mongoClient->selectDatabase('HaliliDentalClinic');
 $usersCollection = $db->selectCollection('users');
 
