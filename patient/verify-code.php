@@ -92,7 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ['email' => $email],
                     ['$set' => ['isVerified' => true], '$unset' => ['verificationCode' => "", 'codeExpires' => ""]]
                 );
-                $success = "Email verified successfully! You can now log in.";
+               $success = "Email verified successfully!";
+
             }
         }
     }
@@ -144,9 +145,17 @@ Swal.fire({ icon: 'error', title: 'Error', text: '<?= htmlspecialchars($error) ?
 
 <?php if (!empty($success)) : ?>
 <script>
-Swal.fire({ icon: 'success', title: 'Success', text: '<?= htmlspecialchars($success) ?>' });
+Swal.fire({
+    icon: 'success',
+    title: 'Success',
+    text: '<?= htmlspecialchars($success) ?>',
+    confirmButtonText: 'Go to Login'
+}).then(() => {
+    window.location.href = 'log-in.php';
+});
 </script>
 <?php endif; ?>
+
 
 </body>
 </html>
