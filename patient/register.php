@@ -5,7 +5,7 @@ require __DIR__ . '/../vendor/autoload.php';
 use MongoDB\Client;
 use Dotenv\Dotenv;
 
-// Load .env
+// Load .env configuration
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
@@ -16,7 +16,7 @@ $usersCollection = $db->selectCollection('users');
 $error = '';
 $success = '';
 
-// Send email via Resend
+// Function: Send verification email using Resend API
 function sendVerificationEmail($email, $username, $code) {
     $apiKey = $_ENV['RESEND_API_KEY'];
     $url = "https://api.resend.com/emails";
@@ -24,10 +24,14 @@ function sendVerificationEmail($email, $username, $code) {
     $data = [
         "from" => "no-reply@halilidentalclinic.com",
         "to" => [$email],
-        "subject" => "Your Halili Dental Clinic Verification Code",
-        "html" => "<p>Hi " . htmlspecialchars($username) . ",</p>
-                   <p>Your verification code is: <strong>$code</strong></p>
-                   <p>Please enter this code on the verification page to activate your account.</p>"
+        "subject" => "Verify Your Halili Dental Clinic Account",
+        "html" => "
+            <div style='font-family: Arial, sans-serif;'>
+                <h2>Welcome to Halili Dental Clinic, $username!</h2>
+                <p>Your verification code is:</p>
+                <h3 style='color: #007bff;'>$code</h3>
+                <p>This code will expire in 15 minutes.</p>
+            </div>"
     ];
 
     $ch = curl_init($url);
@@ -41,10 +45,15 @@ function sendVerificationEmail($email, $username, $code) {
 
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $error = curl_error($ch);
     curl_close($ch);
+
+    // 🔍 Debug output
+    file_put_contents(__DIR__ . '/../email_log.txt', "HTTP: $httpCode\nResponse: $response\nError: $error\n", FILE_APPEND);
 
     return $httpCode >= 200 && $httpCode < 300;
 }
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
@@ -58,44 +67,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "All fields are required.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Invalid email address.";
-    } elseif (!preg_match('/^\d+$/', $mobileNumber)) {
-        $error = "Mobile number must be digits only.";
+    } elseif (!preg_match('/^[0-9]{10,15}$/', $mobileNumber)) {
+        $error = "Mobile number must contain only digits (10–15 digits).";
+    } elseif (strlen($password) < 6) {
+        $error = "Password must be at least 6 characters long.";
     } elseif ($password !== $confirmPassword) {
         $error = "Passwords do not match.";
     } else {
-        $existingUser = $usersCollection->findOne(['email' => $email]);
+        $existingUser = $usersCollection->findOne(['email' => strtolower($email)]);
         if ($existingUser) {
             $error = "Email already registered.";
         } else {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
             $verificationCode = random_int(100000, 999999);
 
-            $insertResult = $usersCollection->insertOne([
+            $newUser = [
                 'username' => $username,
-                'email' => $email,
-                'mobileNumber' => (int)$mobileNumber,
+                'email' => strtolower($email),
+                'mobileNumber' => $mobileNumber,
                 'password' => $hashedPassword,
                 'isVerified' => false,
                 'verificationCode' => (string)$verificationCode,
-                'codeExpires' => new MongoDB\BSON\UTCDateTime((time() + 900) * 1000) // 15 min
-            ]);
+                'codeExpires' => new MongoDB\BSON\UTCDateTime((time() + 900) * 1000), // 15 minutes expiry
+                'createdAt' => new MongoDB\BSON\UTCDateTime()
+            ];
+
+            $insertResult = $usersCollection->insertOne($newUser);
 
             if ($insertResult->getInsertedCount() === 1) {
                 if (sendVerificationEmail($email, $username, $verificationCode)) {
+                    // ✅ Use PHP header redirect (no JS)
                     header("Location: verify-code.php?email=" . urlencode($email));
                     exit;
                 } else {
-                    $error = "Failed to send verification email.";
+                    $error = "Registration successful, but failed to send verification email. Please contact support.";
                 }
             } else {
-                $error = "Registration failed. Try again.";
+                $error = "Registration failed. Please try again.";
             }
         }
     }
 }
 ?>
 
-<!-- HTML form -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -105,21 +119,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="flex items-center justify-center min-h-screen bg-white">
 
-<form method="POST" class="max-w-md w-full p-8 border rounded-lg shadow-lg">
-  <h2 class="text-2xl font-bold mb-6 text-center">Register</h2>
+<form method="POST" class="max-w-md w-full p-8 border rounded-lg shadow-lg bg-white">
+  <h2 class="text-2xl font-bold mb-6 text-center">Create Your Account</h2>
 
   <?php if (!empty($error)) : ?>
     <div class="mb-4 text-red-600 font-semibold"><?= htmlspecialchars($error) ?></div>
+  <?php elseif (!empty($success)) : ?>
+    <div class="mb-4 text-green-600 font-semibold"><?= htmlspecialchars($success) ?></div>
   <?php endif; ?>
 
   <label class="block mb-2 font-semibold">Username</label>
-  <input type="text" name="username" class="w-full p-2 border rounded mb-4" required>
+  <input type="text" name="username" value="<?= htmlspecialchars($_POST['username'] ?? '') ?>" class="w-full p-2 border rounded mb-4" required>
 
   <label class="block mb-2 font-semibold">Email</label>
-  <input type="email" name="email" class="w-full p-2 border rounded mb-4" required>
+  <input type="email" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" class="w-full p-2 border rounded mb-4" required>
 
   <label class="block mb-2 font-semibold">Mobile Number</label>
-  <input type="text" name="mobileNumber" class="w-full p-2 border rounded mb-4" required>
+  <input type="text" name="mobileNumber" value="<?= htmlspecialchars($_POST['mobileNumber'] ?? '') ?>" class="w-full p-2 border rounded mb-4" required>
 
   <label class="block mb-2 font-semibold">Password</label>
   <input type="password" name="password" class="w-full p-2 border rounded mb-4" required>
