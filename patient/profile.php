@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+
 // Redirect if not logged in
 if (!isset($_SESSION['email'])) {
     header("Location: log-in.php");
@@ -8,6 +9,7 @@ if (!isset($_SESSION['email'])) {
 }
 
 require __DIR__ . '/../vendor/autoload.php';
+use MongoDB\BSON\ObjectId;
 use MongoDB\Client;
 use Dotenv\Dotenv;
 
@@ -16,9 +18,9 @@ $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
 $mongo = new Client($_ENV['MONGO_URI']);
-$db = $mongo->selectDatabase('HaliliDentalClinic');
+$db = $mongoClient->selectDatabase('HaliliDentalClinic');
+$usersCollection = $db->selectCollection('users');
 
-$users = $db->users;
 
 // Find user
 $userEmail = $_SESSION['email'];

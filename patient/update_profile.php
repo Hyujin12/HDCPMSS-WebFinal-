@@ -15,9 +15,9 @@ $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
 $mongo = new Client($_ENV['MONGO_URI']);
-$db = $mongo->selectDatabase('HaliliDentalClinic');
+$db = $mongoClient->selectDatabase('HaliliDentalClinic');
+$usersCollection = $db->selectCollection('users');
 
-$users = $db->users;
 
 $id          = $_POST['id'];
 $fullname    = $_POST['fullname'];
