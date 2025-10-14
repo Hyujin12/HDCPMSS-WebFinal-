@@ -1,12 +1,12 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_email'])) {
+if (!isset($_SESSION['email'])) {
     header("Location: log-in.php");
     exit;
 }
 
-$userEmail = $_SESSION['user_email'];
-$userFullName = $_SESSION['user_name'];
+$userEmail = $_SESSION['email'];
+$userFullName = $_SESSION['username'];s
 
 require __DIR__ . '/../vendor/autoload.php';
 use MongoDB\Client;
@@ -18,7 +18,7 @@ $appointmentsCollection = $db->booked_service;
 
 // Case-insensitive fullname search
 $user = $usersCollection->findOne([
-    'fullname' => new MongoDB\BSON\Regex('^' . preg_quote($userFullName) . '$', 'i')
+    'fullname' => new MongoDB\BSON\Regex('^' . preg_quote($userFullName ?? '', '/') . '$', 'i')
 ]);
 
 // Handle selectedTeeth (odontogram)
