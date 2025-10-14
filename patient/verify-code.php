@@ -32,11 +32,10 @@ function resendVerificationCode($usersCollection, $email) {
     );
 
     if ($updateResult->getModifiedCount() === 1) {
-        // Send via Resend
         $apiKey = $_ENV['RESEND_API_KEY'];
         $url = "https://api.resend.com/emails";
         $data = [
-            "from" => "no-reply@halilidentalclinic.com",
+            "from" => "Halili Dental Clinic <onboarding@resend.dev>",
             "to" => [$email],
             "subject" => "Your Halili Dental Clinic Verification Code",
             "html" => "<p>Hi " . htmlspecialchars($user['username']) . ",</p>
@@ -51,13 +50,22 @@ function resendVerificationCode($usersCollection, $email) {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        curl_exec($ch);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
         curl_close($ch);
 
-        return true;
+        // Log for debugging
+        file_put_contents(__DIR__ . '/../resend_log.txt', 
+            "Email: $email\nHTTP: $httpCode\nResponse: $response\nError: $error\n\n", FILE_APPEND);
+
+        // Return true only if Resend accepted it
+        return $httpCode >= 200 && $httpCode < 300;
     }
     return false;
 }
+
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
