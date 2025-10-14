@@ -129,7 +129,7 @@ include 'service-grid.php'; // Make sure this is the PHP file with $services and
     </div>
     <div class="flex items-center justify-around relative">
       <div class="text-center mt-8 flex flex-row items-center justify-center relative gap-4 w-34">
-        <img src="images/email.png" alt="" class="w-8 mx-auto">
+        <img src="../images/email.png" alt="" class="w-8 mx-auto">
         <h1>Email: halilidentalcare@gmail.com</h1>
       </div>
     </div>
