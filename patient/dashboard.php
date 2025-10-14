@@ -10,8 +10,13 @@ $userFullName = $_SESSION['username'];
 
 require __DIR__ . '/../vendor/autoload.php';
 use MongoDB\Client;
+use Dotenv\Dotenv;
 
-$mongoClient = new Client("mongodb://localhost:27017");
+// Load environment variables
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
+
+$mongoClient = new Client($_ENV['MONGO_URI']);
 $db = $mongoClient->HaliliDentalClinic;
 $usersCollection = $db->users;
 $appointmentsCollection = $db->booked_service;
