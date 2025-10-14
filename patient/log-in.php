@@ -13,7 +13,6 @@ $db = $mongoClient->selectDatabase('HaliliDentalClinic');
 $usersCollection = $db->selectCollection('users');
 
 $error = '';
-$success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
@@ -30,16 +29,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = "No user found with that email.";
         } elseif (!password_verify($password, $user['password'])) {
             $error = "Incorrect password.";
-        } elseif (!$user['isVerified']) {
+        } elseif (empty($user['isVerified']) || !$user['isVerified']) {
             $error = "Please verify your email first.";
         } else {
+            // ✅ Store session data
             $_SESSION['user_email'] = $email;
             $_SESSION['username'] = $user['username'];
-            $success = "Login successful! Redirecting...";
 
-            echo "<script>
-                    setTimeout(() => { window.location.href = 'dashboard.php'; }, 1500);
-                  </script>";
+            // ✅ Redirect using PHP (no JS)
+            header("Location: dashboard.php");
+            exit();
         }
     }
 }
@@ -59,8 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <?php if (!empty($error)) : ?>
     <div class="mb-4 text-red-600 font-semibold"><?= htmlspecialchars($error) ?></div>
-  <?php elseif (!empty($success)) : ?>
-    <div class="mb-4 text-green-600 font-semibold"><?= htmlspecialchars($success) ?></div>
   <?php endif; ?>
 
   <label class="block mb-2 font-semibold">Email</label>
