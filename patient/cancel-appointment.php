@@ -21,9 +21,9 @@ if (!$id || !$userEmail) {
 }
 
 try {
-    $mongo = new Client("mongodb://localhost:27017");
-    $db = $mongo->HaliliDentalClinic;
-    $bookedService = $db->booked_service;
+    $mongoClient = new Client($_ENV['MONGO_URI']);
+    $db = $mongoClient->HaliliDentalClinic;
+    $bookedService = $db->bookedservices;
 
     // Ensure only the owner can cancel their appointment
     $result = $bookedService->updateOne(

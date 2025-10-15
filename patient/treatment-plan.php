@@ -4,13 +4,14 @@ if (!isset($_SESSION['user_email'])) {
     header("Location: log-in.php");
     exit;
 }
-$userFullName = $_SESSION['user_name'];
+$userFullName = $_SESSION['username'];
 require __DIR__ . '/../vendor/autoload.php';
 use MongoDB\Client;
 
-$mongoClient = new Client("mongodb://localhost:27017");
+$mongoClient = new Client($_ENV['MONGO_URI']);
 $db = $mongoClient->HaliliDentalClinic;
 $usersCollection = $db->users;
+
 $user = $usersCollection->findOne([
     'fullname' => new MongoDB\BSON\Regex('^' . preg_quote($userFullName) . '$', 'i')
 ]);

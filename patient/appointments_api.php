@@ -4,12 +4,11 @@ header('Content-Type: application/json');
 
 require __DIR__ . '/../vendor/autoload.php';
 use MongoDB\Client;
+$mongoClient = new Client($_ENV['MONGO_URI']);
+$db = $mongoClient->HaliliDentalClinic;
+$bookedService = $db->bookedservices;
 
-$mongo = new Client("mongodb://localhost:27017");
-$db = $mongo->HaliliDentalClinic; 
-$bookedService = $db->booked_service;
-
-$userEmail = $_SESSION['user_email'] ?? '';
+$userEmail = $_SESSION['email'] ?? '';
 if (!$userEmail) {
     echo json_encode([]);
     exit;

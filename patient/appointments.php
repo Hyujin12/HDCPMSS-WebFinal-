@@ -9,11 +9,10 @@ if (!isset($_SESSION['user_email'])) {
 
 require __DIR__ . '/../vendor/autoload.php';
 use MongoDB\Client;
+$mongoClient = new Client($_ENV['MONGO_URI']);
+$db = $mongoClient->HaliliDentalClinic;
 
-// Connect to MongoDB
-$mongo = new Client("mongodb://localhost:27017");
-$db = $mongo->HaliliDentalClinic; 
-$bookedService = $db->booked_service;
+$bookedService = $db->bookedservices;
 
 // Get patient email from session
 $userEmail = $_SESSION['user_email'];
