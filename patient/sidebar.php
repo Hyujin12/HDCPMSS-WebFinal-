@@ -18,7 +18,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <!-- Sidebar -->
 <aside id="sidebar" class="w-64 bg-blue-700 text-white p-4 fixed h-full top-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-50">
   <h1 class="text-xl font-bold mb-4 flex items-center gap-2">
-    <img src="../images/halili logo.png" alt="Halili Dental Logo" class="h-14 w-auto">
+    <img src="/images/halili-logo.png" alt="Halili Dental Logo" class="h-14 w-auto">
     Halili Dental Clinic PMSS
   </h1>
   <ul class="space-y-4">

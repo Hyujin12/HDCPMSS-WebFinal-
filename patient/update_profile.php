@@ -8,6 +8,7 @@ if (!isset($_SESSION['email'])) {
 
 require __DIR__ . '/../vendor/autoload.php';
 use MongoDB\Client;
+use MongoDB\BSON\ObjectId;
 use Dotenv\Dotenv;
 
 // Load .env
