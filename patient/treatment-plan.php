@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_email'])) {
+if (!isset($_SESSION['email'])) {
     header("Location: log-in.php");
     exit;
 }
@@ -17,7 +17,7 @@ $user = $usersCollection->findOne([
 ]);
 
 // Fallback for email if not set in session
-$userEmail = $_SESSION['user_email'] ?? ($user['email'] ?? '');
+$userEmail = $_SESSION['email'] ?? ($user['email'] ?? '');
 ?>
 
 <!DOCTYPE html>
@@ -201,7 +201,7 @@ $userEmail = $_SESSION['user_email'] ?? ($user['email'] ?? '');
   import { renderServices, services } from '/patient/services-grid.js';
 
   const userFullName = <?php echo json_encode($_SESSION['user_name'] ?? $user['fullname'] ?? ''); ?>;
-const userEmail = <?php echo json_encode($_SESSION['user_email'] ?? $user['email'] ?? ''); ?>;
+const userEmail = <?php echo json_encode($_SESSION['email'] ?? $user['email'] ?? ''); ?>;
 
   document.addEventListener('DOMContentLoaded', () => {
     renderServices('servicesContainer');

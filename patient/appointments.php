@@ -2,7 +2,7 @@
 session_start();
 
 // Redirect to login if no session
-if (!isset($_SESSION['user_email'])) {
+if (!isset($_SESSION['email'])) {
     header("Location: log-in.php");
     exit;
 }
@@ -15,7 +15,7 @@ $db = $mongoClient->HaliliDentalClinic;
 $bookedService = $db->bookedservices;
 
 // Get patient email from session
-$userEmail = $_SESSION['user_email'];
+$userEmail = $_SESSION['email'];
 
 // Fetch booked services for this patient, sorted by latest date & time
 $appointmentsCursor = $bookedService->find(
