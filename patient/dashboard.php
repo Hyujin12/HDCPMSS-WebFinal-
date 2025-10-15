@@ -22,9 +22,8 @@ $usersCollection = $db->users;
 $appointmentsCollection = $db->booked_service;
 
 // Case-insensitive fullname search
-$user = $usersCollection->findOne([
-    'fullname' => new MongoDB\BSON\Regex('^' . preg_quote($userFullName ?? '', '/') . '$', 'i')
-]);
+$user = $usersCollection->findOne(['email' => $userEmail]);
+
 
 $today = date("Y-m-d");
 
