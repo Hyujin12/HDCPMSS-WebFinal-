@@ -110,7 +110,8 @@ unset($_SESSION['update_success']);
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body row g-3 p-4">
-              <input type="hidden" name="id" value="<?= $user->_id ?>">
+              <input type="hidden" name="id" value="<?= (string)$user->_id ?>">
+
 
               <div class="col-md-6">
                   <label class="form-label">Full Name</label>
@@ -216,5 +217,16 @@ unset($_SESSION['update_success']);
 });
     </script>
     <?php endif; ?>
+    <?php if (isset($_SESSION['update_error'])): ?>
+<script>
+Swal.fire({
+    icon: 'error',
+    title: 'Update Failed',
+    text: '<?= htmlspecialchars($_SESSION['update_error']) ?>',
+    confirmButtonColor: '#2563eb'
+});
+</script>
+<?php unset($_SESSION['update_error']); endif; ?>
+
 </body>
 </html>
