@@ -118,35 +118,36 @@ $appointments = iterator_to_array($appointmentsCursor);
     </div>
 
     <script>
-        function cancelAppointment(id) {
-            Swal.fire({
-                title: 'Cancel Appointment?',
-                text: "Are you sure you want to cancel this appointment?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, cancel it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch('cancel-appointment.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id })
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire('Cancelled!', data.message, 'success')
-                                .then(() => location.reload());
-                        } else {
-                            Swal.fire('Error!', data.message, 'error');
-                        }
-                    })
-                    .catch(() => Swal.fire('Error!', 'Something went wrong.', 'error'));
+       function cancelAppointment(id) {
+    Swal.fire({
+        title: 'Cancel Appointment?',
+        text: "Are you sure you want to cancel this appointment?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, cancel it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('cancel-appointment.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ appointmentId: id }) // ✅ FIXED HERE
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('Cancelled!', data.message, 'success')
+                        .then(() => location.reload());
+                } else {
+                    Swal.fire('Error!', data.message, 'error');
                 }
-            });
+            })
+            .catch(() => Swal.fire('Error!', 'Something went wrong.', 'error'));
         }
+    });
+}
+
     </script>
 </body>
 </html>
