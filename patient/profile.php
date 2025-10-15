@@ -113,7 +113,7 @@ unset($_SESSION['update_success']);
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body row g-3 p-4">
-             <input type="hidden" name="id" value="<?php echo (string)$user['_id']; ?>">
+             <input type="hidden" name="id" value="<?= (string)$user->_id ?>">
 
               <div class="col-md-6">
                   <label class="form-label">Full Name</label>
