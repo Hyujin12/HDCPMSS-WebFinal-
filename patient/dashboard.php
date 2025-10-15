@@ -19,11 +19,10 @@ $dotenv->load();
 $mongoClient = new Client($_ENV['MONGO_URI']);
 $db = $mongoClient->HaliliDentalClinic;
 $usersCollection = $db->users;
-$appointmentsCollection = $db->booked_service;
+$appointmentsCollection = $db->bookedservices;
 
-// Case-insensitive fullname search
+// Get user info
 $user = $usersCollection->findOne(['email' => $userEmail]);
-
 
 $today = date("Y-m-d");
 
@@ -47,6 +46,9 @@ $totalUpcoming = $appointmentsCollection->countDocuments([
 <title>Dashboard - Halili Dental</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- FullCalendar -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
 <style>
 body { background-color: #f3f4f6; }
@@ -56,6 +58,10 @@ body { background-color: #f3f4f6; }
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   padding: 1.5rem;
   margin-bottom: 1.5rem;
+}
+#calendar {
+  max-width: 100%;
+  margin: 0 auto;
 }
 </style>
 </head>
@@ -108,6 +114,12 @@ body { background-color: #f3f4f6; }
       <?php endif; ?>
     </div>
 
+    <!-- 📅 Appointment Calendar -->
+    <div class="dashboard-card">
+      <h3 class="fw-bold mb-3">Appointment Calendar</h3>
+      <div id="calendar"></div>
+    </div>
+
   </div>
 </main>
 
@@ -151,18 +163,17 @@ body { background-color: #f3f4f6; }
             <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($user->email ?? '') ?>" required>
           </div>
           <div class="col-md-6">
-      <label class="form-label">Civil Status</label>
-     <input type="text" name="civil_status" class="form-control" value="<?= htmlspecialchars($user->civil_status ?? '') ?>">
-    </div>
-      <div class="col-md-6">
-       <label class="form-label">Occupation</label>
-  <input type="text" name="occupation" class="form-control" value="<?= htmlspecialchars($user->occupation ?? '') ?>">
-</div>
-<div class="col-md-6">
-  <label class="form-label">Nationality</label>
-  <input type="text" name="nationality" class="form-control" value="<?= htmlspecialchars($user->nationality ?? '') ?>">
-</div>
-
+            <label class="form-label">Civil Status</label>
+            <input type="text" name="civil_status" class="form-control" value="<?= htmlspecialchars($user->civil_status ?? '') ?>">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Occupation</label>
+            <input type="text" name="occupation" class="form-control" value="<?= htmlspecialchars($user->occupation ?? '') ?>">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Nationality</label>
+            <input type="text" name="nationality" class="form-control" value="<?= htmlspecialchars($user->nationality ?? '') ?>">
+          </div>
         </div>
       </div>
       <div class="modal-footer">
@@ -174,5 +185,20 @@ body { background-color: #f3f4f6; }
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('calendar');
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    themeSystem: 'bootstrap5',
+    events: 'get_user_appointments.php', // PHP backend that provides events
+    eventColor: '#0d6efd',
+    eventTextColor: '#fff',
+  });
+  calendar.render();
+});
+</script>
+
 </body>
 </html>

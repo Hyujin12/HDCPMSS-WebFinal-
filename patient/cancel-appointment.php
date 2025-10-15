@@ -1,42 +1,49 @@
 <?php
 session_start();
-header('Content-Type: application/json');
-
 require __DIR__ . '/../vendor/autoload.php';
+
 use MongoDB\Client;
 use MongoDB\BSON\ObjectId;
+use Dotenv\Dotenv;
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(["success" => false, "message" => "Invalid request."]);
+header('Content-Type: application/json');
+
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
+
+if (!isset($_SESSION['email'])) {
+    echo json_encode(['success' => false, 'message' => 'Not logged in']);
     exit;
 }
 
-$input = json_decode(file_get_contents("php://input"), true);
-$id = $input['id'] ?? null;
-$userEmail = $_SESSION['user_email'] ?? '';
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+    exit;
+}
 
-if (!$id || !$userEmail) {
-    echo json_encode(["success" => false, "message" => "Missing appointment ID or not logged in."]);
+$data = json_decode(file_get_contents('php://input'), true);
+$appointmentId = $data['appointmentId'] ?? '';
+
+if (!$appointmentId) {
+    echo json_encode(['success' => false, 'message' => 'Missing appointment ID']);
     exit;
 }
 
 try {
-    $mongoClient = new Client($_ENV['MONGO_URI']);
-    $db = $mongoClient->HaliliDentalClinic;
-    $bookedService = $db->bookedservices;
+    $client = new Client($_ENV['MONGO_URI']);
+    $db = $client->HaliliDentalClinic;
+    $appointments = $db->booked_service;
 
-    // Ensure only the owner can cancel their appointment
-    $result = $bookedService->updateOne(
-        ['_id' => new ObjectId($id), 'email' => $userEmail],
-        ['$set' => ['status' => 'cancelled']]
+    $result = $appointments->updateOne(
+        ['_id' => new ObjectId($appointmentId), 'email' => $_SESSION['email']],
+        ['$set' => ['status' => 'Cancelled']]
     );
 
     if ($result->getModifiedCount() > 0) {
-        echo json_encode(["success" => true, "message" => "Your appointment has been cancelled."]);
+        echo json_encode(['success' => true, 'message' => 'Appointment cancelled successfully']);
     } else {
-        echo json_encode(["success" => false, "message" => "Appointment not found or already cancelled."]);
+        echo json_encode(['success' => false, 'message' => 'No appointment updated']);
     }
 } catch (Exception $e) {
-    echo json_encode(["success" => false, "message" => "Error: " . $e->getMessage()]);
+    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }
-exit;
