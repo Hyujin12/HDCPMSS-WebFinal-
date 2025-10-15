@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-
 // Redirect if not logged in
 if (!isset($_SESSION['email'])) {
     header("Location: log-in.php");
@@ -9,6 +8,7 @@ if (!isset($_SESSION['email'])) {
 }
 
 require __DIR__ . '/../vendor/autoload.php';
+
 use MongoDB\BSON\ObjectId;
 use MongoDB\Client;
 use Dotenv\Dotenv;
@@ -17,14 +17,16 @@ use Dotenv\Dotenv;
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
+// Connect to MongoDB
 $mongoClient = new Client($_ENV['MONGO_URI']);
 $db = $mongoClient->selectDatabase('HaliliDentalClinic');
 $usersCollection = $db->selectCollection('users');
 
-
-// Find user
+// Get the current logged-in user's email
 $userEmail = $_SESSION['email'];
-$user = $users->findOne(['email' => $userEmail]);
+
+// Find user by email
+$user = $usersCollection->findOne(['email' => $userEmail]);
 
 if (!$user) {
     die("User not found.");
@@ -34,6 +36,7 @@ if (!$user) {
 $updateSuccess = $_SESSION['update_success'] ?? null;
 unset($_SESSION['update_success']);
 ?>
+
 
 <!doctype html>
 <html lang="en">
@@ -110,8 +113,7 @@ unset($_SESSION['update_success']);
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body row g-3 p-4">
-              <input type="hidden" name="id" value="<?= (string)$user->_id ?>">
-
+             <input type="hidden" name="id" value="<?php echo (string)$user['_id']; ?>">
 
               <div class="col-md-6">
                   <label class="form-label">Full Name</label>

@@ -122,7 +122,7 @@ body { background-color: #f3f4f6; }
       </div>
       <div class="modal-body">
         <div class="row g-3">
-          <input type="hidden" name="id" value="<?= $user->_id ?? '' ?>">
+          <input type="hidden" name="id" value="<?php echo (string)$user['_id']; ?>">
           <div class="col-md-6">
             <label class="form-label">Full Name</label>
             <input type="text" name="fullname" class="form-control" value="<?= htmlspecialchars($user->fullname ?? '') ?>" required>
