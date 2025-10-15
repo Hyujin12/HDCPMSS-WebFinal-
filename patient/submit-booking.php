@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Ensure user is logged in
-if (empty($_SESSION['user_email']) && empty($_SESSION['email'])) {
+if (empty($_SESSION['email']) && empty($_SESSION['email'])) {
     http_response_code(401);
     echo 'Unauthorized: Please log in first.';
     exit;
@@ -42,13 +42,14 @@ foreach ($requiredFields as $field) {
 }
 
 try {
-    $mongoClient = new Client("mongodb://localhost:27017");
+    $mongoClient = new Client($_ENV['MONGO_URI']);
     $db = $mongoClient->selectDatabase('HaliliDentalClinic');
     $usersCollection = $db->selectCollection('users');
-    $bookedServiceCollection = $db->selectCollection('booked_service');
+
+    $bookedServiceCollection = $db->selectCollection('bookedservices');
 
     // Get email from session
-    $email = $_SESSION['user_email'] ?? $_SESSION['email'] ?? '';
+    $email = $_SESSION['email'] ?? $_SESSION['email'] ?? '';
 
     // Always get the latest fullname & email from DB
     $user = $usersCollection->findOne(['email' => $email]);
