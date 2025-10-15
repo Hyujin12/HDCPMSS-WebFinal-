@@ -4,6 +4,7 @@ if (!isset($_SESSION['email'])) {
     header("Location: log-in.php");
     exit;
 }
+
 $userFullName = $_SESSION['username'];
 require __DIR__ . '/../vendor/autoload.php';
 use MongoDB\Client;
@@ -31,7 +32,6 @@ $userEmail = $_SESSION['email'] ?? ($user['email'] ?? '');
   <style>
     body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
     main { margin-left: 16rem; padding: 20px; }
-
 
     .services-grid {
       display: grid;
@@ -162,9 +162,21 @@ $userEmail = $_SESSION['email'] ?? ($user['email'] ?? '');
 
 <main>
   <h1 class="text-2xl font-bold mb-4">Our Dental Services</h1>
-  <div id="servicesContainer" class="services-grid"></div>
+  
+  <div id="servicesContainer" class="services-grid">
+    <?php 
+      include 'service-grid.php'; 
+      foreach ($services as $service): ?>
+        <div class="service-card">
+          <img src="<?= htmlspecialchars($service['image']) ?>" alt="<?= htmlspecialchars($service['title']) ?>">
+          <h2><?= htmlspecialchars($service['title']) ?></h2>
+          <p><?= htmlspecialchars($service['description']) ?></p>
+          <button><?= htmlspecialchars($service['btn']) ?></button>
+        </div>
+    <?php endforeach; ?>
+  </div>
 
-  <!-- Modal -->
+  <!-- Booking Modal -->
   <div id="bookingModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-content">
       <button class="close-btn" aria-label="Close modal">&times;</button>
@@ -197,15 +209,11 @@ $userEmail = $_SESSION['email'] ?? ($user['email'] ?? '');
   </div>
 </main>
 
-<script type="module">
-  import { renderServices, services } from '/patient/services-grid.js';
-
-  const userFullName = <?php echo json_encode($_SESSION['user_name'] ?? $user['fullname'] ?? ''); ?>;
-const userEmail = <?php echo json_encode($_SESSION['email'] ?? $user['email'] ?? ''); ?>;
+<script>
+  const userFullName = <?php echo json_encode($_SESSION['username'] ?? $user['fullname'] ?? ''); ?>;
+  const userEmail = <?php echo json_encode($_SESSION['email'] ?? $user['email'] ?? ''); ?>;
 
   document.addEventListener('DOMContentLoaded', () => {
-    renderServices('servicesContainer');
-
     const modal = document.getElementById('bookingModal');
     const serviceNameInput = document.getElementById('serviceName');
     const fullnameInput = document.getElementById('fullname');
@@ -221,8 +229,6 @@ const userEmail = <?php echo json_encode($_SESSION['email'] ?? $user['email'] ??
         const card = e.target.closest('.service-card');
         const serviceTitle = card.querySelector('h2').textContent;
         serviceNameInput.value = serviceTitle;
-        fullnameInput.value = userFullName;
-        emailInput.value = userEmail;
         modal.classList.add('active');
       }
     });
@@ -249,7 +255,7 @@ const userEmail = <?php echo json_encode($_SESSION['email'] ?? $user['email'] ??
       const data = Object.fromEntries(formData.entries());
 
       try {
-        const response = await fetch('/patient/submit-booking.php', {
+        const response = await fetch('submit-booking.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
