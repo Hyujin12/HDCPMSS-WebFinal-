@@ -41,10 +41,10 @@ foreach ($appointments as $appt) {
         }
 
         // Assign color based on status (optional)
-        $color = match (strtolower($appt['status'] ?? 'pending')) {
-            'accepted' => '#22c55e', // green
-            'declined' => '#ef4444', // red
-            'pending' => '#f59e0b',  // yellow
+        $color = match (strtolower($appt['status'] ?? 'Pending')) {
+            'Accepted' => '#22c55e', // green
+            'Declined' => '#ef4444', // red
+            'Pending' => '#f59e0b',  // yellow
             default => '#3b82f6',    // blue
         };
 

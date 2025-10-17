@@ -112,7 +112,7 @@ $appointments = iterator_to_array($appointmentsCursor);
                             </button>
                             <?php endif; ?>
                             </td>
-
+                            
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

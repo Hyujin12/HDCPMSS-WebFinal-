@@ -1,5 +1,5 @@
-<?php
-session_start();
+
+/*session_start();
 if (!isset($_SESSION['email'])) {
     header("Location: log-in.php");
     exit;
@@ -37,7 +37,7 @@ $totalUpcoming = $appointmentsCollection->countDocuments([
     'email' => $userEmail,
     'date' => ['$gte' => $today]
 ]);
-?>
+*/
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -54,15 +54,32 @@ $totalUpcoming = $appointmentsCollection->countDocuments([
 
 <style>
 body { background-color: #f3f4f6; }
+
 .dashboard-card {
   background: white;
   border-radius: 1rem;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   padding: 1.5rem;
   margin-bottom: 1.5rem;
+  height: 100%;
 }
+
+/* Responsive grid for consistent layout */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Calendar size */
 #calendar {
-  max-width: 600px;
+  width: 100%;
   height: 450px;
   margin: 0 auto;
 }
@@ -73,7 +90,7 @@ body { background-color: #f3f4f6; }
 <?php include 'sidebar.php'; ?>
 
 <main class="main-content p-4 sm:p-6">
-  <div class="max-w-7xl mx-auto">
+  <div class="max-w-7xl mx-auto dashboard-grid">
 
     <!-- Profile Section -->
     <div class="dashboard-card">
@@ -117,8 +134,8 @@ body { background-color: #f3f4f6; }
       <?php endif; ?>
     </div>
 
-    <!-- 📅 Appointment Calendar -->
-    <div class="dashboard-card">
+    <!-- Appointment Calendar -->
+    <div class="dashboard-card" style="grid-column: span 2;">
       <h3 class="fw-bold mb-3">Appointment Calendar</h3>
       <div id="calendar"></div>
     </div>
