@@ -19,7 +19,7 @@ $userEmail = $_SESSION['email'];
 $mongoClient = new Client($_ENV['MONGO_URI']);
 $db = $mongoClient->HaliliDentalClinic;
 
-$appointments = $db->bookedservice;
+$appointments = $db->bookedservices;
 
 $cursor = $appointments->find(['email' => $userEmail]);
 

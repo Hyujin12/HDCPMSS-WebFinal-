@@ -104,7 +104,7 @@ body { background-color: #f3f4f6; }
         <div class="p-3 bg-light border-start border-primary border-4 rounded">
           <h5 class="mb-1"><?= htmlspecialchars($firstAppointment['serviceName']); ?></h5>
           <p class="mb-1">📅 <?= htmlspecialchars($firstAppointment['date']); ?> at <?= htmlspecialchars($firstAppointment['time']); ?></p>
-          <p>Status: <strong><?= htmlspecialchars($firstAppointment['status']); ?></strong></p>
+          <p>Status: <strong><?= htmlspecialchars($firstAppointment['status'] ?? 'Pending'); ?></strong></p>
         </div>
         <?php if ($totalUpcoming > 1): ?>
           <a href="appointments.php" class="d-block mt-2 text-primary">View More Appointments →</a>

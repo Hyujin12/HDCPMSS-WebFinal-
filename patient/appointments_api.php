@@ -34,7 +34,7 @@ foreach ($cursor as $appt) {
         'phone' => $appt['phone'] ?? '',
         'date' => $appt['date'] ?? '',
         'time' => $appt['time'] ?? '',
-        'status' => $appt['status'] ?? 'pending',
+        'status' => $appt['status'] ?? 'Pending',
         'description' => $appt['description'] ?? ''
     ];
 }

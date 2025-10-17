@@ -32,7 +32,7 @@ if (!$appointmentId) {
 try {
     $client = new Client($_ENV['MONGO_URI']);
     $db = $client->HaliliDentalClinic;
-    $appointments = $db->booked_service;
+    $appointments = $db->bookedservices;
 
     $result = $appointments->updateOne(
         ['_id' => new ObjectId($appointmentId), 'email' => $_SESSION['email']],
