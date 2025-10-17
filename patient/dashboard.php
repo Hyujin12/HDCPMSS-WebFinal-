@@ -44,8 +44,10 @@ $totalUpcoming = $appointmentsCollection->countDocuments([
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Dashboard - Halili Dental</title>
+
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
 <!-- FullCalendar -->
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
@@ -193,9 +195,15 @@ document.addEventListener('DOMContentLoaded', function() {
   var calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: 'dayGridMonth',
     themeSystem: 'bootstrap5',
-    events: 'get_user_appointments.php', // PHP backend that provides events
+    events: 'get_user_appointments.php',
     eventColor: '#0d6efd',
     eventTextColor: '#fff',
+    eventClick: function(info) {
+      alert(
+        "Service: " + info.event.title + "\n" +
+        "Date: " + info.event.start.toISOString().slice(0,10)
+      );
+    }
   });
   calendar.render();
 });
