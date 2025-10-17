@@ -1,5 +1,5 @@
-
-/*session_start();
+<?php
+session_start();
 if (!isset($_SESSION['email'])) {
     header("Location: log-in.php");
     exit;
@@ -37,7 +37,8 @@ $totalUpcoming = $appointmentsCollection->countDocuments([
     'email' => $userEmail,
     'date' => ['$gte' => $today]
 ]);
-*/
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
