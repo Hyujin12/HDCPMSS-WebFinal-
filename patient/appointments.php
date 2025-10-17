@@ -87,12 +87,12 @@ $appointments = iterator_to_array($appointmentsCursor);
                             <td><?= htmlspecialchars($appt['description'] ?? '') ?></td>
                             <td>
                                 <?php
-                                $status = $appt['status'] ?? 'pending';
+                                $status = $appt['status'] ?? 'Pending';
                                 $badgeClass = match ($status) {
-                                    'accepted' => 'bg-success',
-                                    'rejected' => 'bg-danger',
-                                    'cancelled' => 'bg-secondary',
-                                    'pending'  => 'bg-warning text-dark',
+                                    'Accepted' => 'bg-success',
+                                    'Rejected' => 'bg-danger',
+                                    'Cancelled' => 'bg-secondary',
+                                    'Pending'  => 'bg-warning text-dark',
                                     default    => 'bg-secondary',
                                 };
                                 ?>
@@ -101,15 +101,18 @@ $appointments = iterator_to_array($appointmentsCursor);
                                 </span>
                             </td>
                             <td>
-                                <?php if (($appt['status'] ?? '') !== 'cancelled'): ?>
-                                    <button class="btn btn-sm btn-danger"
-                                        onclick="cancelAppointment('<?= $appt['_id'] ?>')">
-                                        Cancel
-                                    </button>
-                                <?php else: ?>
-                                    <em>—</em>
-                                <?php endif; ?>
+                            <?php 
+                             $status = $appt['status'] ?? 'Pending';
+                            if (in_array($status, ['Cancelled', 'Completed'])): ?>
+                            <button class="btn btn-sm btn-danger" disabled>Cancel</button>
+                             <?php else: ?>
+                            <button class="btn btn-sm btn-danger"
+                             onclick="cancelAppointment('<?= $appt['_id'] ?>')">
+                            Cancel
+                            </button>
+                            <?php endif; ?>
                             </td>
+
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
