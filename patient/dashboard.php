@@ -12,7 +12,6 @@ require __DIR__ . '/../vendor/autoload.php';
 use MongoDB\Client;
 use Dotenv\Dotenv;
 
-// Load environment variables
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
@@ -21,18 +20,15 @@ $db = $mongoClient->HaliliDentalClinic;
 $usersCollection = $db->users;
 $appointmentsCollection = $db->bookedservices;
 
-// Get user info
 $user = $usersCollection->findOne(['email' => $userEmail]);
 
 $today = date("Y-m-d");
 
-// Get next appointment
 $firstAppointment = $appointmentsCollection->findOne(
     ['email' => $userEmail, 'date' => ['$gte' => $today]],
     ['sort' => ['date' => 1, 'time' => 1]]
 );
 
-// Count total upcoming
 $totalUpcoming = $appointmentsCollection->countDocuments([
     'email' => $userEmail,
     'date' => ['$gte' => $today]
@@ -42,43 +38,31 @@ $totalUpcoming = $appointmentsCollection->countDocuments([
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dashboard - Halili Dental</title>
-
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- FullCalendar -->
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
 <style>
 body { background-color: #f3f4f6; }
-
 .dashboard-card {
   background: white;
   border-radius: 1rem;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   padding: 1.5rem;
   margin-bottom: 1.5rem;
-  height: 100%;
 }
-
-/* Responsive grid for consistent layout */
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1.5rem;
 }
-
 @media (min-width: 768px) {
-  .dashboard-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
 }
-
-/* Calendar size */
 #calendar {
   width: 100%;
   height: 450px;
@@ -93,14 +77,11 @@ body { background-color: #f3f4f6; }
 <main class="main-content p-4 sm:p-6">
   <div class="max-w-7xl mx-auto dashboard-grid">
 
-    <!-- Profile Section -->
+    <!-- Profile -->
     <div class="dashboard-card">
       <div class="d-flex flex-column flex-md-row gap-4 align-items-start">
-        <div class="flex-shrink-0">
-          <img src="<?= !empty($user['profile_image']) ? htmlspecialchars($user['profile_image']) : '/images/default-avatar.png' ?>"
-               alt="Profile Picture"
-               class="rounded-circle border shadow" style="width:100px; height:100px; object-fit:cover;">
-        </div>
+        <img src="<?= !empty($user['profile_image']) ? htmlspecialchars($user['profile_image']) : '/images/default-avatar.png' ?>" 
+             alt="Profile Picture" class="rounded-circle border shadow" style="width:100px; height:100px; object-fit:cover;">
         <div class="flex-grow-1">
           <div class="row">
             <div class="col-md-6">
@@ -143,6 +124,28 @@ body { background-color: #f3f4f6; }
 
   </div>
 </main>
+
+<!-- Appointment Detail Modal -->
+<div class="modal fade" id="appointmentModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Appointment Details</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Service:</strong> <span id="modalService"></span></p>
+        <p><strong>Date:</strong> <span id="modalDate"></span></p>
+        <p><strong>Time:</strong> <span id="modalTime"></span></p>
+        <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+        <p><strong>Notes:</strong> <span id="modalNotes"></span></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Edit Profile Modal -->
 <div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
@@ -206,10 +209,11 @@ body { background-color: #f3f4f6; }
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   var calendarEl = document.getElementById('calendar');
+  var appointmentModal = new bootstrap.Modal(document.getElementById('appointmentModal'));
+
   var calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: 'dayGridMonth',
     themeSystem: 'bootstrap5',
@@ -217,12 +221,18 @@ document.addEventListener('DOMContentLoaded', function() {
     eventColor: '#0d6efd',
     eventTextColor: '#fff',
     eventClick: function(info) {
-      alert(
-        "Service: " + info.event.title + "\n" +
-        "Date: " + info.event.start.toISOString().slice(0,10)
-      );
+      const data = info.event.extendedProps;
+
+      document.getElementById('modalService').innerText = info.event.title;
+      document.getElementById('modalDate').innerText = info.event.start.toISOString().slice(0,10);
+      document.getElementById('modalTime').innerText = data.time || 'N/A';
+      document.getElementById('modalStatus').innerText = data.status || 'Pending';
+      document.getElementById('modalNotes').innerText = data.notes || 'No additional notes';
+
+      appointmentModal.show();
     }
   });
+
   calendar.render();
 });
 </script>

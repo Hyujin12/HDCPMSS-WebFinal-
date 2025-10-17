@@ -36,11 +36,10 @@ foreach ($appointments as $appt) {
         // Combine date and time properly for FullCalendar
         $start = $appt['date'];
         if (!empty($appt['time'])) {
-            // Ensure time has seconds and proper ISO format
             $start .= 'T' . date('H:i:s', strtotime($appt['time']));
         }
 
-        // Assign color based on status (optional)
+        // Assign color based on status
         $color = match (strtolower($appt['status'] ?? 'Pending')) {
             'Accepted' => '#22c55e', // green
             'Declined' => '#ef4444', // red
@@ -55,7 +54,10 @@ foreach ($appointments as $appt) {
             'color' => $color,
             'extendedProps' => [
                 'time' => $appt['time'] ?? '',
-                'status' => $appt['status'] ?? 'Pending'
+                'status' => $appt['status'] ?? 'Pending',
+                'notes' => $appt['notes'] ?? 'No additional notes',
+                'dentist' => $appt['dentist'] ?? 'Not assigned',
+                'serviceName' => $appt['serviceName'] ?? 'N/A'
             ]
         ];
     }
@@ -63,3 +65,4 @@ foreach ($appointments as $appt) {
 
 // Output as JSON for FullCalendar
 echo json_encode($events);
+?>
