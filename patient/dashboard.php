@@ -60,7 +60,8 @@ body { background-color: #f3f4f6; }
   margin-bottom: 1.5rem;
 }
 #calendar {
-  max-width: 100%;
+  max-width: 600px;
+  height: 450px;
   margin: 0 auto;
 }
 </style>
