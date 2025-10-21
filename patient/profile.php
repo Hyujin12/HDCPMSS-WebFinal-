@@ -78,19 +78,19 @@ unset($_SESSION['update_success']);
                      width="120" height="120" 
                      style="object-fit:cover;" 
                      alt="Profile">
-                <h3 class="profile-header mt-3"><?= htmlspecialchars($user->fullname ?? 'Patient') ?></h3>
+                <h3 class="profile-header mt-3"><?= htmlspecialchars($user->username ?? 'Patient') ?></h3>
                 <p class="text-muted"><?= htmlspecialchars($user->email ?? '') ?></p>
             </div>
 
             <hr>
 
             <div class="row g-3">
-                <div class="col-md-6"><strong>Date of Birth:</strong><br><?= htmlspecialchars($user->dob ?? '') ?></div>
+                <div class="col-md-6"><strong>Date of Birth:</strong><br><?= htmlspecialchars($user->birthday ?? '') ?></div>
                 <div class="col-md-6"><strong>Age:</strong><br><?= htmlspecialchars($user->age ?? '') ?></div>
                 <div class="col-md-6"><strong>Gender:</strong><br><?= htmlspecialchars($user->gender ?? '') ?></div>
-                <div class="col-md-6"><strong>Civil Status:</strong><br><?= htmlspecialchars($user->civil_status ?? '') ?></div>
+                <div class="col-md-6"><strong>Civil Status:</strong><br><?= htmlspecialchars($user->status ?? '') ?></div>
                 <div class="col-md-12"><strong>Address:</strong><br><?= htmlspecialchars($user->address ?? '') ?></div>
-                <div class="col-md-6"><strong>Phone:</strong><br><?= htmlspecialchars($user->phone ?? '') ?></div>
+                <div class="col-md-6"><strong>Phone:</strong><br><?= htmlspecialchars($user->contactNumber ?? '') ?></div>
                 <div class="col-md-6"><strong>Occupation:</strong><br><?= htmlspecialchars($user->occupation ?? '') ?></div>
                 <div class="col-md-6"><strong>Nationality:</strong><br><?= htmlspecialchars($user->nationality ?? '') ?></div>
             </div>

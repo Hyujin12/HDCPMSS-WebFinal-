@@ -65,7 +65,6 @@ function sendVerificationEmail($email, $username, $code)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $email = trim($_POST['email'] ?? '');
-    $mobileNumber = trim($_POST['mobileNumber'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirmPassword = $_POST['confirm_password'] ?? '';
     
@@ -80,12 +79,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $occupation = trim($_POST['occupation'] ?? '');
 
     // === Validation ===
-    if (!$username || !$email || !$mobileNumber || !$password || !$confirmPassword || !$contactNumber || !$address || !$age || !$status || !$birthday || !$gender || !$nationality || !$occupation) {
+    if (!$username || !$email  || !$password || !$confirmPassword || !$contactNumber || !$address || !$age || !$status || !$birthday || !$gender || !$nationality || !$occupation) {
         $error = "All fields are required.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Invalid email address.";
-    } elseif (!preg_match('/^[0-9]{10,15}$/', $mobileNumber)) {
-        $error = "Mobile number must contain only digits (10–15 digits).";
     } elseif (strlen($password) < 6) {
         $error = "Password must be at least 6 characters long.";
     } elseif ($password !== $confirmPassword) {
@@ -101,7 +98,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $newUser = [
                 'username' => $username,
                 'email' => strtolower($email),
-                'mobileNumber' => $mobileNumber,
                 'contactNumber' => $contactNumber,
                 'address' => $address,
                 'age' => $age,
@@ -163,10 +159,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div>
         <label class="block mb-1 font-semibold">Email</label>
         <input type="email" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" class="w-full p-2 border rounded" required>
-      </div>
-      <div>
-        <label class="block mb-1 font-semibold">Mobile Number</label>
-        <input type="text" name="mobileNumber" value="<?= htmlspecialchars($_POST['mobileNumber'] ?? '') ?>" class="w-full p-2 border rounded" required>
       </div>
       <div>
         <label class="block mb-1 font-semibold">Contact Number</label>
