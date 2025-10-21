@@ -22,11 +22,11 @@ $users = $db->selectCollection('users');
 // --- Collect POST data ---
 $id          = $_POST['id'] ?? '';
 $fullname    = $_POST['fullname'] ?? '';
-$dobInput    = $_POST['dob'] ?? '';
+$dobInput    = $_POST['birthday'] ?? '';
 $gender      = $_POST['gender'] ?? '';
-$civilStatus = $_POST['civil_status'] ?? '';
+$civilStatus = $_POST['status'] ?? '';
 $address     = $_POST['address'] ?? '';
-$phone       = $_POST['phone'] ?? '';
+$phone       = $_POST['contactNumber'] ?? '';
 $email       = $_POST['email'] ?? '';
 $occupation  = $_POST['occupation'] ?? '';
 $nationality = $_POST['nationality'] ?? '';
@@ -71,11 +71,11 @@ if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == UPLO
 
 // --- Prepare update fields ---
 $updateFields = [
-    'fullname'     => $fullname,
-    'dob'          => $dob,
+    'username'     => $fullname,
+    'birthday'      => $dob,
     'age'          => $age,
     'gender'       => $gender,
-    'civil_status' => $civilStatus,
+    'status' => $civilStatus,
     'address'      => $address,
     'phone'        => $phone,
     'email'        => $email,
