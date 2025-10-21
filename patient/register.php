@@ -1,3 +1,4 @@
+Registration successful, but failed to send verification email. Please contact support.
 <?php
 session_start();
 require __DIR__ . '/../vendor/autoload.php';
@@ -22,7 +23,7 @@ function sendVerificationEmail($email, $username, $code) {
     $url = "https://api.resend.com/emails";
 
     $data = [
-        "from" => "Halili Dental Clinic <no-reply@halilidental.com>",
+        "from" => "Halili Dental Clinic <onboarding@resend.dev>",
         "to" => [$email],
         "subject" => "Verify Your Halili Dental Clinic Account",
         "html" => "
