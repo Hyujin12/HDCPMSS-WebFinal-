@@ -117,12 +117,12 @@ unset($_SESSION['update_success']);
 
               <div class="col-md-6">
                   <label class="form-label">Full Name</label>
-                  <input type="text" class="form-control" name="fullname" value="<?= htmlspecialchars($user->fullname ?? '') ?>" required>
+                  <input type="text" class="form-control" name="username" value="<?= htmlspecialchars($user->username ?? '') ?>" required>
               </div>
               <div class="col-md-6">
              <label class="form-label">Date of Birth</label>
-                 <input type="date" class="form-control" id="dobInput" name="dob" 
-           value="<?= htmlspecialchars($user->dob ?? '') ?>">
+                 <input type="date" class="form-control" id="dobInput" name="birthday" 
+           value="<?= htmlspecialchars($user->birthday ?? '') ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Age</label>
@@ -140,12 +140,12 @@ unset($_SESSION['update_success']);
               </div>
               <div class="col-md-4">
                   <label class="form-label">Civil Status</label>
-                  <select class="form-control" name="civil_status">
+                  <select class="form-control" name="status">
                       <option value="">Select</option>
-                      <option value="Single" <?= ($user->civil_status ?? '') == "Single" ? "selected" : "" ?>>Single</option>
-                      <option value="Married" <?= ($user->civil_status ?? '') == "Married" ? "selected" : "" ?>>Married</option>
-                      <option value="Widowed" <?= ($user->civil_status ?? '') == "Widowed" ? "selected" : "" ?>>Widowed</option>
-                      <option value="Divorced" <?= ($user->civil_status ?? '') == "Divorced" ? "selected" : "" ?>>Divorced</option>
+                      <option value="Single" <?= ($user->status ?? '') == "Single" ? "selected" : "" ?>>Single</option>
+                      <option value="Married" <?= ($user->status ?? '') == "Married" ? "selected" : "" ?>>Married</option>
+                      <option value="Widowed" <?= ($user->status ?? '') == "Widowed" ? "selected" : "" ?>>Widowed</option>
+                      <option value="Divorced" <?= ($user->status ?? '') == "Divorced" ? "selected" : "" ?>>Divorced</option>
                   </select>
               </div>
               <div class="col-md-12">
@@ -154,7 +154,7 @@ unset($_SESSION['update_success']);
               </div>
               <div class="col-md-6">
                   <label class="form-label">Phone Number</label>
-                  <input type="text" class="form-control" name="phone" value="<?= htmlspecialchars($user->phone ?? '') ?>">
+                  <input type="text" class="form-control" name="contactNumber" value="<?= htmlspecialchars($user->contactNumber ?? '') ?>">
               </div>
               <div class="col-md-6">
                   <label class="form-label">Email Address</label>
