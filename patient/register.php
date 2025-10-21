@@ -4,6 +4,8 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use MongoDB\Client;
 use Dotenv\Dotenv;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 // Load .env configuration
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
@@ -16,45 +18,44 @@ $usersCollection = $db->selectCollection('users');
 $error = '';
 $success = '';
 
-// Function: Send verification email using Resend API
+// ✅ Function: Send verification email using Gmail SMTP
 function sendVerificationEmail($email, $username, $code) {
-    $apiKey = $_ENV['RESEND_API_KEY'];
-    $url = "https://api.resend.com/emails";
+    $mail = new PHPMailer(true);
+    try {
+        // SMTP configuration
+        $mail->isSMTP();
+        $mail->Host = $_ENV['SMTP_HOST']; // smtp.gmail.com
+        $mail->SMTPAuth = true;
+        $mail->Username = $_ENV['SMTP_USER']; // your Gmail
+        $mail->Password = $_ENV['SMTP_PASS']; // your App Password
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = $_ENV['SMTP_PORT']; // 587
 
-    $data = [
-        "from" => "Halili Dental Clinic <no-reply@halilidental.com>",
-        "to" => [$email],
-        "subject" => "Verify Your Halili Dental Clinic Account",
-        "html" => "
+        // Sender & recipient
+        $mail->setFrom($_ENV['SMTP_USER'], 'Halili Dental Clinic');
+        $mail->addAddress($email);
+
+        // Email content
+        $mail->isHTML(true);
+        $mail->Subject = 'Verify Your Halili Dental Clinic Account';
+        $mail->Body = "
             <div style='font-family: Arial, sans-serif;'>
                 <h2>Welcome to Halili Dental Clinic, $username!</h2>
                 <p>Your verification code is:</p>
                 <h3 style='color: #007bff;'>$code</h3>
                 <p>This code will expire in 15 minutes.</p>
-            </div>"
-    ];
+            </div>
+        ";
 
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        "Authorization: Bearer $apiKey",
-        "Content-Type: application/json"
-    ]);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $error = curl_error($ch);
-    curl_close($ch);
-
-    // Log debug info
-    file_put_contents(__DIR__ . '/../email_log.txt', 
-        "HTTP: $httpCode\nResponse: $response\nError: $error\n\n", FILE_APPEND);
-
-    return $httpCode >= 200 && $httpCode < 300;
+        $mail->send();
+        return true;
+    } catch (Exception $e) {
+        // Log errors to file
+        file_put_contents(__DIR__ . '/../email_log.txt',
+            "Email Error: " . $mail->ErrorInfo . "\n", FILE_APPEND);
+        return false;
+    }
 }
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
@@ -89,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'password' => $hashedPassword,
                 'isVerified' => false,
                 'verificationCode' => (string)$verificationCode,
-                'codeExpires' => new MongoDB\BSON\UTCDateTime((time() + 900) * 1000), // 15 minutes expiry
+                'codeExpires' => new MongoDB\BSON\UTCDateTime((time() + 900) * 1000),
                 'createdAt' => new MongoDB\BSON\UTCDateTime()
             ];
 
@@ -97,7 +98,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($insertResult->getInsertedCount() === 1) {
                 if (sendVerificationEmail($email, $username, $verificationCode)) {
-                    // ✅ Use PHP header redirect (no JS)
                     header("Location: verify-code.php?email=" . urlencode($email));
                     exit;
                 } else {
