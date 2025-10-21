@@ -1,4 +1,3 @@
-Registration successful, but failed to send verification email. Please contact support.
 <?php
 session_start();
 require __DIR__ . '/../vendor/autoload.php';
