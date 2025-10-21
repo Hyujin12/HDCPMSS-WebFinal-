@@ -5,10 +5,11 @@ require __DIR__ . '/../vendor/autoload.php';
 use MongoDB\Client;
 use Dotenv\Dotenv;
 
-// Load .env configuration
+// Load environment variables
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
+// MongoDB connection
 $mongoClient = new Client($_ENV['MONGO_URI']);
 $db = $mongoClient->selectDatabase('HaliliDentalClinic');
 $usersCollection = $db->selectCollection('users');
@@ -16,8 +17,9 @@ $usersCollection = $db->selectCollection('users');
 $error = '';
 $success = '';
 
-// Function: Send verification email using Resend API
-function sendVerificationEmail($email, $username, $code) {
+// ✅ Function: Send verification email using Resend API
+function sendVerificationEmail($email, $username, $code)
+{
     $apiKey = $_ENV['RESEND_API_KEY'];
     $url = "https://api.resend.com/emails";
 
@@ -31,6 +33,8 @@ function sendVerificationEmail($email, $username, $code) {
                 <p>Your verification code is:</p>
                 <h3 style='color: #007bff;'>$code</h3>
                 <p>This code will expire in 15 minutes.</p>
+                <br>
+                <p>If you did not create this account, please ignore this email.</p>
             </div>"
     ];
 
@@ -48,14 +52,17 @@ function sendVerificationEmail($email, $username, $code) {
     $error = curl_error($ch);
     curl_close($ch);
 
-    // Log debug info
-    file_put_contents(__DIR__ . '/../email_log.txt', 
-        "HTTP: $httpCode\nResponse: $response\nError: $error\n\n", FILE_APPEND);
+    // Log every attempt for debugging
+    file_put_contents(__DIR__ . '/../email_log.txt',
+        "==== " . date('Y-m-d H:i:s') . " ====\n" .
+        "To: $email\nHTTP: $httpCode\nResponse: $response\nError: $error\n\n",
+        FILE_APPEND
+    );
 
     return $httpCode >= 200 && $httpCode < 300;
 }
 
-
+// ✅ Registration handler
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $email = trim($_POST['email'] ?? '');
@@ -63,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     $confirmPassword = $_POST['confirm_password'] ?? '';
 
-    // Validation
+    // === Validation ===
     if (!$username || !$email || !$mobileNumber || !$password || !$confirmPassword) {
         $error = "All fields are required.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -88,20 +95,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'mobileNumber' => $mobileNumber,
                 'password' => $hashedPassword,
                 'isVerified' => false,
-                'verificationCode' => (string)$verificationCode,
-                'codeExpires' => new MongoDB\BSON\UTCDateTime((time() + 900) * 1000), // 15 minutes expiry
+                'verificationCode' => (string) $verificationCode,
+                'codeExpires' => new MongoDB\BSON\UTCDateTime((time() + 900) * 1000), // 15 min
                 'createdAt' => new MongoDB\BSON\UTCDateTime()
             ];
 
             $insertResult = $usersCollection->insertOne($newUser);
 
             if ($insertResult->getInsertedCount() === 1) {
+                // Try sending verification email
                 if (sendVerificationEmail($email, $username, $verificationCode)) {
-                    // ✅ Use PHP header redirect (no JS)
                     header("Location: verify-code.php?email=" . urlencode($email));
                     exit;
                 } else {
-                    $error = "Registration successful, but failed to send verification email. Please contact support.";
+                    $error = "✅ Account created, but email failed to send. Please contact support.";
                 }
             } else {
                 $error = "Registration failed. Please try again.";
