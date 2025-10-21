@@ -31,7 +31,7 @@ foreach ($cursor as $appt) {
         'serviceName' => $appt['serviceName'] ?? '',
         'fullname' => $appt['fullname'] ?? '',
         'email' => $appt['email'] ?? '',
-        'phone' => $appt['phone'] ?? '',
+        'contactNumber' => $appt['phone'] ?? '',
         'date' => $appt['date'] ?? '',
         'time' => $appt['time'] ?? '',
         'status' => $appt['status'] ?? 'Pending',
