@@ -52,7 +52,6 @@ function sendVerificationEmail($email, $username, $code)
     $error = curl_error($ch);
     curl_close($ch);
 
-    // Log every attempt for debugging
     file_put_contents(__DIR__ . '/../email_log.txt',
         "==== " . date('Y-m-d H:i:s') . " ====\n" .
         "To: $email\nHTTP: $httpCode\nResponse: $response\nError: $error\n\n",
@@ -69,9 +68,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mobileNumber = trim($_POST['mobileNumber'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirmPassword = $_POST['confirm_password'] ?? '';
+    
+    // New fields
+    $contactNumber = trim($_POST['contact_number'] ?? '');
+    $address = trim($_POST['address'] ?? '');
+    $age = (int)($_POST['age'] ?? 0);
+    $status = trim($_POST['status'] ?? '');
+    $birthday = trim($_POST['birthday'] ?? '');
+    $gender = trim($_POST['gender'] ?? '');
+    $nationality = trim($_POST['nationality'] ?? '');
+    $occupation = trim($_POST['occupation'] ?? '');
 
     // === Validation ===
-    if (!$username || !$email || !$mobileNumber || !$password || !$confirmPassword) {
+    if (!$username || !$email || !$mobileNumber || !$password || !$confirmPassword || !$contactNumber || !$address || !$age || !$status || !$birthday || !$gender || !$nationality || !$occupation) {
         $error = "All fields are required.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Invalid email address.";
@@ -93,17 +102,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'username' => $username,
                 'email' => strtolower($email),
                 'mobileNumber' => $mobileNumber,
+                'contactNumber' => $contactNumber,
+                'address' => $address,
+                'age' => $age,
+                'status' => $status,
+                'birthday' => $birthday,
+                'gender' => $gender,
+                'nationality' => $nationality,
+                'occupation' => $occupation,
                 'password' => $hashedPassword,
                 'isVerified' => false,
-                'verificationCode' => (string) $verificationCode,
-                'codeExpires' => new MongoDB\BSON\UTCDateTime((time() + 900) * 1000), // 15 min
+                'verificationCode' => (string)$verificationCode,
+                'codeExpires' => new MongoDB\BSON\UTCDateTime((time() + 900) * 1000),
                 'createdAt' => new MongoDB\BSON\UTCDateTime()
             ];
 
             $insertResult = $usersCollection->insertOne($newUser);
 
             if ($insertResult->getInsertedCount() === 1) {
-                // Try sending verification email
                 if (sendVerificationEmail($email, $username, $verificationCode)) {
                     header("Location: verify-code.php?email=" . urlencode($email));
                     exit;
@@ -136,6 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="mb-4 text-green-600 font-semibold"><?= htmlspecialchars($success) ?></div>
   <?php endif; ?>
 
+  <!-- Basic Info -->
   <label class="block mb-2 font-semibold">Username</label>
   <input type="text" name="username" value="<?= htmlspecialchars($_POST['username'] ?? '') ?>" class="w-full p-2 border rounded mb-4" required>
 
@@ -145,6 +162,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <label class="block mb-2 font-semibold">Mobile Number</label>
   <input type="text" name="mobileNumber" value="<?= htmlspecialchars($_POST['mobileNumber'] ?? '') ?>" class="w-full p-2 border rounded mb-4" required>
 
+  <!-- Additional Fields -->
+  <label class="block mb-2 font-semibold">Contact Number</label>
+  <input type="text" name="contact_number" value="<?= htmlspecialchars($_POST['contact_number'] ?? '') ?>" class="w-full p-2 border rounded mb-4" required>
+
+  <label class="block mb-2 font-semibold">Address</label>
+  <input type="text" name="address" value="<?= htmlspecialchars($_POST['address'] ?? '') ?>" class="w-full p-2 border rounded mb-4" required>
+
+  <label class="block mb-2 font-semibold">Age</label>
+  <input type="number" name="age" value="<?= htmlspecialchars($_POST['age'] ?? '') ?>" class="w-full p-2 border rounded mb-4" required>
+
+  <label class="block mb-2 font-semibold">Status</label>
+  <input type="text" name="status" value="<?= htmlspecialchars($_POST['status'] ?? '') ?>" class="w-full p-2 border rounded mb-4" required>
+
+  <label class="block mb-2 font-semibold">Birthday</label>
+  <input type="date" name="birthday" value="<?= htmlspecialchars($_POST['birthday'] ?? '') ?>" class="w-full p-2 border rounded mb-4" required>
+
+  <label class="block mb-2 font-semibold">Gender</label>
+  <select name="gender" class="w-full p-2 border rounded mb-4" required>
+      <option value="">Select Gender</option>
+      <option value="Male" <?= (($_POST['gender'] ?? '') === 'Male') ? 'selected' : '' ?>>Male</option>
+      <option value="Female" <?= (($_POST['gender'] ?? '') === 'Female') ? 'selected' : '' ?>>Female</option>
+      <option value="Other" <?= (($_POST['gender'] ?? '') === 'Other') ? 'selected' : '' ?>>Other</option>
+  </select>
+
+  <label class="block mb-2 font-semibold">Nationality</label>
+  <input type="text" name="nationality" value="<?= htmlspecialchars($_POST['nationality'] ?? '') ?>" class="w-full p-2 border rounded mb-4" required>
+
+  <label class="block mb-2 font-semibold">Occupation</label>
+  <input type="text" name="occupation" value="<?= htmlspecialchars($_POST['occupation'] ?? '') ?>" class="w-full p-2 border rounded mb-6" required>
+
+  <!-- Password -->
   <label class="block mb-2 font-semibold">Password</label>
   <input type="password" name="password" class="w-full p-2 border rounded mb-4" required>
 

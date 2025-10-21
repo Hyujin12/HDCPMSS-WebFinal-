@@ -85,7 +85,7 @@ body { background-color: #f3f4f6; }
         <div class="flex-grow-1">
           <div class="row">
             <div class="col-md-6">
-              <p><strong>Name:</strong> <?= htmlspecialchars($user['fullname'] ?? 'N/A') ?></p>
+              <p><strong>Name:</strong> <?= htmlspecialchars($user['username'] ?? 'N/A') ?></p>
               <p><strong>Age:</strong> <?= htmlspecialchars($user['age'] ?? 'N/A') ?></p>
               <p><strong>Sex:</strong> <?= htmlspecialchars($user['gender'] ?? 'N/A') ?></p>
             </div>
