@@ -67,7 +67,7 @@ try {
         'serviceName' => $data['serviceName'],
         'fullname'    => $fullname,
         'email'       => $email,
-        'contactNumber'       => $data['contactNumber'],
+        'phone'  => $data['phone'],
         'description' => $data['description'],
         'date'        => $data['date'],
         'time'        => $data['time'],
