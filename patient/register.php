@@ -22,7 +22,7 @@ function sendVerificationEmail($email, $username, $code) {
     $url = "https://api.resend.com/emails";
 
     $data = [
-        "from" => "Halili Dental Clinic <onboarding@resend.dev>",
+        "from" => "Halili Dental Clinic <no-reply@hdcpmss-webfinal.onrender.com>",
         "to" => [$email],
         "subject" => "Verify Your Halili Dental Clinic Account",
         "html" => "
