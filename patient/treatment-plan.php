@@ -27,335 +27,151 @@ $userEmail = $_SESSION['email'] ?? ($user['email'] ?? '');
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <title>Dental Services - Halili Dental</title>
+  <title>Dental Services</title>
   <style>
-    body { 
-      margin: 0; 
-      padding: 0; 
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f3f4f6;
-    }
-
-    .main-content {
-      padding: 1.5rem;
-      min-height: 100vh;
-      margin-top: 70px;
-    }
-
-    @media (min-width: 640px) {
-      .main-content {
-        padding: 2rem;
-      }
-    }
-
-    .page-header {
-      background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
-      color: white;
-      padding: 2rem;
-      border-radius: 1rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-
-    .page-header h1 {
-      margin: 0;
-      font-size: 2rem;
-      font-weight: 700;
-    }
-
-    .page-header p {
-      margin: 0.5rem 0 0 0;
-      opacity: 0.9;
-      font-size: 1rem;
-    }
-
-    @media (max-width: 575px) {
-      .page-header h1 {
-        font-size: 1.5rem;
-      }
-      .page-header p {
-        font-size: 0.9rem;
-      }
-    }
+    body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    main { margin-left: 16rem; padding: 20px; }
 
     .services-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.5rem;
-      max-width: 1400px;
-      margin: 0 auto;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
     }
-
-    @media (max-width: 640px) {
-      .services-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
     .service-card {
-      background: white;
-      border-radius: 1rem;
-      overflow: hidden;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      background: #e6f0ff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
       display: flex;
       flex-direction: column;
-      transition: all 0.3s ease;
-      height: 100%;
+      align-items: center;
+      text-align: center;
+      transition: box-shadow 0.3s ease;
     }
-
     .service-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
     }
-
-    .service-card-image {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+    .service-card img {
+      max-width: 100%;
+      height: 180px;
+      object-fit: contain;
+      border-radius: 12px;
+      margin-bottom: 15px;
     }
-
-    .service-card-content {
-      padding: 1.5rem;
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-    }
-
     .service-card h2 {
-      color: #1e40af;
-      margin: 0 0 0.75rem 0;
-      font-size: 1.375rem;
-      font-weight: 700;
+      color: #005cbf;
+      margin: 0 0 12px;
+      font-size: 1.5rem;
     }
-
     .service-card p {
-      color: #4b5563;
-      margin-bottom: 1.25rem;
-      line-height: 1.6;
-      flex-grow: 1;
+      color: #444;
+      margin-bottom: 16px;
+      min-height: 72px;
     }
-
     .service-card button {
-      background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+      background-color: #005cbf;
       border: none;
       color: white;
-      padding: 0.75rem 1.75rem;
-      border-radius: 0.5rem;
-      font-weight: 600;
+      padding: 10px 28px;
+      border-radius: 25px;
+      font-weight: bold;
       cursor: pointer;
-      transition: all 0.3s ease;
-      width: 100%;
-      font-size: 1rem;
+      transition: background-color 0.3s ease;
     }
-
     .service-card button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(30, 64, 175, 0.3);
-    }
-
-    .service-card button:active {
-      transform: translateY(0);
+      background-color: #003f7f;
     }
 
     /* Modal styles */
     .modal {
       display: none;
       position: fixed;
-      z-index: 1100;
-      left: 0; 
-      top: 0;
-      width: 100vw; 
-      height: 100vh;
-      background-color: rgba(0,0,0,0.6);
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100vw; height: 100vh;
+      background-color: rgba(0,0,0,0.5);
       justify-content: center;
       align-items: center;
-      padding: 1rem;
-      overflow-y: auto;
     }
-
     .modal.active {
       display: flex;
     }
-
     .modal-content {
       background: white;
-      padding: 2rem;
-      border-radius: 1rem;
-      max-width: 500px;
-      width: 100%;
-      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+      padding: 24px;
+      border-radius: 12px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
       position: relative;
-      margin: auto;
-      max-height: 90vh;
-      overflow-y: auto;
     }
-
-    @media (max-width: 575px) {
-      .modal-content {
-        padding: 1.5rem;
-        max-width: 95%;
-      }
-    }
-
     .modal-content h2 {
       margin-top: 0;
-      color: #1e40af;
-      margin-bottom: 1.5rem;
-      font-size: 1.75rem;
-      font-weight: 700;
-      padding-right: 2rem;
+      color: #005cbf;
+      margin-bottom: 16px;
+      font-size: 1.6rem;
     }
-
     .modal-content label {
       display: block;
-      margin-top: 1rem;
-      font-weight: 600;
-      color: #374151;
-      margin-bottom: 0.5rem;
-      font-size: 0.95rem;
+      margin-top: 12px;
+      font-weight: bold;
+      color: #333;
     }
-
     .modal-content input,
-    .modal-content select,
-    .modal-content textarea {
+    .modal-content select {
       width: 100%;
-      padding: 0.75rem;
-      margin-top: 0.25rem;
-      border-radius: 0.5rem;
-      border: 1.5px solid #d1d5db;
+      padding: 8px 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
       box-sizing: border-box;
       font-size: 1rem;
-      transition: all 0.2s ease;
-      font-family: inherit;
     }
-
-    .modal-content input:focus,
-    .modal-content select:focus,
-    .modal-content textarea:focus {
-      outline: none;
-      border-color: #1e40af;
-      box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
-    }
-
-    .modal-content input[readonly] {
-      background-color: #f3f4f6;
-      color: #6b7280;
-    }
-
-    .modal-content textarea {
-      resize: vertical;
-      min-height: 100px;
-    }
-
     .modal-content button.submit-btn {
-      margin-top: 1.5rem;
-      background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+      margin-top: 20px;
+      background-color: #005cbf;
       color: white;
       border: none;
-      padding: 0.875rem 2rem;
-      border-radius: 0.5rem;
-      font-weight: 600;
+      padding: 10px 25px;
+      border-radius: 25px;
+      font-weight: bold;
       cursor: pointer;
-      transition: all 0.3s ease;
-      width: 100%;
-      font-size: 1.05rem;
+      transition: background-color 0.3s ease;
     }
-
     .modal-content button.submit-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(30, 64, 175, 0.3);
+      background-color: #003f7f;
     }
-
-    .modal-content button.submit-btn:active {
-      transform: translateY(0);
-    }
-
     .close-btn {
       position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: #f3f4f6;
+      top: 12px;
+      right: 16px;
+      background: none;
       border: none;
-      width: 2.5rem;
-      height: 2.5rem;
-      border-radius: 0.5rem;
-      font-size: 1.5rem;
+      font-size: 24px;
       cursor: pointer;
-      color: #6b7280;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      line-height: 1;
+      color: #666;
     }
-
     .close-btn:hover {
-      background: #e5e7eb;
-      color: #1f2937;
-    }
-
-    .form-group {
-      margin-bottom: 0.25rem;
-    }
-
-    .required-note {
-      font-size: 0.875rem;
-      color: #6b7280;
-      margin-top: 1rem;
-      font-style: italic;
-    }
-
-    /* Loading state */
-    .loading {
-      opacity: 0.6;
-      pointer-events: none;
-    }
-
-    .spinner {
-      display: inline-block;
-      width: 1rem;
-      height: 1rem;
-      border: 2px solid #ffffff;
-      border-radius: 50%;
-      border-top-color: transparent;
-      animation: spin 0.6s linear infinite;
-      margin-left: 0.5rem;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+      color: #000;
     }
   </style>
 </head>
 <body>
 <?php include 'sidebar.php'; ?>
 
-<main class="main-content">
-  <div class="page-header">
-    <h1>🦷 Our Dental Services</h1>
-    <p>Choose from our comprehensive range of dental care services</p>
-  </div>
+<main>
+  <h1 class="text-2xl font-bold mb-4">Our Dental Services</h1>
   
   <div id="servicesContainer" class="services-grid">
     <?php 
       include 'service-grid.php'; 
       foreach ($services as $service): ?>
         <div class="service-card">
-          <img 
-            src="<?= htmlspecialchars($service['image']) ?>" 
-            alt="<?= htmlspecialchars($service['title']) ?>"
-            class="service-card-image"
-          >
-          <div class="service-card-content">
-            <h2><?= htmlspecialchars($service['title']) ?></h2>
-            <p><?= htmlspecialchars($service['description']) ?></p>
-            <button data-service="<?= htmlspecialchars($service['title']) ?>">
-              <?= htmlspecialchars($service['btn']) ?>
-            </button>
-          </div>
+          <img src="<?= htmlspecialchars($service['image']) ?>" alt="<?= htmlspecialchars($service['title']) ?>">
+          <h2><?= htmlspecialchars($service['title']) ?></h2>
+          <p><?= htmlspecialchars($service['description']) ?></p>
+          <button><?= htmlspecialchars($service['btn']) ?></button>
         </div>
     <?php endforeach; ?>
   </div>
@@ -364,66 +180,35 @@ $userEmail = $_SESSION['email'] ?? ($user['email'] ?? '');
   <div id="bookingModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-content">
       <button class="close-btn" aria-label="Close modal">&times;</button>
-      <h2 id="modalTitle">📅 Book an Appointment</h2>
+      <h2 id="modalTitle">Book an Appointment</h2>
       <form id="bookingForm">
-        <div class="form-group">
-          <label for="serviceName">Service *</label>
-          <input type="text" id="serviceName" name="serviceName" readonly />
-        </div>
+        <label for="serviceName">Service</label>
+        <input type="text" id="serviceName" name="serviceName" readonly />
 
-        <div class="form-group">
-          <label for="fullname">Full Name *</label>
-          <input type="text" id="fullname" name="fullname" readonly />
-        </div>
+        <label for="fullname">Full Name</label>
+        <input type="text" id="fullname" name="fullname" readonly />
 
-        <div class="form-group">
-          <label for="email">Email Address *</label>
-          <input type="email" id="email" name="email" readonly />
-        </div>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" readonly />
 
-        <div class="form-group">
-          <label for="phone">Phone Number *</label>
-          <input 
-            type="tel" 
-            id="phone" 
-            name="phone" 
-            placeholder="09XX XXX XXXX" 
-            required 
-            pattern="[0-9]{10,11}"
-          />
-        </div>
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" placeholder="0912 345 6789" required />
 
-        <div class="form-group">
-          <label for="description">Description / Concerns *</label>
-          <textarea 
-            id="description" 
-            name="description" 
-            placeholder="Please describe your dental concern or request..."
-            required
-          ></textarea>
-        </div>
+        <label for="description">Description</label>
+        <input type="text" id="description" name="description" placeholder="Describe your problem" required />
 
-        <div class="form-group">
-          <label for="date">Appointment Date *</label>
-          <input type="date" id="date" name="date" required />
-        </div>
+        <label for="date">Appointment Date</label>
+        <input type="date" id="date" name="date" required />
 
-        <div class="form-group">
-          <label for="time">Appointment Time *</label>
-          <input type="time" id="time" name="time" required />
-        </div>
+        <label for="time">Appointment Time</label>
+        <input type="time" id="time" name="time" required />
 
-        <p class="required-note">* Required fields</p>
-
-        <button type="submit" class="submit-btn" id="submitBtn">
-          Confirm Booking
-        </button>
+        <button type="submit" class="submit-btn">Confirm Booking</button>
       </form>
     </div>
   </div>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   const userFullName = <?php echo json_encode($_SESSION['username'] ?? $user['fullname'] ?? ''); ?>;
   const userEmail = <?php echo json_encode($_SESSION['email'] ?? $user['email'] ?? ''); ?>;
@@ -433,67 +218,39 @@ $userEmail = $_SESSION['email'] ?? ($user['email'] ?? '');
     const serviceNameInput = document.getElementById('serviceName');
     const fullnameInput = document.getElementById('fullname');
     const emailInput = document.getElementById('email');
-    const dateInput = document.getElementById('date');
     const closeBtn = modal.querySelector('.close-btn');
     const bookingForm = document.getElementById('bookingForm');
-    const submitBtn = document.getElementById('submitBtn');
 
-    // Pre-fill user data
     fullnameInput.value = userFullName;
     emailInput.value = userEmail;
 
-    // Set minimum date to today
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.setAttribute('min', today);
-
-    // Open modal when clicking book button
     document.getElementById('servicesContainer').addEventListener('click', (e) => {
       if (e.target.tagName === 'BUTTON') {
-        const serviceTitle = e.target.getAttribute('data-service') || 
-                           e.target.closest('.service-card').querySelector('h2').textContent;
+        const card = e.target.closest('.service-card');
+        const serviceTitle = card.querySelector('h2').textContent;
         serviceNameInput.value = serviceTitle;
         modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
       }
     });
 
-    // Close modal function
-    function closeModal() {
+    closeBtn.addEventListener('click', () => {
       modal.classList.remove('active');
-      document.body.style.overflow = '';
       bookingForm.reset();
       fullnameInput.value = userFullName;
       emailInput.value = userEmail;
-      dateInput.setAttribute('min', today);
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = 'Confirm Booking';
-    }
+    });
 
-    // Close button click
-    closeBtn.addEventListener('click', closeModal);
-
-    // Click outside modal
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
-        closeModal();
+        modal.classList.remove('active');
+        bookingForm.reset();
+        fullnameInput.value = userFullName;
+        emailInput.value = userEmail;
       }
     });
 
-    // ESC key to close
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal.classList.contains('active')) {
-        closeModal();
-      }
-    });
-
-    // Form submission
     bookingForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      
-      // Disable button and show loading
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = 'Booking... <span class="spinner"></span>';
-      
       const formData = new FormData(bookingForm);
       const data = Object.fromEntries(formData.entries());
 
@@ -507,25 +264,17 @@ $userEmail = $_SESSION['email'] ?? ($user['email'] ?? '');
         const text = await response.text();
 
         if (response.ok) {
-          // Success message
-          alert(`✅ Booking Confirmed!\n\nService: ${data.serviceName}\nDate: ${data.date}\nTime: ${data.time}\n\nThank you, ${data.fullname}! We'll contact you soon.`);
-          closeModal();
+          alert(`Booking confirmed for ${data.serviceName} on ${data.date} at ${data.time}.\nThank you, ${data.fullname}!`);
+          modal.classList.remove('active');
+          bookingForm.reset();
+          fullnameInput.value = userFullName;
+          emailInput.value = userEmail;
         } else {
-          alert('❌ Booking failed: ' + text);
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = 'Confirm Booking';
+          alert('Booking failed: ' + text);
         }
       } catch (error) {
-        alert('❌ Error submitting booking: ' + error.message);
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = 'Confirm Booking';
+        alert('Error submitting booking: ' + error.message);
       }
-    });
-
-    // Phone number validation
-    const phoneInput = document.getElementById('phone');
-    phoneInput.addEventListener('input', (e) => {
-      e.target.value = e.target.value.replace(/[^0-9]/g, '');
     });
   });
 </script>
