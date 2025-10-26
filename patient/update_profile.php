@@ -71,23 +71,22 @@ if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == UPLO
 
 // --- Prepare update fields ---
 $updateFields = [
-    'username'     => $username,
+    'username'      => $username,
     'birthday'      => $dob,
-    'age'          => $age,
-    'gender'       => $gender,
-    'status' => $civilStatus,
-    'address'      => $address,
-    'phone'        => $phone,
-    'email'        => $email,
-    'occupation'   => $occupation,
-    'nationality'  => $nationality
+    'age'           => $age,
+    'gender'        => $gender,
+    'status'        => $civilStatus,
+    'address'       => $address,
+    'contactNumber' => $phone, // ✅ Fixed
+    'email'         => $email,
+    'occupation'    => $occupation,
+    'nationality'   => $nationality
 ];
 
 if ($profileImagePath) {
     $updateFields['profile_image'] = $profileImagePath;
 }
 
-// --- Update MongoDB with error handling ---
 try {
     $result = $users->updateOne(
         ['_id' => new ObjectId($id)],
@@ -103,7 +102,5 @@ try {
     $_SESSION['update_error'] = "Error updating profile: " . $e->getMessage();
 }
 
-// --- Redirect back to profile ---
 header("Location: profile.php");
 exit;
-?>
