@@ -32,7 +32,7 @@ if (!$data) {
 }
 
 // Required fields for booking
-$requiredFields = ['serviceName', 'phone', 'description', 'date', 'time'];
+$requiredFields = ['serviceName', 'contactNumber', 'description', 'date', 'time'];
 foreach ($requiredFields as $field) {
     if (empty($data[$field])) {
         http_response_code(400);
@@ -67,7 +67,7 @@ try {
         'serviceName' => $data['serviceName'],
         'fullname'    => $fullname,
         'email'       => $email,
-        'phone'  => $data['phone'],
+        'contactNumber'  => $data['contactNumber'],
         'description' => $data['description'],
         'date'        => $data['date'],
         'time'        => $data['time'],
