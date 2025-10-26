@@ -56,6 +56,7 @@ body {
 .main-content {
   padding: 1.5rem;
   min-height: 100vh;
+  margin-top: 70px;
 }
 
 @media (min-width: 640px) {

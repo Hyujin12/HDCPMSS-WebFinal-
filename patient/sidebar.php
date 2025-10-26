@@ -24,18 +24,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   transform: translateX(0);
 }
 
-/* Desktop sidebar always visible */
-@media (min-width: 768px) {
-  .sidebar {
-    transform: translateX(0);
-    box-shadow: none;
-  }
-  
-  .main-content {
-    margin-left: 280px;
-  }
-}
-
 /* Mobile navbar */
 .mobile-navbar {
   display: flex;
