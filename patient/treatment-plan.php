@@ -14,7 +14,7 @@ $db = $mongoClient->HaliliDentalClinic;
 $usersCollection = $db->users;
 
 $user = $usersCollection->findOne([
-    'fullname' => new MongoDB\BSON\Regex('^' . preg_quote($userFullName) . '$', 'i')
+    'username' => new MongoDB\BSON\Regex('^' . preg_quote($userFullName) . '$', 'i')
 ]);
 
 // Fallback for email if not set in session
@@ -185,8 +185,8 @@ $userEmail = $_SESSION['email'] ?? ($user['email'] ?? '');
         <label for="serviceName">Service</label>
         <input type="text" id="serviceName" name="serviceName" readonly />
 
-        <label for="fullname">Full Name</label>
-        <input type="text" id="fullname" name="fullname" readonly />
+        <label for="username">Full Name</label>
+        <input type="text" id="username" name="username" readonly />
 
         <label for="email">Email</label>
         <input type="email" id="email" name="email" readonly />
@@ -216,7 +216,7 @@ $userEmail = $_SESSION['email'] ?? ($user['email'] ?? '');
   document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('bookingModal');
     const serviceNameInput = document.getElementById('serviceName');
-    const fullnameInput = document.getElementById('fullname');
+    const fullnameInput = document.getElementById('username');
     const emailInput = document.getElementById('email');
     const closeBtn = modal.querySelector('.close-btn');
     const bookingForm = document.getElementById('bookingForm');
@@ -264,7 +264,7 @@ $userEmail = $_SESSION['email'] ?? ($user['email'] ?? '');
         const text = await response.text();
 
         if (response.ok) {
-          alert(`Booking confirmed for ${data.serviceName} on ${data.date} at ${data.time}.\nThank you, ${data.fullname}!`);
+          alert(`Booking confirmed for ${data.serviceName} on ${data.date} at ${data.time}.\nThank you, ${data.username}!`);
           modal.classList.remove('active');
           bookingForm.reset();
           fullnameInput.value = userFullName;
