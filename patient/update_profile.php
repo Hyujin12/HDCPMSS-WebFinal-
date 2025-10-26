@@ -21,7 +21,7 @@ $users = $db->selectCollection('users');
 
 // --- Collect POST data ---
 $id          = $_POST['id'] ?? '';
-$fullname    = $_POST['fullname'] ?? '';
+$username    = $_POST['username'] ?? '';
 $dobInput    = $_POST['birthday'] ?? '';
 $gender      = $_POST['gender'] ?? '';
 $civilStatus = $_POST['status'] ?? '';
@@ -71,7 +71,7 @@ if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == UPLO
 
 // --- Prepare update fields ---
 $updateFields = [
-    'username'     => $fullname,
+    'username'     => $username,
     'birthday'      => $dob,
     'age'          => $age,
     'gender'       => $gender,
