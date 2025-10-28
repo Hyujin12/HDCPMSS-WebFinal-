@@ -13,12 +13,14 @@ $mongoClient = new Client($_ENV['MONGO_URI']);
 $db = $mongoClient->HaliliDentalClinic;
 $usersCollection = $db->users;
 
+// Find user by username (case-insensitive)
 $user = $usersCollection->findOne([
     'username' => new MongoDB\BSON\Regex('^' . preg_quote($userFullName) . '$', 'i')
 ]);
 
-// Fallback for email if not set in session
+// Safely extract user details
 $userEmail = $_SESSION['email'] ?? ($user['email'] ?? '');
+$userContact = $user['contactNumber'] ?? '';
 ?>
 
 <!DOCTYPE html>
@@ -212,17 +214,20 @@ $userEmail = $_SESSION['email'] ?? ($user['email'] ?? '');
 <script>
   const userFullName = <?php echo json_encode($_SESSION['username'] ?? $user['fullname'] ?? ''); ?>;
   const userEmail = <?php echo json_encode($_SESSION['email'] ?? $user['email'] ?? ''); ?>;
+  const userContact = <?php echo json_encode($userContact); ?>;
 
   document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('bookingModal');
     const serviceNameInput = document.getElementById('serviceName');
     const fullnameInput = document.getElementById('username');
     const emailInput = document.getElementById('email');
+    const contactInput = document.getElementById('contactNumber');
     const closeBtn = modal.querySelector('.close-btn');
     const bookingForm = document.getElementById('bookingForm');
 
     fullnameInput.value = userFullName;
     emailInput.value = userEmail;
+    contactInput.value = userContact;
 
     document.getElementById('servicesContainer').addEventListener('click', (e) => {
       if (e.target.tagName === 'BUTTON') {
@@ -238,6 +243,7 @@ $userEmail = $_SESSION['email'] ?? ($user['email'] ?? '');
       bookingForm.reset();
       fullnameInput.value = userFullName;
       emailInput.value = userEmail;
+      contactInput.value = userContact;
     });
 
     modal.addEventListener('click', (e) => {
@@ -246,6 +252,7 @@ $userEmail = $_SESSION['email'] ?? ($user['email'] ?? '');
         bookingForm.reset();
         fullnameInput.value = userFullName;
         emailInput.value = userEmail;
+        contactInput.value = userContact;
       }
     });
 
@@ -269,6 +276,7 @@ $userEmail = $_SESSION['email'] ?? ($user['email'] ?? '');
           bookingForm.reset();
           fullnameInput.value = userFullName;
           emailInput.value = userEmail;
+          contactInput.value = userContact;
         } else {
           alert('Booking failed: ' + text);
         }
