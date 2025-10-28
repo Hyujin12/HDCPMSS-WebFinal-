@@ -14,7 +14,8 @@ $usersCollection = $db->selectCollection('users');
 
 $error = '';
 $success = '';
-$email = $_GET['email'] ?? '';
+$email = $_GET['email'] ?? $_POST['email'] ?? '';
+
 
 // ✅ Check if account already verified (auto check on page load)
 if (!empty($email)) {
@@ -126,7 +127,7 @@ if (isset($_GET['resend']) && $email) {
 </head>
 <body class="bg-white text-gray-900 flex items-center justify-center min-h-screen">
 
-<form method="POST" class="max-w-md w-full p-8 border rounded-lg shadow-lg">
+<form method="POST" action="verify-code.php" class="max-w-md w-full p-8 border rounded-lg shadow-lg">
     <h2 class="text-2xl font-bold mb-6 text-center">Verify Your Email</h2>
 
     <input type="hidden" name="email" value="<?= htmlspecialchars($email) ?>">
