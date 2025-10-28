@@ -60,12 +60,12 @@ try {
         exit;
     }
 
-    $fullname = $user['username'] ?? '';
+    $username = $user['username'] ?? '';
     $email = $user['email'] ?? '';
 
     $bookingDocument = [
         'serviceName' => $data['serviceName'],
-        'fullname'    => $fullname,
+        'username'    => $username,
         'email'       => $email,
         'contactNumber'  => $data['contactNumber'],
         'description' => $data['description'],

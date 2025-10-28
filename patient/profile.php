@@ -142,10 +142,13 @@ unset($_SESSION['update_success']);
                   <label class="form-label">Civil Status</label>
                   <select class="form-control" name="status">
                       <option value="">Select</option>
-                      <option value="Single" <?= ($user->status ?? '') == "Single" ? "selected" : "" ?>>Single</option>
-                      <option value="Married" <?= ($user->status ?? '') == "Married" ? "selected" : "" ?>>Married</option>
-                      <option value="Widowed" <?= ($user->status ?? '') == "Widowed" ? "selected" : "" ?>>Widowed</option>
-                      <option value="Divorced" <?= ($user->status ?? '') == "Divorced" ? "selected" : "" ?>>Divorced</option>
+                      <option value="">Select Status</option>
+                    <option value="Single" <?= (($_POST['status'] ?? '') === 'Single') ? 'selected' : '' ?>>Single</option>
+                    <option value="Married" <?= (($_POST['status'] ?? '') === 'Married') ? 'selected' : '' ?>>Married</option>
+                     <option value="Separated" <?= (($_POST['status'] ?? '') === 'Separated') ? 'selected' : '' ?>>Separated</option>
+                     <option value="Widowed" <?= (($_POST['status'] ?? '') === 'Widowed') ? 'selected' : '' ?>>Widowed</option>
+                     <option value="Divorced" <?= (($_POST['status'] ?? '') === 'Divorced') ? 'selected' : '' ?>>Divorced</option>
+                     <option value="Complicated" <?= (($_POST['status'] ?? '') === 'Complicated') ? 'selected' : '' ?>>Complicated</option>
                   </select>
               </div>
               <div class="col-md-12">

@@ -191,8 +191,8 @@ $userEmail = $_SESSION['email'] ?? ($user['email'] ?? '');
         <label for="email">Email</label>
         <input type="email" id="email" name="email" readonly />
 
-        <label for="phone">Phone Number</label>
-        <input type="tel" id="phone" name="phone" placeholder="0912 345 6789" required />
+        <label for="contactNumber">Phone Number</label>
+        <input type="tel" id="contactNumber" name="contactNumber" placeholder="0912 345 6789" required />
 
         <label for="description">Description</label>
         <input type="text" id="description" name="description" placeholder="Describe your problem" required />
