@@ -187,17 +187,18 @@ body { background-color: #f3f4f6; }
             <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($user->email ?? '') ?>" required readonly>
           </div>
           <div class="col-md-6">
-            <label class="form-label">Civil Status</label>
-            <select name="status" class="w-full p-2 border rounded" required>
-          <option value="">Select Status</option>
-          <option value="Single" <?= (($_POST['status'] ?? '') === 'Single') ? 'selected' : '' ?>>Single</option>
-          <option value="Married" <?= (($_POST['status'] ?? '') === 'Married') ? 'selected' : '' ?>>Married</option>
-          <option value="Separated" <?= (($_POST['status'] ?? '') === 'Separated') ? 'selected' : '' ?>>Separated</option>
-          <option value="Widowed" <?= (($_POST['status'] ?? '') === 'Widowed') ? 'selected' : '' ?>>Widowed</option>
-          <option value="Divorced" <?= (($_POST['status'] ?? '') === 'Divorced') ? 'selected' : '' ?>>Divorced</option>
-          <option value="Complicated" <?= (($_POST['status'] ?? '') === 'Complicated') ? 'selected' : '' ?>>Complicated</option>
-        </select>
-          </div>
+          <label class="form-label">Civil Status</label>
+            <select name="status" class="form-control" required>
+            <option value="">Select Status</option>
+              <option value="Single" <?= ($user['status'] ?? '') === 'Single' ? 'selected' : '' ?>>Single</option>
+              <option value="Married" <?= ($user['status'] ?? '') === 'Married' ? 'selected' : '' ?>>Married</option>
+              <option value="Separated" <?= ($user['status'] ?? '') === 'Separated' ? 'selected' : '' ?>>Separated</option>
+              <option value="Widowed" <?= ($user['status'] ?? '') === 'Widowed' ? 'selected' : '' ?>>Widowed</option>
+              <option value="Divorced" <?= ($user['status'] ?? '') === 'Divorced' ? 'selected' : '' ?>>Divorced</option>
+              <option value="Complicated" <?= ($user['status'] ?? '') === 'Complicated' ? 'selected' : '' ?>>Complicated</option>
+              </select>
+            </div>
+
           <div class="col-md-6">
             <label class="form-label">Occupation</label>
             <input type="text" name="occupation" class="form-control" value="<?= htmlspecialchars($user->occupation ?? '') ?>">
