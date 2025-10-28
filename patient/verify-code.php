@@ -35,7 +35,7 @@ function resendVerificationCode($usersCollection, $email) {
         $apiKey = $_ENV['RESEND_API_KEY'];
         $url = "https://api.resend.com/emails";
         $data = [
-            "from" => "Halili Dental Clinic <onboarding@resend.dev>",
+            "from" => "Halili Dental Clinic <no-reply@halilidentalclinic.shop>",
             "to" => [$email],
             "subject" => "Your Halili Dental Clinic Verification Code",
             "html" => "<p>Hi " . htmlspecialchars($user['username']) . ",</p>

@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div>
         <label class="block mb-1 font-semibold">Status</label>
         <select name="status" class="w-full p-2 border rounded" required>
-          <option value="">Select Gender</option>
+          <option value="">Select Status</option>
           <option value="Single" <?= (($_POST['status'] ?? '') === 'Single') ? 'selected' : '' ?>>Single</option>
           <option value="Married" <?= (($_POST['status'] ?? '') === 'Married') ? 'selected' : '' ?>>Married</option>
           <option value="Separated" <?= (($_POST['status'] ?? '') === 'Separated') ? 'selected' : '' ?>>Separated</option>
