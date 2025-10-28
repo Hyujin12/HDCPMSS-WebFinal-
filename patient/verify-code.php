@@ -151,7 +151,7 @@ Swal.fire({
     text: '<?= htmlspecialchars($success) ?>',
     confirmButtonText: 'Go to Login'
 }).then(() => {
-    window.location.href = 'log-in.php';
+    window.location.href = 'verify-code.php';
 });
 </script>
 <?php endif; ?>
