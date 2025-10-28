@@ -16,8 +16,17 @@ $error = '';
 $success = '';
 $email = $_GET['email'] ?? '';
 
-// Function to resend verification code
-function resendVerificationCode($usersCollection, $email) {
+// ✅ Check if account already verified (auto check on page load)
+if (!empty($email)) {
+    $existingUser = $usersCollection->findOne(['email' => $email]);
+    if ($existingUser && !empty($existingUser['isVerified']) && $existingUser['isVerified'] === true) {
+        $success = "Your account is already verified! You can now log in.";
+    }
+}
+
+// ✅ Function to resend verification code
+function resendVerificationCode($usersCollection, $email)
+{
     $user = $usersCollection->findOne(['email' => $email]);
     if (!$user) return false;
 
@@ -56,18 +65,17 @@ function resendVerificationCode($usersCollection, $email) {
         $error = curl_error($ch);
         curl_close($ch);
 
-        // Log for debugging
-        file_put_contents(__DIR__ . '/../resend_log.txt', 
-            "Email: $email\nHTTP: $httpCode\nResponse: $response\nError: $error\n\n", FILE_APPEND);
+        file_put_contents(__DIR__ . '/../resend_log.txt',
+            "Email: $email\nHTTP: $httpCode\nResponse: $response\nError: $error\n\n",
+            FILE_APPEND
+        );
 
-        // Return true only if Resend accepted it
         return $httpCode >= 200 && $httpCode < 300;
     }
     return false;
 }
 
-
-// Handle form submission
+// ✅ Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $code = trim($_POST['code'] ?? '');
     $email = trim($_POST['email'] ?? '');
@@ -80,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$user) {
             $error = "User not found.";
         } elseif ($user['isVerified']) {
-            $success = "Email already verified! You can log in.";
+            $success = "Your account is already verified! You can now log in.";
         } elseif ($user['verificationCode'] !== $code) {
             $error = "Invalid verification code.";
         } else {
@@ -92,14 +100,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ['email' => $email],
                     ['$set' => ['isVerified' => true], '$unset' => ['verificationCode' => "", 'codeExpires' => ""]]
                 );
-               $success = "Email verified successfully!";
-
+                $success = "Email verified successfully!";
             }
         }
     }
 }
 
-// Handle resend request
+// ✅ Handle resend request
 if (isset($_GET['resend']) && $email) {
     if (resendVerificationCode($usersCollection, $email)) {
         $success = "A new verification code has been sent to your email.";
@@ -137,6 +144,7 @@ if (isset($_GET['resend']) && $email) {
     </p>
 </form>
 
+<!-- ✅ SweetAlert Notifications -->
 <?php if (!empty($error)) : ?>
 <script>
 Swal.fire({ icon: 'error', title: 'Error', text: '<?= htmlspecialchars($error) ?>' });
@@ -149,13 +157,19 @@ Swal.fire({
     icon: 'success',
     title: 'Success',
     text: '<?= htmlspecialchars($success) ?>',
-    confirmButtonText: 'Go to Login'
+    confirmButtonText: 'OK'
 }).then(() => {
-    window.location.href = 'verify-code.php';
+    // ✅ If already verified, redirect to login
+    <?php if (str_contains($success, 'already verified')): ?>
+        window.location.href = 'log-in.php';
+    <?php elseif (str_contains($success, 'Email verified successfully')): ?>
+        window.location.href = 'log-in.php';
+    <?php else: ?>
+        window.location.href = 'verify-code.php?email=<?= urlencode($email) ?>';
+    <?php endif; ?>
 });
 </script>
 <?php endif; ?>
-
 
 </body>
 </html>
