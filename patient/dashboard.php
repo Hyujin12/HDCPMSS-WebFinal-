@@ -160,11 +160,11 @@ body { background-color: #f3f4f6; }
           <input type="hidden" name="id" value="<?= (string)$user->_id ?>">
           <div class="col-md-6">
             <label class="form-label">Full Name</label>
-            <input type="text" name="fullname" class="form-control" value="<?= htmlspecialchars($user->username ?? '') ?>" required>
+            <input type="text" name="username" class="form-control" value="<?= htmlspecialchars($user->username ?? '') ?>">
           </div>
           <div class="col-md-6">
             <label class="form-label">Date of Birth</label>
-            <input type="date" name="dob" class="form-control" value="<?= htmlspecialchars($user->birthday ?? '') ?>">
+           <input type="date" name="birthday" class="form-control" value="<?= htmlspecialchars($user->birthday ?? '') ?>">
           </div>
           <div class="col-md-6">
             <label class="form-label">Gender</label>
@@ -188,7 +188,7 @@ body { background-color: #f3f4f6; }
           </div>
           <div class="col-md-6">
             <label class="form-label">Civil Status</label>
-            <input type="text" name="civil_status" class="form-control" value="<?= htmlspecialchars($user->status ?? '') ?>">
+            <input type="text" name="status" class="form-control" value="<?= htmlspecialchars($user->status ?? '') ?>">
           </div>
           <div class="col-md-6">
             <label class="form-label">Occupation</label>

@@ -11,7 +11,6 @@ use MongoDB\Client;
 use MongoDB\BSON\ObjectId;
 use Dotenv\Dotenv;
 
-// Load .env
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
@@ -19,41 +18,42 @@ $mongoClient = new Client($_ENV['MONGO_URI']);
 $db = $mongoClient->selectDatabase('HaliliDentalClinic');
 $users = $db->selectCollection('users');
 
-// --- Collect POST data ---
-$id          = $_POST['id'] ?? '';
-$username    = $_POST['username'] ?? '';
-$dobInput    = $_POST['birthday'] ?? '';
-$gender      = $_POST['gender'] ?? '';
-$civilStatus = $_POST['status'] ?? '';
-$address     = $_POST['address'] ?? '';
-$phone       = $_POST['contactNumber'] ?? '';
-$email       = $_POST['email'] ?? '';
-$occupation  = $_POST['occupation'] ?? '';
-$nationality = $_POST['nationality'] ?? '';
+// ✅ Collect POST data safely
+$id             = $_POST['id'] ?? '';
+$username       = $_POST['username'] ?? $_POST['fullname'] ?? ''; // handle both field names
+$dobInput       = $_POST['birthday'] ?? $_POST['dob'] ?? '';
+$gender         = $_POST['gender'] ?? '';
+$civilStatus    = $_POST['status'] ?? $_POST['civil_status'] ?? '';
+$address        = $_POST['address'] ?? '';
+$phone          = $_POST['contactNumber'] ?? '';
+$email          = $_POST['email'] ?? '';
+$occupation     = $_POST['occupation'] ?? '';
+$nationality    = $_POST['nationality'] ?? '';
 
-// ✅ Check for valid ObjectId before proceeding
+// ✅ Validate ID
 if (empty($id) || !preg_match('/^[a-f\d]{24}$/i', $id)) {
-    $_SESSION['update_error'] = "Invalid or missing user ID. Please try again.";
+    $_SESSION['update_error'] = "Invalid user ID.";
     header("Location: profile.php");
     exit;
 }
 
-// --- Recalculate Age ---
+// ✅ Compute age
+$age = null;
 if (!empty($dobInput)) {
-    $dobObj = new DateTime($dobInput);
-    $today = new DateTime();
-    $age = $today->diff($dobObj)->y;
-    $dob = $dobInput;
-} else {
-    $age = null;
-    $dob = null;
+    try {
+        $dobObj = new DateTime($dobInput);
+        $today = new DateTime();
+        $age = $today->diff($dobObj)->y;
+    } catch (Exception $e) {
+        $dobInput = null;
+    }
 }
 
-// --- Handle file upload ---
+// ✅ Handle file upload
 $profileImagePath = null;
 if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == UPLOAD_ERR_OK) {
     $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-    $maxSize = 2 * 1024 * 1024; // 2MB
+    $maxSize = 2 * 1024 * 1024;
 
     if (in_array($_FILES['profile_image']['type'], $allowedTypes) && $_FILES['profile_image']['size'] <= $maxSize) {
         $uploadsDir = __DIR__ . "/uploads/";
@@ -69,18 +69,18 @@ if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == UPLO
     }
 }
 
-// --- Prepare update fields ---
+// ✅ Prepare update fields
 $updateFields = [
     'username'      => $username,
-    'birthday'      => $dob,
+    'birthday'      => $dobInput,
     'age'           => $age,
     'gender'        => $gender,
     'status'        => $civilStatus,
     'address'       => $address,
-    'contactNumber' => $phone, // ✅ Fixed
+    'contactNumber' => $phone,
     'email'         => $email,
     'occupation'    => $occupation,
-    'nationality'   => $nationality
+    'nationality'   => $nationality,
 ];
 
 if ($profileImagePath) {
@@ -96,10 +96,10 @@ try {
     if ($result->getModifiedCount() > 0) {
         $_SESSION['update_success'] = true;
     } else {
-        $_SESSION['update_error'] = "No changes were made to your profile.";
+        $_SESSION['update_error'] = "No changes detected.";
     }
 } catch (Exception $e) {
-    $_SESSION['update_error'] = "Error updating profile: " . $e->getMessage();
+    $_SESSION['update_error'] = "Error: " . $e->getMessage();
 }
 
 header("Location: profile.php");
