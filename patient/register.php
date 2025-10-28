@@ -181,8 +181,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
       <div>
         <label class="block mb-1 font-semibold">Status</label>
-        <input type="text" name="status" value="<?= htmlspecialchars($_POST['status'] ?? '') ?>" class="w-full p-2 border rounded" required>
+        <select name="status" class="w-full p-2 border rounded" required>
+          <option value="">Select Gender</option>
+          <option value="Single" <?= (($_POST['status'] ?? '') === 'Single') ? 'selected' : '' ?>>Single</option>
+          <option value="Married" <?= (($_POST['status'] ?? '') === 'Married') ? 'selected' : '' ?>>Married</option>
+          <option value="Separated" <?= (($_POST['status'] ?? '') === 'Separated') ? 'selected' : '' ?>>Separated</option>
+          <option value="Widowed" <?= (($_POST['status'] ?? '') === 'Widowed') ? 'selected' : '' ?>>Widowed</option>
+          <option value="Divorced" <?= (($_POST['status'] ?? '') === 'Divorced') ? 'selected' : '' ?>>Divorced</option>
+          <option value="Complicated" <?= (($_POST['status'] ?? '') === 'Complicated') ? 'selected' : '' ?>>Complicated</option>
+        </select>
       </div>
+
       <div>
         <label class="block mb-1 font-semibold">Birthday</label>
         <input type="date" name="birthday" value="<?= htmlspecialchars($_POST['birthday'] ?? '') ?>" class="w-full p-2 border rounded" required>
@@ -198,7 +207,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
       <div>
         <label class="block mb-1 font-semibold">Nationality</label>
-        <input type="text" name="nationality" value="<?= htmlspecialchars($_POST['nationality'] ?? '') ?>" class="w-full p-2 border rounded" required>
+        <select name="nationality" class="w-full p-2 border rounded" required>
+          <option value="">Select Nationality</option>
+          <option value="Filipino" <?= (($_POST['nationality'] ?? '') === 'Filipino') ? 'selected' : '' ?>>Filipino</option>
+          <option value="Foreign National" <?= (($_POST['nationality'] ?? '') === 'Foreign National') ? 'selected' : '' ?>>Foreign National</option>
+        </select>
       </div>
       <div>
         <label class="block mb-1 font-semibold">Occupation</label>
