@@ -85,27 +85,26 @@ include 'service-grid.php';
       border: 1px solid rgba(102, 126, 234, 0.1);
     }
 
-    .service-image-container {
-    width: 100%;
-    height: 250px; /* Fixed height for uniform images */
-    overflow: hidden;
-    background: #f3f4f6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+          .service-image-container {
+        width: 100%;
+        height: 280px; /* Slightly taller */
+        overflow: hidden;
+        background: #f3f4f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-    .service-image-container img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      object-position: center;
-      transition: transform 0.5s ease;
-    }
 
+        .service-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* fill the box nicely */
+        transition: transform 0.5s ease;
+      }
+
+
+  
     .service-image-container:hover img {
       transform: scale(1.05);
     }
@@ -415,11 +414,16 @@ include 'service-grid.php';
       }
     }
 
-    function updateSlider() {
-      const slideWidth = slider.offsetWidth;
+      function updateSlider() {
+      const slideWidth = slides[0].offsetWidth;
       slider.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
       updateIndicators();
-    }
+}
+
+    window.addEventListener('resize', updateSlider);
+    window.addEventListener('load', updateSlider);
+    updateSlider();
+
 
     function goToSlide(index) {
       currentIndex = index;
