@@ -140,7 +140,8 @@ unset($_SESSION['update_success']);
               </div>
               <div class="col-md-4">
                   <label class="form-label">Civil Status</label>
-                  <option value="">Select Status</option>
+                  <select name="status" class="form-control" required>
+                    <option value="">Select Status</option>
                     <option value="Single" <?= ($user['status'] ?? '') === 'Single' ? 'selected' : '' ?>>Single</option>
                     <option value="Married" <?= ($user['status'] ?? '') === 'Married' ? 'selected' : '' ?>>Married</option>
                     <option value="Separated" <?= ($user['status'] ?? '') === 'Separated' ? 'selected' : '' ?>>Separated</option>
