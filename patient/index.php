@@ -38,29 +38,26 @@ include 'service-grid.php';
       transform: translateY(-8px);
       box-shadow: 0 20px 40px rgba(0,0,0,0.15);
     }
-
-    .service-slide {
+    #serviceSlides {
+    display: flex;
+    align-items: stretch; /* Make slides stretch equally */
+  }
+      .service-slide {
       min-width: 100%;
       flex-shrink: 0;
+      display: flex;
+      justify-content: center;
     }
-
-    @media (min-width: 768px) {
-      .service-slide {
-        min-width: calc(50% - 12px);
-      }
-    }
-
-    @media (min-width: 1024px) {
-      .service-slide {
-        min-width: calc(33.333% - 16px);
-      }
-    }
-
     .slider-container {
       overflow: hidden;
       padding: 0 2px;
     }
-
+  .service-slide .card-hover {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 620px; /* Control uniform height (adjust as needed) */
+}
     .nav-link {
       position: relative;
       padding-bottom: 4px;
@@ -86,6 +83,38 @@ include 'service-grid.php';
       backdrop-filter: blur(10px);
       background: rgba(255, 255, 255, 0.9);
       border: 1px solid rgba(102, 126, 234, 0.1);
+    }
+
+    .service-image-container {
+    width: 100%;
+    height: 250px; /* Fixed height for uniform images */
+    overflow: hidden;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+    .service-image-container img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      transition: transform 0.5s ease;
+    }
+
+    .service-image-container:hover img {
+      transform: scale(1.05);
+    }
+    .service-slide .p-6,
+    .service-slide .p-8 {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
   </style>
 </head>
@@ -173,15 +202,15 @@ include 'service-grid.php';
         <!-- Stats -->
         <div class="grid grid-cols-3 gap-4 mt-12 pt-8 border-t border-gray-200">
           <div class="text-center">
-            <h3 class="text-2xl sm:text-3xl font-bold gradient-text">15+</h3>
+            <h3 class="text-2xl sm:text-3xl font-bold gradient-text">44</h3>
             <p class="text-xs sm:text-sm text-gray-600">Years Experience</p>
           </div>
           <div class="text-center">
-            <h3 class="text-2xl sm:text-3xl font-bold gradient-text">5K+</h3>
+            <h3 class="text-2xl sm:text-3xl font-bold gradient-text">500+</h3>
             <p class="text-xs sm:text-sm text-gray-600">Happy Patients</p>
           </div>
           <div class="text-center">
-            <h3 class="text-2xl sm:text-3xl font-bold gradient-text">98%</h3>
+            <h3 class="text-2xl sm:text-3xl font-bold gradient-text">95%</h3>
             <p class="text-xs sm:text-sm text-gray-600">Satisfaction Rate</p>
           </div>
         </div>
@@ -243,20 +272,20 @@ include 'service-grid.php';
         </p>
       </div>
 
-      <div class="relative">
+      <div class="relative max-w-4xl mx-auto">
         <div class="slider-container">
-          <div id="serviceSlides" class="flex gap-4 sm:gap-6 transition-transform duration-500 ease-in-out">
+          <div id="serviceSlides" class="flex transition-transform duration-500 ease-in-out">
             <?php
               foreach ($services as $service) {
-                  echo '<div class="service-slide">';
-                  echo '<div class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 h-full">';
-                  echo '<div class="relative h-64 sm:h-72 lg:h-80 overflow-hidden">';
-                  echo '<img src="' . htmlspecialchars($service['image']) . '" alt="' . htmlspecialchars($service['title']) . '" class="w-full h-full object-cover">';
+                  echo '<div class="service-slide px-2">';
+                  echo '<div class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">';
+                  echo '<div class="service-image-container">';
+                  echo '<img src="' . htmlspecialchars($service['image']) . '" alt="' . htmlspecialchars($service['title']) . '">';
                   echo '</div>';
-                  echo '<div class="p-6">';
-                  echo '<h3 class="text-xl sm:text-2xl font-bold mb-3">' . htmlspecialchars($service['title']) . '</h3>';
-                  echo '<p class="text-gray-600 mb-6 text-sm sm:text-base">' . htmlspecialchars($service['description']) . '</p>';
-                  echo '<button class="hero-gradient text-white py-2 sm:py-3 px-6 rounded-full hover:shadow-lg transition duration-300 w-full sm:w-auto font-medium">' . htmlspecialchars($service['btn']) . '</button>';
+                  echo '<div class="p-6 sm:p-8">';
+                  echo '<h3 class="text-2xl sm:text-3xl font-bold mb-4">' . htmlspecialchars($service['title']) . '</h3>';
+                  echo '<p class="text-gray-600 mb-6 text-base sm:text-lg leading-relaxed">' . htmlspecialchars($service['description']) . '</p>';
+                  echo '<button class="hero-gradient text-white py-3 px-8 rounded-full hover:shadow-lg transition duration-300 w-full sm:w-auto font-medium">' . htmlspecialchars($service['btn']) . '</button>';
                   echo '</div>';
                   echo '</div>';
                   echo '</div>';
@@ -276,6 +305,9 @@ include 'service-grid.php';
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
           </svg>
         </button>
+
+        <!-- Slide Indicators -->
+        <div id="slideIndicators" class="flex justify-center mt-8 gap-2"></div>
       </div>
     </div>
   </section>
@@ -286,7 +318,7 @@ include 'service-grid.php';
       <div class="text-center mb-12">
         <img src="/images/halili-logo.png" alt="Halili's Dental Clinic" class="w-24 sm:w-32 h-auto mx-auto mb-6 bg-white p-4 rounded-2xl shadow-xl">
         <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Get In Touch With Us</h2>
-        <p class="text-purple-100 text-lg max-w-2xl mx-auto">Halili Dental Clinic by Dra Emily E Halili, Rodriguez, Philippines</p>
+        <p class="text-purple-100 text-lg max-w-2xl mx-auto">Halili Dental Clinic by Doc Kyle Halili, Rodriguez, Philippines</p>
       </div>
 
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -355,58 +387,75 @@ include 'service-grid.php';
       link.addEventListener('click', closeSidebar);
     });
 
-    // Service Slider
+    // Service Slider - ONE SLIDE AT A TIME
     const slider = document.getElementById('serviceSlides');
     const prevBtn = document.getElementById('prevService');
     const nextBtn = document.getElementById('nextService');
+    const indicatorsContainer = document.getElementById('slideIndicators');
     const slides = slider.children;
     let currentIndex = 0;
     const totalSlides = slides.length;
 
-    function getVisibleSlides() {
-      if (window.innerWidth >= 1024) return 3;
-      if (window.innerWidth >= 768) return 2;
-      return 1;
+    // Create slide indicators
+    for (let i = 0; i < totalSlides; i++) {
+      const dot = document.createElement('button');
+      dot.className = 'w-2 h-2 rounded-full transition-all duration-300';
+      dot.onclick = () => goToSlide(i);
+      indicatorsContainer.appendChild(dot);
+    }
+
+    function updateIndicators() {
+      const dots = indicatorsContainer.children;
+      for (let i = 0; i < dots.length; i++) {
+        if (i === currentIndex) {
+          dots[i].className = 'w-8 h-2 rounded-full bg-purple-600 transition-all duration-300';
+        } else {
+          dots[i].className = 'w-2 h-2 rounded-full bg-gray-300 hover:bg-gray-400 transition-all duration-300';
+        }
+      }
     }
 
     function updateSlider() {
-      const visibleSlides = getVisibleSlides();
-      const slideWidth = slider.offsetWidth / visibleSlides;
-      const maxIndex = Math.max(0, totalSlides - visibleSlides);
-      currentIndex = Math.min(currentIndex, maxIndex);
+      const slideWidth = slider.offsetWidth;
       slider.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+      updateIndicators();
+    }
+
+    function goToSlide(index) {
+      currentIndex = index;
+      updateSlider();
+      resetAutoSlide();
     }
 
     nextBtn.addEventListener('click', () => {
-      const visibleSlides = getVisibleSlides();
-      const maxIndex = Math.max(0, totalSlides - visibleSlides);
-      currentIndex = Math.min(currentIndex + 1, maxIndex);
+      currentIndex = (currentIndex + 1) % totalSlides;
       updateSlider();
+      resetAutoSlide();
     });
 
     prevBtn.addEventListener('click', () => {
-      currentIndex = Math.max(currentIndex - 1, 0);
+      currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
       updateSlider();
+      resetAutoSlide();
     });
 
-    // Auto-slide
+    // Auto-slide - ONE AT A TIME
     let autoSlideInterval = setInterval(() => {
-      const visibleSlides = getVisibleSlides();
-      const maxIndex = Math.max(0, totalSlides - visibleSlides);
-      currentIndex = currentIndex >= maxIndex ? 0 : currentIndex + 1;
+      currentIndex = (currentIndex + 1) % totalSlides;
       updateSlider();
     }, 4000);
 
-    // Pause auto-slide on hover
-    slider.addEventListener('mouseenter', () => clearInterval(autoSlideInterval));
-    slider.addEventListener('mouseleave', () => {
+    function resetAutoSlide() {
+      clearInterval(autoSlideInterval);
       autoSlideInterval = setInterval(() => {
-        const visibleSlides = getVisibleSlides();
-        const maxIndex = Math.max(0, totalSlides - visibleSlides);
-        currentIndex = currentIndex >= maxIndex ? 0 : currentIndex + 1;
+        currentIndex = (currentIndex + 1) % totalSlides;
         updateSlider();
       }, 4000);
-    });
+    }
+
+    // Pause auto-slide on hover
+    slider.addEventListener('mouseenter', () => clearInterval(autoSlideInterval));
+    slider.addEventListener('mouseleave', resetAutoSlide);
 
     window.addEventListener('resize', updateSlider);
     updateSlider();
