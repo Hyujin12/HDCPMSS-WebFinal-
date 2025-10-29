@@ -250,7 +250,7 @@ include 'service-grid.php';
               foreach ($services as $service) {
                   echo '<div class="service-slide">';
                   echo '<div class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 h-full">';
-                  echo '<div class="relative h-48 sm:h-56 overflow-hidden">';
+                  echo '<div class="relative h-64 sm:h-72 lg:h-80 overflow-hidden">';
                   echo '<img src="' . htmlspecialchars($service['image']) . '" alt="' . htmlspecialchars($service['title']) . '" class="w-full h-full object-cover">';
                   echo '</div>';
                   echo '<div class="p-6">';
