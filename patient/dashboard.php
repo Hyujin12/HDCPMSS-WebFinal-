@@ -205,7 +205,11 @@ body { background-color: #f3f4f6; }
           </div>
           <div class="col-md-6">
             <label class="form-label">Nationality</label>
-            <input type="text" name="nationality" class="form-control" value="<?= htmlspecialchars($user->nationality ?? '') ?>">
+             <select name="nationality" class="form-control" required>
+          <option value="">Select Nationality</option>
+          <option value="Filipino" <?= (($user['nationality'] ?? '') === 'Filipino') ? 'selected' : '' ?>>Filipino</option>
+          <option value="Foreign National" <?= (($user['nationality'] ?? '') === 'Foreign National') ? 'selected' : '' ?>>Foreign National</option>
+        </select>
           </div>
         </div>
       </div>
