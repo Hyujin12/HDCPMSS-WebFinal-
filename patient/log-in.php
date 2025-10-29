@@ -32,11 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (empty($user['isVerified']) || !$user['isVerified']) {
             $error = "Please verify your email first.";
         } else {
-            // ✅ Store session data
             $_SESSION['email'] = $email;
             $_SESSION['username'] = $user['username'];
-
-            // ✅ Redirect using PHP (no JS)
             header("Location: dashboard.php");
             exit();
         }
@@ -48,32 +45,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Log In - Halili Dental Clinic</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  .gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+</style>
 </head>
-<body class="flex items-center justify-center min-h-screen bg-white">
+<body class="min-h-screen flex flex-col md:flex-row">
 
-<form method="POST" class="max-w-md w-full p-8 border rounded-lg shadow-lg">
-  <h2 class="text-2xl font-bold mb-6 text-center">Log In</h2>
+  <!-- Left Side Login Form -->
+  <div class="flex-1 flex items-center justify-center bg-gray-50 p-8 order-2 md:order-1">
+    <form method="POST" class="w-full max-w-md bg-white shadow-2xl rounded-2xl p-8">
+      <div class="text-center mb-6">
+        <img src="/images/halili-logo.png" alt="Halili Logo" class="w-20 h-20 mx-auto mb-4">
+        <h2 class="text-2xl font-bold gradient-text mb-2">Welcome Back</h2>
+        <p class="text-gray-600 text-sm">Please log in to access your dashboard</p>
+      </div>
 
-  <?php if (!empty($error)) : ?>
-    <div class="mb-4 text-red-600 font-semibold"><?= htmlspecialchars($error) ?></div>
-  <?php endif; ?>
+      <?php if (!empty($error)) : ?>
+        <div class="mb-4 bg-red-100 text-red-700 font-medium p-3 rounded-md text-center">
+          <?= htmlspecialchars($error) ?>
+        </div>
+      <?php endif; ?>
 
-  <label class="block mb-2 font-semibold">Email</label>
-  <input type="email" name="email" class="w-full p-2 border rounded mb-4" required>
+      <div class="mb-4">
+        <label class="block font-semibold mb-2 text-gray-700">Email</label>
+        <input type="email" name="email" required
+          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+      </div>
 
-  <label class="block mb-2 font-semibold">Password</label>
-  <input type="password" name="password" class="w-full p-2 border rounded mb-6" required>
+      <div class="mb-6">
+        <label class="block font-semibold mb-2 text-gray-700">Password</label>
+        <input type="password" name="password" required
+          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+      </div>
 
-  <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded font-bold hover:bg-blue-700 transition">
-    Log In
-  </button>
+      <button type="submit"
+        class="w-full gradient-bg text-white py-3 rounded-lg font-bold hover:opacity-90 transition duration-300 shadow-md">
+        Log In
+      </button>
 
-  <p class="mt-6 text-center text-gray-700">
-    Don't have an account? <a href="register.php" class="text-blue-600 hover:underline">Register</a>
-  </p>
-</form>
+      <p class="mt-6 text-center text-gray-700">
+        Don't have an account? 
+        <a href="register.php" class="text-purple-600 font-semibold hover:underline">Register</a>
+      </p>
+    </form>
+  </div>
+
+  <!-- Right Side Image / Branding -->
+  <div class="hidden md:flex md:w-1/2 gradient-bg items-center justify-center text-white p-10 order-1 md:order-2">
+    <div class="max-w-md text-center">
+      <img src="/images/logodental.png" alt="Clinic Logo" class="w-24 h-24 mx-auto mb-6 drop-shadow-lg">
+      <h1 class="text-4xl font-bold mb-4">Halili's Dental Clinic</h1>
+      <p class="text-lg leading-relaxed">
+        Excellence in Dental Care. Bringing you the best smiles with comfort and care.
+      </p>
+    </div>
+  </div>
 
 </body>
 </html>

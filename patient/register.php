@@ -67,8 +67,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirmPassword = $_POST['confirm_password'] ?? '';
-    
-    // New fields
     $contactNumber = trim($_POST['contact_number'] ?? '');
     $address = trim($_POST['address'] ?? '');
     $age = (int)($_POST['age'] ?? 0);
@@ -78,8 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nationality = trim($_POST['nationality'] ?? '');
     $occupation = trim($_POST['occupation'] ?? '');
 
-    // === Validation ===
-    if (!$username || !$email  || !$password || !$confirmPassword || !$contactNumber || !$address || !$age || !$status || !$birthday || !$gender || !$nationality || !$occupation) {
+    if (!$username || !$email || !$password || !$confirmPassword || !$contactNumber || !$address || !$age || !$status || !$birthday || !$gender || !$nationality || !$occupation) {
         $error = "All fields are required.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Invalid email address.";
@@ -133,117 +130,141 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Register - Halili Dental Clinic</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register - Halili Dental Clinic</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  .gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+</style>
 </head>
-<body class="flex items-center justify-center min-h-screen bg-white">
+<body class="min-h-screen flex flex-col md:flex-row">
 
-<form method="POST" class="max-w-2xl w-full p-8 border rounded-lg shadow-lg bg-white space-y-6">
-  <h2 class="text-2xl font-bold mb-4 text-center">Create Your Account</h2>
-
-  <?php if (!empty($error)) : ?>
-    <div class="text-red-600 font-semibold"><?= htmlspecialchars($error) ?></div>
-  <?php elseif (!empty($success)) : ?>
-    <div class="text-green-600 font-semibold"><?= htmlspecialchars($success) ?></div>
-  <?php endif; ?>
-
-  <!-- Section 1: Basic Info -->
-  <fieldset class="border p-4 rounded space-y-4">
-    <legend class="font-semibold text-gray-700">Basic Info</legend>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <label class="block mb-1 font-semibold">Username</label>
-        <input type="text" name="username" value="<?= htmlspecialchars($_POST['username'] ?? '') ?>" class="w-full p-2 border rounded" required>
-      </div>
-      <div>
-        <label class="block mb-1 font-semibold">Email</label>
-        <input type="email" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" class="w-full p-2 border rounded" required>
-      </div>
-      <div>
-        <label class="block mb-1 font-semibold">Contact Number</label>
-        <input type="text" name="contact_number" value="<?= htmlspecialchars($_POST['contact_number'] ?? '') ?>" class="w-full p-2 border rounded" required>
-      </div>
+  <!-- Left Side Image / Branding -->
+  <div class="hidden md:flex md:w-1/2 gradient-bg items-center justify-center text-white p-10">
+    <div class="max-w-md text-center">
+      <img src="/images/logodental.png" alt="Clinic Logo" class="w-24 h-24 mx-auto mb-6 drop-shadow-lg">
+      <h1 class="text-4xl font-bold mb-4">Halili's Dental Clinic</h1>
+      <p class="text-lg leading-relaxed">
+        Creating beautiful smiles through modern dental care.
+      </p>
     </div>
-  </fieldset>
+  </div>
 
-  <!-- Section 2: Personal Info -->
-  <fieldset class="border p-4 rounded space-y-4">
-    <legend class="font-semibold text-gray-700">Personal Info</legend>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <label class="block mb-1 font-semibold">Address</label>
-        <input type="text" name="address" value="<?= htmlspecialchars($_POST['address'] ?? '') ?>" class="w-full p-2 border rounded" required>
-      </div>
-      <div>
-        <label class="block mb-1 font-semibold">Age</label>
-        <input type="number" name="age" value="<?= htmlspecialchars($_POST['age'] ?? '') ?>" class="w-full p-2 border rounded" required>
-      </div>
-      <div>
-        <label class="block mb-1 font-semibold">Status</label>
-        <select name="status" class="w-full p-2 border rounded" required>
-          <option value="">Select Status</option>
-          <option value="Single" <?= (($_POST['status'] ?? '') === 'Single') ? 'selected' : '' ?>>Single</option>
-          <option value="Married" <?= (($_POST['status'] ?? '') === 'Married') ? 'selected' : '' ?>>Married</option>
-          <option value="Separated" <?= (($_POST['status'] ?? '') === 'Separated') ? 'selected' : '' ?>>Separated</option>
-          <option value="Widowed" <?= (($_POST['status'] ?? '') === 'Widowed') ? 'selected' : '' ?>>Widowed</option>
-          <option value="Divorced" <?= (($_POST['status'] ?? '') === 'Divorced') ? 'selected' : '' ?>>Divorced</option>
-          <option value="Complicated" <?= (($_POST['status'] ?? '') === 'Complicated') ? 'selected' : '' ?>>Complicated</option>
-        </select>
-      </div>
+  <!-- Right Side Registration Form -->
+  <!-- Right Section (Form) -->
+    <div class="flex justify-center items-center w-full md:w-1/2 p-6">
+      <form method="POST" class="w-full max-w-lg space-y-5">
 
-      <div>
-        <label class="block mb-1 font-semibold">Birthday</label>
-        <input type="date" name="birthday" value="<?= htmlspecialchars($_POST['birthday'] ?? '') ?>" class="w-full p-2 border rounded" required>
-      </div>
-      <div>
-        <label class="block mb-1 font-semibold">Gender</label>
-        <select name="gender" class="w-full p-2 border rounded" required>
-          <option value="">Select Gender</option>
-          <option value="Male" <?= (($_POST['gender'] ?? '') === 'Male') ? 'selected' : '' ?>>Male</option>
-          <option value="Female" <?= (($_POST['gender'] ?? '') === 'Female') ? 'selected' : '' ?>>Female</option>
-          <option value="Other" <?= (($_POST['gender'] ?? '') === 'Other') ? 'selected' : '' ?>>Other</option>
-        </select>
-      </div>
-      <div>
-        <label class="block mb-1 font-semibold">Nationality</label>
-        <select name="nationality" class="w-full p-2 border rounded" required>
-          <option value="">Select Nationality</option>
-          <option value="Filipino" <?= (($_POST['nationality'] ?? '') === 'Filipino') ? 'selected' : '' ?>>Filipino</option>
-          <option value="Foreign National" <?= (($_POST['nationality'] ?? '') === 'Foreign National') ? 'selected' : '' ?>>Foreign National</option>
-        </select>
-      </div>
-      <div>
-        <label class="block mb-1 font-semibold">Occupation</label>
-        <input type="text" name="occupation" value="<?= htmlspecialchars($_POST['occupation'] ?? '') ?>" class="w-full p-2 border rounded" required>
-      </div>
+        <h2 class="text-3xl font-bold text-center text-blue-600 mb-4">Create Your Account</h2>
+
+        <?php if (!empty($error)) : ?>
+          <div class="text-red-600 bg-red-50 p-3 rounded-lg font-semibold text-center"><?= htmlspecialchars($error) ?></div>
+        <?php elseif (!empty($success)) : ?>
+          <div class="text-green-600 bg-green-50 p-3 rounded-lg font-semibold text-center"><?= htmlspecialchars($success) ?></div>
+        <?php endif; ?>
+
+        <!-- Grid layout for compact fitting -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <div>
+            <label class="block text-sm font-semibold mb-1">Full Name</label>
+            <input type="text" name="username" value="<?= htmlspecialchars($_POST['username'] ?? '') ?>" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400" required>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1">Email</label>
+            <input type="email" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400" required>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1">Contact Number</label>
+            <input type="text" name="contact_number" value="<?= htmlspecialchars($_POST['contact_number'] ?? '') ?>" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400" required>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1">Address</label>
+            <input type="text" name="address" value="<?= htmlspecialchars($_POST['address'] ?? '') ?>" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400" required>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1">Age</label>
+            <input type="number" name="age" value="<?= htmlspecialchars($_POST['age'] ?? '') ?>" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400" required>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1">Birthday</label>
+            <input type="date" name="birthday" value="<?= htmlspecialchars($_POST['birthday'] ?? '') ?>" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400" required>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1">Status</label>
+            <select name="status" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400" required>
+              <option value="">Select</option>
+              <?php
+              $statuses = ['Single', 'Married', 'Separated', 'Widowed', 'Divorced', 'Complicated'];
+              foreach ($statuses as $s) {
+                $selected = (($_POST['status'] ?? '') === $s) ? 'selected' : '';
+                echo "<option value='$s' $selected>$s</option>";
+              }
+              ?>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1">Gender</label>
+            <select name="gender" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400" required>
+              <option value="">Select</option>
+              <option value="Male" <?= (($_POST['gender'] ?? '') === 'Male') ? 'selected' : '' ?>>Male</option>
+              <option value="Female" <?= (($_POST['gender'] ?? '') === 'Female') ? 'selected' : '' ?>>Female</option>
+              <option value="Other" <?= (($_POST['gender'] ?? '') === 'Other') ? 'selected' : '' ?>>Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1">Nationality</label>
+            <select name="nationality" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400" required>
+              <option value="">Select</option>
+              <option value="Filipino" <?= (($_POST['nationality'] ?? '') === 'Filipino') ? 'selected' : '' ?>>Filipino</option>
+              <option value="Foreign National" <?= (($_POST['nationality'] ?? '') === 'Foreign National') ? 'selected' : '' ?>>Foreign National</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1">Occupation</label>
+            <input type="text" name="occupation" value="<?= htmlspecialchars($_POST['occupation'] ?? '') ?>" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400" required>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1">Password</label>
+            <input type="password" name="password" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400" required>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1">Confirm Password</label>
+            <input type="password" name="confirm_password" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400" required>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition">
+          Register
+        </button>
+
+        <p class="text-center text-gray-700">
+          Already have an account?
+          <a href="log-in.php" class="text-blue-600 hover:underline font-semibold">Log in</a>
+        </p>
+
+      </form>
     </div>
-  </fieldset>
-
-  <!-- Section 3: Password -->
-  <fieldset class="border p-4 rounded space-y-4">
-    <legend class="font-semibold text-gray-700">Account Security</legend>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <label class="block mb-1 font-semibold">Password</label>
-        <input type="password" name="password" class="w-full p-2 border rounded" required>
-      </div>
-      <div>
-        <label class="block mb-1 font-semibold">Confirm Password</label>
-        <input type="password" name="confirm_password" class="w-full p-2 border rounded" required>
-      </div>
-    </div>
-  </fieldset>
-
-  <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded font-bold hover:bg-blue-700 transition">
-    Register
-  </button>
-
-  <p class="mt-4 text-center text-gray-700">
-    Already have an account? <a href="log-in.php" class="text-blue-600 hover:underline">Log in</a>
-  </p>
-</form>
-
+  </div>
 
 </body>
 </html>
