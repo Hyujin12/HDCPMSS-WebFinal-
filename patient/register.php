@@ -161,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <!-- Right Side Registration Form -->
   <!-- Right Section (Form) -->
     <div class="flex justify-center items-center w-full md:w-1/2 p-6">
-      <form method="POST" class="w-full max-w-lg space-y-5">
+      <form method="POST" class="w-full max-w-md bg-white shadow-2xl rounded-2xl p-6 space-y-6">
 
         <h2 class="text-3xl font-bold text-center text-blue-600 mb-4">Create Your Account</h2>
 
