@@ -395,6 +395,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
 <!-- Scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
   const burgerBtn = document.getElementById('burgerBtn');
   const sidebar = document.getElementById('sidebar');
@@ -429,10 +430,36 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     });
   }
 
-  // Logout confirmation
+  // SweetAlert logout confirmation
   function confirmLogout() {
-    if (confirm('Are you sure you want to logout?')) {
-      document.getElementById('logoutForm').submit();
-    }
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will be logged out from your account.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#2563eb',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, logout',
+      cancelButtonText: 'Cancel',
+      background: '#f9fafb',
+      customClass: {
+        popup: 'rounded-xl shadow-lg',
+        confirmButton: 'px-4 py-2 font-semibold',
+        cancelButton: 'px-4 py-2 font-semibold'
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Logging out...',
+          text: 'Please wait a moment.',
+          icon: 'info',
+          showConfirmButton: false,
+          timer: 1200,
+          didClose: () => {
+            document.getElementById('logoutForm').submit();
+          }
+        });
+      }
+    });
   }
 </script>
