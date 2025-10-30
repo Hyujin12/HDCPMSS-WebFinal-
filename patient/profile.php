@@ -83,6 +83,99 @@ unset($_SESSION['update_success']);
             }
         }
         
+        /* Desktop - Single Page, No Scroll */
+        @media (min-width: 992px) {
+            body {
+                overflow: hidden;
+            }
+            
+            .content {
+                height: 100vh;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                padding: 1.5rem;
+            }
+            
+            .content > * {
+                flex-shrink: 0;
+            }
+            
+            .page-header {
+                margin-bottom: 1rem;
+                padding: 1.25rem;
+            }
+            
+            .stats-container {
+                margin-bottom: 1rem;
+            }
+            
+            .profile-card {
+                flex: 1;
+                overflow-y: auto;
+                margin-bottom: 0;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .profile-banner {
+                height: 100px;
+            }
+            
+            .profile-image-container {
+                margin-top: -50px;
+                margin-bottom: 0.5rem;
+            }
+            
+            .profile-image {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .profile-name {
+                font-size: 1.5rem;
+                margin-bottom: 0.25rem;
+            }
+            
+            .profile-email {
+                font-size: 0.9rem;
+                margin-bottom: 1rem;
+            }
+            
+            .profile-progress {
+                margin: 0 1.5rem 1rem 1.5rem;
+                padding: 0.75rem;
+            }
+            
+            .info-grid {
+                padding: 1rem 1.5rem;
+                gap: 1rem;
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            }
+            
+            .info-card {
+                padding: 1rem;
+            }
+            
+            .action-buttons {
+                padding: 0 1.5rem 1.25rem 1.5rem;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+            }
+            
+            .stat-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.25rem;
+            }
+            
+            .stat-info h4 {
+                font-size: 1.25rem;
+            }
+        }
+        
         @media (max-width: 767px) {
             .content {
                 padding-top: 5rem;
@@ -93,21 +186,21 @@ unset($_SESSION['update_success']);
         .page-header {
             background: white;
             border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
         
         .page-title {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #1e293b;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
         }
         
         .page-subtitle {
             color: #64748b;
-            font-size: 1rem;
+            font-size: 0.875rem;
         }
 
         /* Profile Card */
@@ -116,7 +209,9 @@ unset($_SESSION['update_success']);
             border-radius: 16px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             overflow: hidden;
-            margin-bottom: 2rem;
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
         }
 
         .profile-banner {
@@ -247,8 +342,8 @@ unset($_SESSION['update_success']);
         .stats-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .stat-card {
@@ -355,6 +450,25 @@ unset($_SESSION['update_success']);
         .btn-save:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Scrollbar Styling for Profile Card */
+        .profile-card::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .profile-card::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+
+        .profile-card::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .profile-card::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
 
         /* Responsive Design */
