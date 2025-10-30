@@ -67,19 +67,12 @@ body {
   display: flex;
   flex-direction: column;
   margin-left: 0;
-  transition: margin-left 0.3s ease;
 }
 
-/* Sidebar adjustments */
+/* If you have a sidebar, adjust these values */
 @media (min-width: 992px) {
   .main-content {
-    margin-left: 250px;
-  }
-}
-
-@media (max-width: 991px) {
-  .main-content {
-    margin-left: 0;
+    /* margin-left: 250px; */ /* Uncomment and adjust if using sidebar */
   }
 }
 
@@ -525,8 +518,6 @@ body {
 </style>
 </head>
 <body>
-
-<?php include 'sidebar.php'; ?>
 
 <main class="main-content">
   <div class="dashboard-container">
