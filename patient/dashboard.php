@@ -518,7 +518,7 @@ body {
 </style>
 </head>
 <body>
-
+  <?php include 'sidebar.php'; ?>
 <main class="main-content">
   <div class="dashboard-container">
     <div class="dashboard-grid">
