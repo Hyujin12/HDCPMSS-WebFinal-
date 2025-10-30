@@ -41,374 +41,469 @@ $totalUpcoming = $appointmentsCollection->countDocuments([
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dashboard - Halili Dental</title>
-<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-:root {
-  --primary-color: #0891b2;
-  --primary-dark: #0e7490;
-  --secondary-color: #06b6d4;
-  --accent-color: #22d3ee;
-  --success-color: #10b981;
-  --warning-color: #f59e0b;
-  --danger-color: #ef4444;
-  --text-dark: #1e293b;
-  --text-muted: #64748b;
-  --bg-light: #f8fafc;
-  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body { 
-  background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8f9fa;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+.main-content {
   min-height: 100vh;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
-.dashboard-header {
-  background: white;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  border-radius: 1rem;
-  box-shadow: var(--card-shadow);
+.dashboard-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-.dashboard-card {
+/* Desktop Layout - Single Page, No Scroll */
+@media (min-width: 992px) {
+  .main-content {
+    padding: 1.5rem;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .dashboard-container {
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 1.25rem;
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  .profile-section {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    overflow-y: auto;
+  }
+  
+  .stats-section {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  
+  .calendar-section {
+    grid-column: 2;
+    grid-row: 2;
+    min-height: 0;
+  }
+}
+
+/* Tablet Layout */
+@media (min-width: 768px) and (max-width: 991px) {
+  .main-content {
+    padding: 1.25rem;
+  }
+  
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  
+  .profile-section {
+    grid-column: 1 / 3;
+  }
+  
+  .calendar-section {
+    grid-column: 1 / 3;
+  }
+}
+
+/* Mobile Layout */
+@media (max-width: 767px) {
+  .main-content {
+    padding: 0.75rem;
+  }
+  
+  .dashboard-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+/* Card Styles */
+.card {
   background: white;
-  border-radius: 1rem;
-  box-shadow: var(--card-shadow);
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(8, 145, 178, 0.1);
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e9ecef;
+  background: white;
+  border-radius: 12px 12px 0 0;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #212529;
+  margin: 0;
+}
+
+.card-body {
+  padding: 1.25rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Profile Section */
+.profile-header {
+  text-align: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e9ecef;
+  margin-bottom: 1rem;
+}
+
+.profile-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #0d6efd;
+  margin-bottom: 0.75rem;
+}
+
+.profile-name {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 0.25rem;
+}
+
+.profile-email {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: 0.85rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 0.85rem;
+  color: #212529;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Stats Cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
   height: 100%;
 }
 
-.dashboard-card:hover {
-  box-shadow: var(--card-shadow-hover);
-  transform: translateY(-2px);
-}
-
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-}
-
-@media (min-width: 768px) {
-  .dashboard-grid { 
-    grid-template-columns: repeat(2, 1fr); 
-  }
-}
-
-@media (min-width: 1024px) {
-  .dashboard-grid { 
-    grid-template-columns: repeat(3, 1fr); 
-  }
-}
-
-.profile-card {
-  grid-column: 1 / -1;
-}
-
-.calendar-card {
-  grid-column: 1 / -1;
-}
-
-@media (min-width: 1024px) {
-  .profile-card {
-    grid-column: span 2;
+@media (max-width: 991px) {
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 }
 
 .stat-card {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.stat-card.primary {
+  background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
   color: white;
   border: none;
-  padding: 2rem 1.5rem;
 }
 
-.stat-card .icon {
-  font-size: 2.5rem;
+.stat-card.success {
+  background: linear-gradient(135deg, #198754 0%, #146c43 100%);
+  color: white;
+  border: none;
+}
+
+.stat-icon {
+  font-size: 2rem;
   opacity: 0.9;
+  margin-bottom: 0.5rem;
 }
 
-.stat-card .number {
+.stat-number {
   font-size: 2rem;
   font-weight: 700;
+  line-height: 1;
   margin: 0.5rem 0;
 }
 
-.stat-card .label {
-  font-size: 0.95rem;
+.stat-label {
+  font-size: 0.9rem;
   opacity: 0.9;
-  font-weight: 500;
 }
 
 .appointment-card {
-  background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
-  border-left: 4px solid var(--primary-color);
-  padding: 1.5rem;
-  border-radius: 0.75rem;
+  background: #f8f9fa;
+  border-left: 3px solid #0d6efd;
+  padding: 1rem;
+  border-radius: 8px;
   margin-bottom: 1rem;
-  transition: all 0.3s ease;
 }
 
-.appointment-card:hover {
-  transform: translateX(4px);
-  box-shadow: var(--card-shadow);
+.appointment-card:last-child {
+  margin-bottom: 0;
 }
 
-.appointment-card .service-name {
-  color: var(--text-dark);
-  font-size: 1.1rem;
+.appointment-title {
+  font-size: 1rem;
   font-weight: 600;
-  margin-bottom: 0.75rem;
-}
-
-.appointment-card .appointment-info {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--text-muted);
-  font-size: 0.95rem;
+  color: #212529;
   margin-bottom: 0.5rem;
 }
 
-.appointment-card .appointment-info i {
-  color: var(--primary-color);
-  width: 20px;
+.appointment-detail {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-bottom: 0.25rem;
 }
 
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.375rem 0.875rem;
-  border-radius: 9999px;
-  font-size: 0.875rem;
+.appointment-detail i {
+  width: 16px;
+  text-align: center;
+  margin-right: 0.5rem;
+  color: #0d6efd;
+}
+
+.badge-status {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
   font-weight: 600;
+  margin-top: 0.5rem;
 }
 
-.status-pending {
-  background-color: #fef3c7;
-  color: #92400e;
+.badge-pending {
+  background: #fff3cd;
+  color: #856404;
 }
 
-.status-confirmed {
-  background-color: #d1fae5;
-  color: #065f46;
+.badge-confirmed {
+  background: #d1e7dd;
+  color: #0f5132;
 }
 
-.status-completed {
-  background-color: #dbeafe;
-  color: #1e40af;
-}
-
-.profile-image-container {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  margin: 0 auto;
-}
-
-.profile-image {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid var(--primary-color);
-  box-shadow: var(--card-shadow);
-}
-
-.info-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-@media (min-width: 640px) {
-  .info-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.info-label {
-  color: var(--text-muted);
-  font-size: 0.875rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
-}
-
-.info-value {
-  color: var(--text-dark);
-  font-size: 1rem;
-  font-weight: 600;
+/* Calendar */
+.calendar-section .card-body {
+  padding: 1rem;
 }
 
 #calendar {
-  width: 100%;
-  min-height: 450px;
-  margin: 0 auto;
+  height: 100%;
+  min-height: 400px;
+}
+
+@media (min-width: 992px) {
+  #calendar {
+    height: calc(100vh - 180px);
+  }
+}
+
+.fc {
+  height: 100% !important;
+}
+
+.fc-toolbar-title {
+  font-size: 1.1rem !important;
+}
+
+.fc .fc-button {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
 }
 
 .fc .fc-button-primary {
-  background-color: var(--primary-color) !important;
-  border-color: var(--primary-color) !important;
+  background-color: #0d6efd;
+  border-color: #0d6efd;
 }
 
 .fc .fc-button-primary:hover {
-  background-color: var(--primary-dark) !important;
+  background-color: #0a58ca;
+  border-color: #0a58ca;
 }
 
-.fc .fc-event {
-  border-radius: 0.375rem;
+.fc-event {
   border: none;
-  padding: 2px 4px;
+  border-radius: 4px;
 }
 
-.btn-primary {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
-  transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-  background-color: var(--primary-dark);
-  border-color: var(--primary-dark);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.btn-success {
-  background-color: var(--success-color);
-  border-color: var(--success-color);
-}
-
-.btn-outline-primary {
-  color: var(--primary-color);
-  border-color: var(--primary-color);
-}
-
-.btn-outline-primary:hover {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
-  color: white;
-}
-
-.card-title {
-  color: var(--text-dark);
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.card-title i {
-  color: var(--primary-color);
-}
-
-.empty-state {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: var(--text-muted);
-}
-
-.empty-state i {
-  font-size: 3rem;
-  color: var(--primary-color);
-  opacity: 0.3;
-  margin-bottom: 1rem;
-}
-
-.welcome-text {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--text-dark);
-  margin-bottom: 0.5rem;
-}
-
-.welcome-subtext {
-  color: var(--text-muted);
-  font-size: 1rem;
-}
-
-.modal-header {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-  border-bottom: none;
-}
-
-.form-label {
-  color: var(--text-dark);
+/* Buttons */
+.btn-edit {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.6rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
-  font-size: 0.875rem;
 }
 
-.form-control, .form-select {
-  border: 2px solid #e2e8f0;
-  border-radius: 0.5rem;
-  padding: 0.625rem 0.875rem;
-  transition: all 0.3s ease;
-}
-
-.form-control:focus, .form-select:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.1);
-}
-
-@media (max-width: 767px) {
-  .dashboard-header {
-    padding: 1rem;
-  }
-  
-  .welcome-text {
-    font-size: 1.5rem;
-  }
-  
-  .profile-image-container, .profile-image {
-    width: 100px;
-    height: 100px;
-  }
-  
-  .stat-card {
-    padding: 1.5rem 1rem;
-  }
-  
-  .stat-card .icon {
-    font-size: 2rem;
-  }
-  
-  .stat-card .number {
-    font-size: 1.5rem;
-  }
-}
-
-.quick-action-btn {
+.btn-link-custom {
+  color: #0d6efd;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.625rem 1.25rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
+  margin-top: 0.75rem;
 }
 
-.quick-action-btn:hover {
-  transform: translateY(-2px);
+.btn-link-custom:hover {
+  text-decoration: underline;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #6c757d;
+}
+
+.empty-state i {
+  font-size: 2.5rem;
+  color: #dee2e6;
+  margin-bottom: 1rem;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Modal Improvements */
+.modal-header {
+  background: #0d6efd;
+  color: white;
+  border-bottom: none;
+}
+
+.modal-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.4rem;
+}
+
+.form-control, .form-select {
+  font-size: 0.9rem;
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  padding: 0.6rem 0.75rem;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+/* Scrollbar Styling */
+.card-body::-webkit-scrollbar,
+.profile-section::-webkit-scrollbar {
+  width: 6px;
+}
+
+.card-body::-webkit-scrollbar-track,
+.profile-section::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.card-body::-webkit-scrollbar-thumb,
+.profile-section::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.card-body::-webkit-scrollbar-thumb:hover,
+.profile-section::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+  .profile-img {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .profile-name {
+    font-size: 1rem;
+  }
+  
+  .card-header {
+    padding: 0.875rem 1rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  .stat-number {
+    font-size: 1.75rem;
+  }
+  
+  .stat-icon {
+    font-size: 1.75rem;
+  }
 }
 </style>
 </head>
@@ -416,138 +511,116 @@ body {
 
 <?php include 'sidebar.php'; ?>
 
-<main class="main-content p-3 p-sm-4 p-lg-6">
-  <div class="max-w-7xl mx-auto">
-    
-    <!-- Welcome Header -->
-    <div class="dashboard-header">
-      <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3">
-        <div>
-          <h1 class="welcome-text mb-1">Welcome back, <?= htmlspecialchars(explode(' ', $userFullName)[0]) ?>! 👋</h1>
-          <p class="welcome-subtext mb-0">Here's what's happening with your dental care today</p>
-        </div>
-        <div class="d-flex gap-2 flex-wrap">
-          <a href="book-appointment.php" class="btn btn-primary quick-action-btn">
-            <i class="fas fa-calendar-plus"></i> Book Appointment
-          </a>
-        </div>
-      </div>
-    </div>
-
+<main class="main-content">
+  <div class="dashboard-container">
     <div class="dashboard-grid">
 
-      <!-- Profile Card -->
-      <div class="dashboard-card profile-card">
-        <h3 class="card-title">
-          <i class="fas fa-user-circle"></i> Patient Profile
-        </h3>
-        <div class="row g-4">
-          <div class="col-12 col-sm-auto text-center">
-            <div class="profile-image-container">
+      <!-- Profile Section -->
+      <div class="profile-section">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Patient Profile</h2>
+          </div>
+          <div class="card-body">
+            <div class="profile-header">
               <img src="<?= !empty($user['profile_image']) ? htmlspecialchars($user['profile_image']) : '/images/default-avatar.png' ?>" 
-                   alt="Profile Picture" class="profile-image">
+                   alt="Profile" class="profile-img">
+              <div class="profile-name"><?= htmlspecialchars($user['username'] ?? 'N/A') ?></div>
+              <div class="profile-email"><?= htmlspecialchars($user['email'] ?? 'N/A') ?></div>
+            </div>
+            
+            <div class="info-row">
+              <span class="info-label">Age</span>
+              <span class="info-value"><?= htmlspecialchars($user['age'] ?? 'N/A') ?> years</span>
+            </div>
+            
+            <div class="info-row">
+              <span class="info-label">Gender</span>
+              <span class="info-value"><?= htmlspecialchars($user['gender'] ?? 'N/A') ?></span>
+            </div>
+            
+            <div class="info-row">
+              <span class="info-label">Civil Status</span>
+              <span class="info-value"><?= htmlspecialchars($user['status'] ?? 'N/A') ?></span>
+            </div>
+            
+            <div class="info-row">
+              <span class="info-label">Contact</span>
+              <span class="info-value"><?= htmlspecialchars($user['contactNumber'] ?? 'N/A') ?></span>
+            </div>
+            
+            <div class="info-row">
+              <span class="info-label">Address</span>
+              <span class="info-value"><?= htmlspecialchars($user['address'] ?? 'N/A') ?></span>
+            </div>
+            
+            <div class="info-row">
+              <span class="info-label">Occupation</span>
+              <span class="info-value"><?= htmlspecialchars($user['occupation'] ?? 'N/A') ?></span>
+            </div>
+            
+            <div class="info-row">
+              <span class="info-label">Nationality</span>
+              <span class="info-value"><?= htmlspecialchars($user['nationality'] ?? 'N/A') ?></span>
+            </div>
+            
+            <button class="btn btn-primary btn-edit" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+              <i class="fas fa-edit me-2"></i>Edit Profile
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Section -->
+      <div class="stats-section">
+        <div class="stats-grid">
+          <!-- Total Appointments -->
+          <div class="stat-card primary">
+            <div>
+              <div class="stat-icon">
+                <i class="fas fa-calendar-check"></i>
+              </div>
+              <div class="stat-number"><?= $totalUpcoming ?></div>
+              <div class="stat-label">Upcoming</div>
             </div>
           </div>
-          <div class="col">
-            <div class="info-grid">
-              <div class="info-item">
-                <span class="info-label">Full Name</span>
-                <span class="info-value"><?= htmlspecialchars($user['username'] ?? 'N/A') ?></span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Age</span>
-                <span class="info-value"><?= htmlspecialchars($user['age'] ?? 'N/A') ?> years</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Gender</span>
-                <span class="info-value"><?= htmlspecialchars($user['gender'] ?? 'N/A') ?></span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Civil Status</span>
-                <span class="info-value"><?= htmlspecialchars($user['status'] ?? 'N/A') ?></span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Email Address</span>
-                <span class="info-value"><?= htmlspecialchars($user['email'] ?? 'N/A') ?></span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Contact Number</span>
-                <span class="info-value"><?= htmlspecialchars($user['contactNumber'] ?? 'N/A') ?></span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Address</span>
-                <span class="info-value"><?= htmlspecialchars($user['address'] ?? 'N/A') ?></span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Occupation</span>
-                <span class="info-value"><?= htmlspecialchars($user['occupation'] ?? 'N/A') ?></span>
-              </div>
+
+          <!-- Next Appointment -->
+          <div class="stat-card success">
+            <div class="card-header border-0 p-0 bg-transparent">
+              <h3 class="card-title text-white" style="font-size: 0.95rem;">Next Appointment</h3>
             </div>
-            <div class="mt-4">
-              <button class="btn btn-outline-primary quick-action-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">
-                <i class="fas fa-edit"></i> Edit Profile
-              </button>
+            <div style="margin-top: 0.75rem;">
+              <?php if ($firstAppointment): ?>
+                <div class="appointment-title text-white" style="font-size: 0.95rem;">
+                  <?= htmlspecialchars($firstAppointment['serviceName']); ?>
+                </div>
+                <div class="appointment-detail text-white-50" style="font-size: 0.8rem;">
+                  <i class="fas fa-calendar"></i>
+                  <?= date('M d, Y', strtotime($firstAppointment['date'])); ?>
+                </div>
+                <div class="appointment-detail text-white-50" style="font-size: 0.8rem;">
+                  <i class="fas fa-clock"></i>
+                  <?= htmlspecialchars($firstAppointment['time']); ?>
+                </div>
+              <?php else: ?>
+                <p class="text-white-50 mb-0" style="font-size: 0.85rem;">No appointments scheduled</p>
+              <?php endif; ?>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Stats Card - Total Appointments -->
-      <div class="dashboard-card stat-card">
-        <div class="text-center">
-          <div class="icon">
-            <i class="fas fa-calendar-check"></i>
+      <!-- Calendar Section -->
+      <div class="calendar-section">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Appointment Calendar</h2>
           </div>
-          <div class="number"><?= $totalUpcoming ?></div>
-          <div class="label">Upcoming Appointments</div>
+          <div class="card-body">
+            <div id="calendar"></div>
+          </div>
         </div>
-      </div>
-
-      <!-- Next Appointment Card -->
-      <div class="dashboard-card">
-        <h3 class="card-title">
-          <i class="fas fa-clock"></i> Next Appointment
-        </h3>
-        <?php if ($firstAppointment): ?>
-          <div class="appointment-card">
-            <div class="service-name"><?= htmlspecialchars($firstAppointment['serviceName']); ?></div>
-            <div class="appointment-info">
-              <i class="fas fa-calendar-day"></i>
-              <span><?= date('F d, Y', strtotime($firstAppointment['date'])); ?></span>
-            </div>
-            <div class="appointment-info">
-              <i class="fas fa-clock"></i>
-              <span><?= htmlspecialchars($firstAppointment['time']); ?></span>
-            </div>
-            <div class="mt-3">
-              <span class="status-badge status-<?= strtolower($firstAppointment['status'] ?? 'pending'); ?>">
-                <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
-                <?= htmlspecialchars($firstAppointment['status'] ?? 'Pending'); ?>
-              </span>
-            </div>
-          </div>
-          <?php if ($totalUpcoming > 1): ?>
-            <a href="appointments.php" class="btn btn-outline-primary btn-sm w-100 mt-3">
-              View All Appointments <i class="fas fa-arrow-right ms-1"></i>
-            </a>
-          <?php endif; ?>
-        <?php else: ?>
-          <div class="empty-state">
-            <i class="fas fa-calendar-times"></i>
-            <p class="mb-0 mt-2">No upcoming appointments scheduled</p>
-            <a href="book-appointment.php" class="btn btn-primary btn-sm mt-3">
-              <i class="fas fa-plus"></i> Schedule Now
-            </a>
-          </div>
-        <?php endif; ?>
-      </div>
-
-      <!-- Appointment Calendar -->
-      <div class="dashboard-card calendar-card">
-        <h3 class="card-title">
-          <i class="fas fa-calendar-alt"></i> Appointment Calendar
-        </h3>
-        <div id="calendar"></div>
       </div>
 
     </div>
@@ -558,29 +631,29 @@ body {
 <div class="modal fade" id="appointmentModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header text-white">
-        <h5 class="modal-title"><i class="fas fa-info-circle me-2"></i>Appointment Details</h5>
+      <div class="modal-header">
+        <h5 class="modal-title">Appointment Details</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body p-4">
-        <div class="info-item mb-3">
-          <span class="info-label"><i class="fas fa-tooth me-2"></i>Service</span>
+      <div class="modal-body">
+        <div class="info-row">
+          <span class="info-label">Service</span>
           <span class="info-value" id="modalService"></span>
         </div>
-        <div class="info-item mb-3">
-          <span class="info-label"><i class="fas fa-calendar-day me-2"></i>Date</span>
+        <div class="info-row">
+          <span class="info-label">Date</span>
           <span class="info-value" id="modalDate"></span>
         </div>
-        <div class="info-item mb-3">
-          <span class="info-label"><i class="fas fa-clock me-2"></i>Time</span>
+        <div class="info-row">
+          <span class="info-label">Time</span>
           <span class="info-value" id="modalTime"></span>
         </div>
-        <div class="info-item mb-3">
-          <span class="info-label"><i class="fas fa-info-circle me-2"></i>Status</span>
+        <div class="info-row">
+          <span class="info-label">Status</span>
           <span class="info-value" id="modalStatus"></span>
         </div>
-        <div class="info-item">
-          <span class="info-label"><i class="fas fa-sticky-note me-2"></i>Notes</span>
+        <div class="info-row">
+          <span class="info-label">Notes</span>
           <span class="info-value" id="modalNotes"></span>
         </div>
       </div>
@@ -595,26 +668,26 @@ body {
 <div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <form method="POST" action="update_profile.php" enctype="multipart/form-data" class="modal-content">
-      <div class="modal-header text-white">
-        <h5 class="modal-title"><i class="fas fa-user-edit me-2"></i>Edit Profile</h5>
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Profile</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body p-4">
+      <div class="modal-body">
         <div class="row g-3">
           <input type="hidden" name="id" value="<?= (string)$user->_id ?>">
           
           <div class="col-md-6">
-            <label class="form-label"><i class="fas fa-user me-2"></i>Full Name</label>
+            <label class="form-label">Full Name</label>
             <input type="text" name="username" class="form-control" value="<?= htmlspecialchars($user->username ?? '') ?>" required>
           </div>
           
           <div class="col-md-6">
-            <label class="form-label"><i class="fas fa-birthday-cake me-2"></i>Date of Birth</label>
+            <label class="form-label">Date of Birth</label>
             <input type="date" name="birthday" class="form-control" value="<?= htmlspecialchars($user->birthday ?? '') ?>" required>
           </div>
           
           <div class="col-md-6">
-            <label class="form-label"><i class="fas fa-venus-mars me-2"></i>Gender</label>
+            <label class="form-label">Gender</label>
             <select class="form-select" name="gender" required>
               <option value="">Select Gender</option>
               <option value="Male" <?= ($user->gender ?? '') == "Male" ? "selected" : "" ?>>Male</option>
@@ -623,22 +696,22 @@ body {
           </div>
           
           <div class="col-md-6">
-            <label class="form-label"><i class="fas fa-phone me-2"></i>Contact Number</label>
+            <label class="form-label">Contact Number</label>
             <input type="text" name="contactNumber" class="form-control" value="<?= htmlspecialchars($user->contactNumber ?? '') ?>" required>
           </div>
           
           <div class="col-12">
-            <label class="form-label"><i class="fas fa-map-marker-alt me-2"></i>Address</label>
+            <label class="form-label">Address</label>
             <input type="text" name="address" class="form-control" value="<?= htmlspecialchars($user->address ?? '') ?>" required>
           </div>
           
           <div class="col-md-6">
-            <label class="form-label"><i class="fas fa-envelope me-2"></i>Email</label>
+            <label class="form-label">Email</label>
             <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($user->email ?? '') ?>" required readonly>
           </div>
           
           <div class="col-md-6">
-            <label class="form-label"><i class="fas fa-heart me-2"></i>Civil Status</label>
+            <label class="form-label">Civil Status</label>
             <select name="status" class="form-select" required>
               <option value="">Select Status</option>
               <option value="Single" <?= ($user['status'] ?? '') === 'Single' ? 'selected' : '' ?>>Single</option>
@@ -651,12 +724,12 @@ body {
           </div>
 
           <div class="col-md-6">
-            <label class="form-label"><i class="fas fa-briefcase me-2"></i>Occupation</label>
+            <label class="form-label">Occupation</label>
             <input type="text" name="occupation" class="form-control" value="<?= htmlspecialchars($user->occupation ?? '') ?>" required>
           </div>
           
           <div class="col-md-6">
-            <label class="form-label"><i class="fas fa-flag me-2"></i>Nationality</label>
+            <label class="form-label">Nationality</label>
             <select name="nationality" class="form-select" required>
               <option value="">Select Nationality</option>
               <option value="Filipino" <?= (($user['nationality'] ?? '') === 'Filipino') ? 'selected' : '' ?>>Filipino</option>
@@ -666,9 +739,7 @@ body {
         </div>
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn btn-success">
-          <i class="fas fa-save me-2"></i>Save Changes
-        </button>
+        <button type="submit" class="btn btn-success">Save Changes</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
       </div>
     </form>
@@ -686,13 +757,14 @@ document.addEventListener('DOMContentLoaded', function() {
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
-      right: window.innerWidth < 768 ? 'listMonth' : 'dayGridMonth,listMonth'
+      right: window.innerWidth < 768 ? '' : 'dayGridMonth,listMonth'
     },
     themeSystem: 'bootstrap5',
     events: 'get_user_appointments.php',
-    eventColor: '#0891b2',
+    eventColor: '#0d6efd',
     eventTextColor: '#fff',
-    height: 'auto',
+    height: '100%',
+    contentHeight: 'auto',
     eventClick: function(info) {
       const data = info.event.extendedProps;
       const eventDate = info.event.start;
@@ -713,8 +785,6 @@ document.addEventListener('DOMContentLoaded', function() {
     windowResize: function(view) {
       if (window.innerWidth < 768) {
         calendar.changeView('listMonth');
-      } else {
-        calendar.changeView('dayGridMonth');
       }
     }
   });
