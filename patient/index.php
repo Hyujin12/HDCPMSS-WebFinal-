@@ -1,19 +1,5 @@
 <?php
-// Fetch services from database
-require __DIR__ . '/../vendor/autoload.php';
-use MongoDB\Client;
-use Dotenv\Dotenv;
-
-$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
-$dotenv->load();
-
-$mongoClient = new Client($_ENV['MONGO_URI']);
-$db = $mongoClient->HaliliDentalClinic;
-$servicesCollection = $db->services;
-
-// Fetch all services
-$servicesCursor = $servicesCollection->find();
-$services = iterator_to_array($servicesCursor);
+include 'service-grid.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,7 +8,6 @@ $services = iterator_to_array($servicesCursor);
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Halili's Dental Clinic - Your Trusted Dental Care Partner</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
       margin: 0;
@@ -53,164 +38,26 @@ $services = iterator_to_array($servicesCursor);
       transform: translateY(-8px);
       box-shadow: 0 20px 40px rgba(0,0,0,0.15);
     }
-
-    /* Service Slider Styles */
-    .slider-container {
-      overflow: hidden;
-      position: relative;
-    }
-
     #serviceSlides {
-      display: flex;
-      transition: transform 0.5s ease-in-out;
-    }
-
-    .service-slide {
+    display: flex;
+    align-items: stretch; /* Make slides stretch equally */
+  }
+      .service-slide {
       min-width: 100%;
       flex-shrink: 0;
-      padding: 0 0.5rem;
+      display: flex;
+      justify-content: center;
     }
-
-    .service-card {
-      background: white;
-      border-radius: 1.5rem;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    .slider-container {
       overflow: hidden;
-      border: 1px solid #e5e7eb;
-      display: flex;
-      flex-direction: column;
-      max-width: 600px;
-      margin: 0 auto;
-      height: 100%;
+      padding: 0 2px;
     }
-
-    .service-image-container {
-      width: 100%;
-      height: 280px;
-      overflow: hidden;
-      background: #f3f4f6;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .service-image-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-
-    .service-card:hover .service-image-container img {
-      transform: scale(1.05);
-    }
-
-    .service-content {
-      padding: 2rem;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .service-title {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: #1f2937;
-      margin-bottom: 1rem;
-    }
-
-    .service-description {
-      color: #6b7280;
-      line-height: 1.7;
-      margin-bottom: 1.5rem;
-      flex: 1;
-    }
-
-    .service-button {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 0.875rem 2rem;
-      border-radius: 9999px;
-      font-weight: 600;
-      text-align: center;
-      transition: all 0.3s ease;
-      border: none;
-      cursor: pointer;
-      display: inline-block;
-    }
-
-    .service-button:hover {
-      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-      transform: translateY(-2px);
-    }
-
-    /* Navigation Buttons */
-    .slider-nav-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: white;
-      width: 3rem;
-      height: 3rem;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      z-index: 10;
-      border: 1px solid #e5e7eb;
-    }
-
-    .slider-nav-btn:hover {
-      background: #f9fafb;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-    }
-
-    .slider-nav-btn.prev {
-      left: -1rem;
-    }
-
-    .slider-nav-btn.next {
-      right: -1rem;
-    }
-
-    @media (min-width: 640px) {
-      .slider-nav-btn.prev {
-        left: -1.5rem;
-      }
-      .slider-nav-btn.next {
-        right: -1.5rem;
-      }
-    }
-
-    /* Slide Indicators */
-    .slide-indicators {
-      display: flex;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-top: 2rem;
-    }
-
-    .slide-indicator {
-      width: 0.5rem;
-      height: 0.5rem;
-      border-radius: 9999px;
-      background: #d1d5db;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .slide-indicator:hover {
-      background: #9ca3af;
-    }
-
-    .slide-indicator.active {
-      width: 2rem;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-
+  .service-slide .card-hover {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 620px; /* Control uniform height (adjust as needed) */
+}
     .nav-link {
       position: relative;
       padding-bottom: 4px;
@@ -236,6 +83,37 @@ $services = iterator_to_array($servicesCursor);
       backdrop-filter: blur(10px);
       background: rgba(255, 255, 255, 0.9);
       border: 1px solid rgba(102, 126, 234, 0.1);
+    }
+
+          .service-image-container {
+        width: 100%;
+        height: 280px; /* Slightly taller */
+        overflow: hidden;
+        background: #f3f4f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+
+        .service-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* fill the box nicely */
+        transition: transform 0.5s ease;
+      }
+
+
+  
+    .service-image-container:hover img {
+      transform: scale(1.05);
+    }
+    .service-slide .p-6,
+    .service-slide .p-8 {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
   </style>
 </head>
@@ -381,72 +259,104 @@ $services = iterator_to_array($servicesCursor);
         </div>
       </div>
     </div>
-  </section>
-
-  <!-- Dental Services Section -->
-  <section id="services" class="py-16 sm:py-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-3xl mx-auto mb-12">
-        <h2 class="text-3xl sm:text-4xl font-bold mb-4">Our <span class="gradient-text">Dental Services</span></h2>
-        <p class="text-gray-600 text-lg">
-          At Halili's Dental Clinic, we offer a comprehensive range of dental services to meet all your oral health needs. From routine check-ups to advanced cosmetic procedures, our team is dedicated to providing exceptional care tailored to you.
-        </p>
-      </div>
-
-      <div class="relative max-w-4xl mx-auto">
-        <div class="slider-container">
-          <div id="serviceSlides">
-            <?php if (!empty($services)): ?>
-              <?php foreach ($services as $service): ?>
-                <div class="service-slide">
-                  <div class="service-card">
-                    <div class="service-image-container">
-                      <img src="<?= htmlspecialchars($service['image'] ?? '/images/default-service.jpg') ?>" 
-                           alt="<?= htmlspecialchars($service['title'] ?? 'Dental Service') ?>">
-                    </div>
-                    <div class="service-content">
-                      <h3 class="service-title"><?= htmlspecialchars($service['title'] ?? 'Service') ?></h3>
-                      <p class="service-description"><?= htmlspecialchars($service['description'] ?? '') ?></p>
-                      <a href="log-in.php">
-                        <button class="service-button w-full">
-                          <i class="fas fa-calendar-check mr-2"></i>
-                          Book Appointment
-                        </button>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              <?php endforeach; ?>
-            <?php else: ?>
-              <div class="service-slide">
-                <div class="service-card">
-                  <div class="service-content text-center">
-                    <p class="text-gray-500">No services available at the moment.</p>
-                  </div>
-                </div>
-              </div>
-            <?php endif; ?>
-          </div>
-        </div>
-
-        <!-- Navigation Buttons -->
-        <button id="prevService" class="slider-nav-btn prev">
-          <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-          </svg>
-        </button>
-        <button id="nextService" class="slider-nav-btn next">
-          <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-
-        <!-- Slide Indicators -->
-        <div id="slideIndicators" class="slide-indicators"></div>
-      </div>
     </div>
   </section>
 
+  <!-- Dental Services Section - REPLACE YOUR EXISTING SERVICES SECTION WITH THIS -->
+<section id="services" class="py-16 sm:py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-3xl mx-auto mb-12">
+      <h2 class="text-3xl sm:text-4xl font-bold mb-4">Our <span class="gradient-text">Dental Services</span></h2>
+      <p class="text-gray-600 text-lg">
+        At Halili's Dental Clinic, we offer a comprehensive range of dental services to meet all your oral health needs. From routine check-ups to advanced cosmetic procedures, our team is dedicated to providing exceptional care tailored to you.
+      </p>
+    </div>
+
+    <div class="relative max-w-7xl mx-auto">
+      <div class="slider-container">
+        <div id="serviceSlides" class="flex transition-transform duration-500 ease-in-out">
+          <!-- Slide 1 - First 3 services -->
+          <div class="service-slide px-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+              <?php
+              $slideServices = array_slice($services, 0, 3);
+              foreach ($slideServices as $service) {
+                  echo '<div class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 flex flex-col">';
+                  echo '<div class="service-image-container">';
+                  echo '<img src="' . htmlspecialchars($service['image']) . '" alt="' . htmlspecialchars($service['title']) . '">';
+                  echo '</div>';
+                  echo '<div class="p-6 sm:p-8 flex flex-col flex-grow">';
+                  echo '<h3 class="text-2xl sm:text-3xl font-bold mb-4">' . htmlspecialchars($service['title']) . '</h3>';
+                  echo '<p class="text-gray-600 mb-6 text-base sm:text-lg leading-relaxed flex-grow">' . htmlspecialchars($service['description']) . '</p>';
+                  echo '<button class="hero-gradient text-white py-3 px-8 rounded-full hover:shadow-lg transition duration-300 w-full sm:w-auto font-medium">' . htmlspecialchars($service['btn']) . '</button>';
+                  echo '</div>';
+                  echo '</div>';
+              }
+              ?>
+            </div>
+          </div>
+
+          <!-- Slide 2 - Next 3 services -->
+          <div class="service-slide px-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+              <?php
+              $slideServices = array_slice($services, 3, 3);
+              foreach ($slideServices as $service) {
+                  echo '<div class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 flex flex-col">';
+                  echo '<div class="service-image-container">';
+                  echo '<img src="' . htmlspecialchars($service['image']) . '" alt="' . htmlspecialchars($service['title']) . '">';
+                  echo '</div>';
+                  echo '<div class="p-6 sm:p-8 flex flex-col flex-grow">';
+                  echo '<h3 class="text-2xl sm:text-3xl font-bold mb-4">' . htmlspecialchars($service['title']) . '</h3>';
+                  echo '<p class="text-gray-600 mb-6 text-base sm:text-lg leading-relaxed flex-grow">' . htmlspecialchars($service['description']) . '</p>';
+                  echo '<button class="hero-gradient text-white py-3 px-8 rounded-full hover:shadow-lg transition duration-300 w-full sm:w-auto font-medium">' . htmlspecialchars($service['btn']) . '</button>';
+                  echo '</div>';
+                  echo '</div>';
+              }
+              ?>
+            </div>
+          </div>
+
+          <!-- Slide 3 - Last service -->
+          <div class="service-slide px-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+              <?php
+              $slideServices = array_slice($services, 6);
+              foreach ($slideServices as $service) {
+                  echo '<div class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 flex flex-col">';
+                  echo '<div class="service-image-container">';
+                  echo '<img src="' . htmlspecialchars($service['image']) . '" alt="' . htmlspecialchars($service['title']) . '">';
+                  echo '</div>';
+                  echo '<div class="p-6 sm:p-8 flex flex-col flex-grow">';
+                  echo '<h3 class="text-2xl sm:text-3xl font-bold mb-4">' . htmlspecialchars($service['title']) . '</h3>';
+                  echo '<p class="text-gray-600 mb-6 text-base sm:text-lg leading-relaxed flex-grow">' . htmlspecialchars($service['description']) . '</p>';
+                  echo '<button class="hero-gradient text-white py-3 px-8 rounded-full hover:shadow-lg transition duration-300 w-full sm:w-auto font-medium">' . htmlspecialchars($service['btn']) . '</button>';
+                  echo '</div>';
+                  echo '</div>';
+              }
+              ?>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <button id="prevService" class="absolute -left-4 sm:-left-6 top-1/2 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg hover:bg-gray-100 transition z-10 border border-gray-200">
+        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+      </button>
+      <button id="nextService" class="absolute -right-4 sm:-right-6 top-1/2 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg hover:bg-gray-100 transition z-10 border border-gray-200">
+        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </button>
+
+      <!-- Slide Indicators -->
+      <div id="slideIndicators" class="flex justify-center mt-8 gap-2"></div>
+    </div>
+  </div>
+</section>
   <!-- Contact Section -->
   <section id="contact" class="bg-gradient-to-br from-purple-600 to-blue-600 py-16 sm:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -460,7 +370,7 @@ $services = iterator_to_array($servicesCursor);
         <!-- Phone -->
         <div class="contact-card p-6 rounded-2xl text-center">
           <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-phone text-white text-2xl"></i>
+            <img src="/images/telephone.png" alt="Phone" class="w-8 h-8">
           </div>
           <h3 class="font-bold text-gray-900 mb-2">Call Us</h3>
           <p class="text-gray-600">0922 223 3688</p>
@@ -469,7 +379,7 @@ $services = iterator_to_array($servicesCursor);
         <!-- Viber -->
         <div class="contact-card p-6 rounded-2xl text-center">
           <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i class="fab fa-viber text-white text-2xl"></i>
+            <img src="/images/viber.png" alt="Viber" class="w-8 h-8">
           </div>
           <h3 class="font-bold text-gray-900 mb-2">Viber</h3>
           <p class="text-gray-600">+63 922 223 3688</p>
@@ -478,7 +388,7 @@ $services = iterator_to_array($servicesCursor);
         <!-- Email -->
         <div class="contact-card p-6 rounded-2xl text-center sm:col-span-2 lg:col-span-1">
           <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-envelope text-white text-2xl"></i>
+            <img src="../images/email.png" alt="Email" class="w-8 h-8">
           </div>
           <h3 class="font-bold text-gray-900 mb-2">Email</h3>
           <p class="text-gray-600 break-all">halilidentalcare@gmail.com</p>
@@ -533,28 +443,33 @@ $services = iterator_to_array($servicesCursor);
 
     // Create slide indicators
     for (let i = 0; i < totalSlides; i++) {
-      const indicator = document.createElement('div');
-      indicator.className = 'slide-indicator';
-      indicator.onclick = () => goToSlide(i);
-      indicatorsContainer.appendChild(indicator);
+      const dot = document.createElement('button');
+      dot.className = 'w-2 h-2 rounded-full transition-all duration-300';
+      dot.onclick = () => goToSlide(i);
+      indicatorsContainer.appendChild(dot);
     }
 
     function updateIndicators() {
-      const indicators = indicatorsContainer.children;
-      for (let i = 0; i < indicators.length; i++) {
+      const dots = indicatorsContainer.children;
+      for (let i = 0; i < dots.length; i++) {
         if (i === currentIndex) {
-          indicators[i].classList.add('active');
+          dots[i].className = 'w-8 h-2 rounded-full bg-purple-600 transition-all duration-300';
         } else {
-          indicators[i].classList.remove('active');
+          dots[i].className = 'w-2 h-2 rounded-full bg-gray-300 hover:bg-gray-400 transition-all duration-300';
         }
       }
     }
 
-    function updateSlider() {
-      const slideWidth = slider.offsetWidth;
+      function updateSlider() {
+      const slideWidth = slides[0].offsetWidth;
       slider.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
       updateIndicators();
-    }
+}
+
+    window.addEventListener('resize', updateSlider);
+    window.addEventListener('load', updateSlider);
+    updateSlider();
+
 
     function goToSlide(index) {
       currentIndex = index;
@@ -574,7 +489,7 @@ $services = iterator_to_array($servicesCursor);
       resetAutoSlide();
     });
 
-    // Auto-slide every 4 seconds
+    // Auto-slide - ONE AT A TIME
     let autoSlideInterval = setInterval(() => {
       currentIndex = (currentIndex + 1) % totalSlides;
       updateSlider();
@@ -592,11 +507,7 @@ $services = iterator_to_array($servicesCursor);
     slider.addEventListener('mouseenter', () => clearInterval(autoSlideInterval));
     slider.addEventListener('mouseleave', resetAutoSlide);
 
-    // Handle window resize
     window.addEventListener('resize', updateSlider);
-    window.addEventListener('load', updateSlider);
-    
-    // Initialize
     updateSlider();
 
     // Smooth Scrolling
