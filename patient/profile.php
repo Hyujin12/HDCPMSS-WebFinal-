@@ -97,111 +97,142 @@ unset($_SESSION['update_success']);
                 padding: 1.5rem;
             }
             
-            .content > * {
-                flex-shrink: 0;
-            }
-            
             .page-header {
                 margin-bottom: 1rem;
-                padding: 1.25rem;
-            }
-            
-            .stats-container {
-                margin-bottom: 1rem;
+                padding: 1rem;
+                flex-shrink: 0;
             }
             
             .profile-card {
                 flex: 1;
-                overflow-y: auto;
+                overflow: hidden;
                 margin-bottom: 0;
                 min-height: 0;
+                display: flex;
+                flex-direction: column;
             }
             
+            .profile-banner {
+                height: 70px;
+                flex-shrink: 0;
+            }
+            
+            .profile-image-container {
+                margin-top: -35px;
+                margin-bottom: 0.5rem;
+                flex-shrink: 0;
+            }
+            
+            .profile-image {
+                width: 70px;
+                height: 70px;
+                border: 3px solid white;
+            }
+            
+            .profile-name {
+                font-size: 1.25rem;
+                margin-bottom: 0.25rem;
+            }
+            
+            .profile-email {
+                font-size: 0.8rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .verified-badge {
+                padding: 0.35rem 0.75rem;
+                font-size: 0.75rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .profile-progress {
+                margin: 0 1.5rem 0.75rem 1.5rem;
+                padding: 0.6rem;
+                flex-shrink: 0;
+            }
+            
+            .progress-label {
+                font-size: 0.75rem;
+                margin-bottom: 0.35rem;
+            }
+            
+            .progress {
+                height: 6px;
+            }
+            
+            .info-grid {
+                padding: 0.75rem 1.5rem;
+                gap: 0.75rem;
+                grid-template-columns: repeat(3, 1fr);
+                overflow: hidden;
+                flex: 1;
+            }
+            
+            .info-card {
+                padding: 0.75rem;
+            }
+            
+            .info-label {
+                font-size: 0.7rem;
+                margin-bottom: 0.4rem;
+            }
+            
+            .info-label i {
+                font-size: 0.85rem;
+            }
+            
+            .info-value {
+                font-size: 0.9rem;
+            }
+            
+            .action-buttons {
+                padding: 0.75rem 1.5rem 0.75rem 1.5rem;
+                flex-shrink: 0;
+            }
+            
+            .btn-edit-profile {
+                padding: 0.6rem 1.5rem;
+                font-size: 0.85rem;
+            }
+        }
+        
+        @media (min-width: 1200px) {
             .profile-banner {
                 height: 80px;
             }
             
             .profile-image-container {
                 margin-top: -40px;
-                margin-bottom: 0.5rem;
             }
             
             .profile-image {
                 width: 80px;
                 height: 80px;
-                border: 4px solid white;
             }
             
             .profile-name {
                 font-size: 1.35rem;
-                margin-bottom: 0.25rem;
             }
             
             .profile-email {
-                font-size: 0.875rem;
-                margin-bottom: 0.75rem;
-            }
-            
-            .verified-badge {
-                padding: 0.4rem 0.875rem;
-                font-size: 0.8rem;
-            }
-            
-            .profile-progress {
-                margin: 0 1.5rem 0.75rem 1.5rem;
-                padding: 0.75rem;
+                font-size: 0.85rem;
             }
             
             .info-grid {
                 padding: 1rem 1.5rem;
-                gap: 0.875rem;
-                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
             }
             
             .info-card {
-                padding: 1rem;
+                padding: 0.875rem;
             }
             
             .info-label {
                 font-size: 0.75rem;
-                margin-bottom: 0.5rem;
             }
             
             .info-value {
-                font-size: 1rem;
-            }
-            
-            .action-buttons {
-                padding: 0.75rem 1.5rem 1rem 1.5rem;
-            }
-            
-            .btn-edit-profile {
-                padding: 0.75rem 1.75rem;
-                font-size: 0.9rem;
-            }
-            
-            .stat-card {
-                padding: 1rem;
-            }
-            
-            .stat-icon {
-                width: 50px;
-                height: 50px;
-                font-size: 1.25rem;
-            }
-            
-            .stat-info h4 {
-                font-size: 1.25rem;
-            }
-            
-            .stat-info p {
-                font-size: 0.8rem;
-            }
-        }
-        
-        @media (min-width: 1400px) {
-            .info-grid {
-                grid-template-columns: repeat(3, 1fr);
+                font-size: 0.95rem;
             }
         }
         
@@ -582,14 +613,6 @@ unset($_SESSION['update_success']);
                 font-size: 0.9rem;
                 width: 100%;
             }
-
-            .stats-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .stat-card {
-                padding: 1.25rem;
-            }
             
             .profile-progress {
                 margin: 0 1.25rem 1rem 1.25rem;
@@ -691,37 +714,6 @@ unset($_SESSION['update_success']);
                     <p class="page-subtitle mb-0">
                         Manage your personal information and account settings
                     </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Stats Cards -->
-        <div class="stats-container">
-            <div class="stat-card profile-complete">
-                <div class="stat-icon">
-                    <i class="bi bi-clipboard-check-fill"></i>
-                </div>
-                <div class="stat-info">
-                    <h4>95%</h4>
-                    <p>Profile Complete</p>
-                </div>
-            </div>
-            <div class="stat-card account-age">
-                <div class="stat-icon">
-                    <i class="bi bi-calendar-event"></i>
-                </div>
-                <div class="stat-info">
-                    <h4>Member</h4>
-                    <p>Active Patient</p>
-                </div>
-            </div>
-            <div class="stat-card last-update">
-                <div class="stat-icon">
-                    <i class="bi bi-clock-history"></i>
-                </div>
-                <div class="stat-info">
-                    <h4>Updated</h4>
-                    <p>Recently Modified</p>
                 </div>
             </div>
         </div>
