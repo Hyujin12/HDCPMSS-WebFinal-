@@ -1,5 +1,19 @@
 <?php
-include 'service-grid.php';
+// Fetch services from database
+require __DIR__ . '/../vendor/autoload.php';
+use MongoDB\Client;
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
+
+$mongoClient = new Client($_ENV['MONGO_URI']);
+$db = $mongoClient->HaliliDentalClinic;
+$servicesCollection = $db->services;
+
+// Fetch all services
+$servicesCursor = $servicesCollection->find();
+$services = iterator_to_array($servicesCursor);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,6 +22,7 @@ include 'service-grid.php';
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Halili's Dental Clinic - Your Trusted Dental Care Partner</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
       margin: 0;
@@ -38,26 +53,164 @@ include 'service-grid.php';
       transform: translateY(-8px);
       box-shadow: 0 20px 40px rgba(0,0,0,0.15);
     }
-    #serviceSlides {
-    display: flex;
-    align-items: stretch; /* Make slides stretch equally */
-  }
-      .service-slide {
-      min-width: 100%;
-      flex-shrink: 0;
-      display: flex;
-      justify-content: center;
-    }
+
+    /* Service Slider Styles */
     .slider-container {
       overflow: hidden;
-      padding: 0 2px;
+      position: relative;
     }
-  .service-slide .card-hover {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  max-height: 620px; /* Control uniform height (adjust as needed) */
-}
+
+    #serviceSlides {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .service-slide {
+      min-width: 100%;
+      flex-shrink: 0;
+      padding: 0 0.5rem;
+    }
+
+    .service-card {
+      background: white;
+      border-radius: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      overflow: hidden;
+      border: 1px solid #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      max-width: 600px;
+      margin: 0 auto;
+      height: 100%;
+    }
+
+    .service-image-container {
+      width: 100%;
+      height: 280px;
+      overflow: hidden;
+      background: #f3f4f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .service-image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .service-card:hover .service-image-container img {
+      transform: scale(1.05);
+    }
+
+    .service-content {
+      padding: 2rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .service-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 1rem;
+    }
+
+    .service-description {
+      color: #6b7280;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+      flex: 1;
+    }
+
+    .service-button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 0.875rem 2rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .service-button:hover {
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* Navigation Buttons */
+    .slider-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: white;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 10;
+      border: 1px solid #e5e7eb;
+    }
+
+    .slider-nav-btn:hover {
+      background: #f9fafb;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    .slider-nav-btn.prev {
+      left: -1rem;
+    }
+
+    .slider-nav-btn.next {
+      right: -1rem;
+    }
+
+    @media (min-width: 640px) {
+      .slider-nav-btn.prev {
+        left: -1.5rem;
+      }
+      .slider-nav-btn.next {
+        right: -1.5rem;
+      }
+    }
+
+    /* Slide Indicators */
+    .slide-indicators {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+
+    .slide-indicator {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 9999px;
+      background: #d1d5db;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .slide-indicator:hover {
+      background: #9ca3af;
+    }
+
+    .slide-indicator.active {
+      width: 2rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
     .nav-link {
       position: relative;
       padding-bottom: 4px;
@@ -83,37 +236,6 @@ include 'service-grid.php';
       backdrop-filter: blur(10px);
       background: rgba(255, 255, 255, 0.9);
       border: 1px solid rgba(102, 126, 234, 0.1);
-    }
-
-          .service-image-container {
-        width: 100%;
-        height: 280px; /* Slightly taller */
-        overflow: hidden;
-        background: #f3f4f6;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-
-        .service-image-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover; /* fill the box nicely */
-        transition: transform 0.5s ease;
-      }
-
-
-  
-    .service-image-container:hover img {
-      transform: scale(1.05);
-    }
-    .service-slide .p-6,
-    .service-slide .p-8 {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
     }
   </style>
 </head>
@@ -258,17 +380,6 @@ include 'service-grid.php';
           <p class="text-gray-600">Personalized treatment plans designed around your specific needs and comfort.</p>
         </div>
       </div>
-      <div class="flex justify-center mb-12">
-  <iframe
-  class="w-full max-w-3xl aspect-video rounded-2xl shadow-lg"
-  src="https://www.youtube.com/embed/8ZF4Z0fmJyw"
-  frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-  allowfullscreen>
-</iframe>
-
-</div>
-    </div>
     </div>
   </section>
 
@@ -284,40 +395,54 @@ include 'service-grid.php';
 
       <div class="relative max-w-4xl mx-auto">
         <div class="slider-container">
-          <div id="serviceSlides" class="flex transition-transform duration-500 ease-in-out">
-            <?php
-              foreach ($services as $service) {
-                  echo '<div class="service-slide px-2">';
-                  echo '<div class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">';
-                  echo '<div class="service-image-container">';
-                  echo '<img src="' . htmlspecialchars($service['image']) . '" alt="' . htmlspecialchars($service['title']) . '">';
-                  echo '</div>';
-                  echo '<div class="p-6 sm:p-8">';
-                  echo '<h3 class="text-2xl sm:text-3xl font-bold mb-4">' . htmlspecialchars($service['title']) . '</h3>';
-                  echo '<p class="text-gray-600 mb-6 text-base sm:text-lg leading-relaxed">' . htmlspecialchars($service['description']) . '</p>';
-                  echo '<button class="hero-gradient text-white py-3 px-8 rounded-full hover:shadow-lg transition duration-300 w-full sm:w-auto font-medium">' . htmlspecialchars($service['btn']) . '</button>';
-                  echo '</div>';
-                  echo '</div>';
-                  echo '</div>';
-              }
-            ?>
+          <div id="serviceSlides">
+            <?php if (!empty($services)): ?>
+              <?php foreach ($services as $service): ?>
+                <div class="service-slide">
+                  <div class="service-card">
+                    <div class="service-image-container">
+                      <img src="<?= htmlspecialchars($service['image'] ?? '/images/default-service.jpg') ?>" 
+                           alt="<?= htmlspecialchars($service['title'] ?? 'Dental Service') ?>">
+                    </div>
+                    <div class="service-content">
+                      <h3 class="service-title"><?= htmlspecialchars($service['title'] ?? 'Service') ?></h3>
+                      <p class="service-description"><?= htmlspecialchars($service['description'] ?? '') ?></p>
+                      <a href="log-in.php">
+                        <button class="service-button w-full">
+                          <i class="fas fa-calendar-check mr-2"></i>
+                          Book Appointment
+                        </button>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              <?php endforeach; ?>
+            <?php else: ?>
+              <div class="service-slide">
+                <div class="service-card">
+                  <div class="service-content text-center">
+                    <p class="text-gray-500">No services available at the moment.</p>
+                  </div>
+                </div>
+              </div>
+            <?php endif; ?>
           </div>
         </div>
 
         <!-- Navigation Buttons -->
-        <button id="prevService" class="absolute -left-4 sm:-left-6 top-1/2 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg hover:bg-gray-100 transition z-10 border border-gray-200">
-          <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button id="prevService" class="slider-nav-btn prev">
+          <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </button>
-        <button id="nextService" class="absolute -right-4 sm:-right-6 top-1/2 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg hover:bg-gray-100 transition z-10 border border-gray-200">
-          <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button id="nextService" class="slider-nav-btn next">
+          <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
           </svg>
         </button>
 
         <!-- Slide Indicators -->
-        <div id="slideIndicators" class="flex justify-center mt-8 gap-2"></div>
+        <div id="slideIndicators" class="slide-indicators"></div>
       </div>
     </div>
   </section>
@@ -335,7 +460,7 @@ include 'service-grid.php';
         <!-- Phone -->
         <div class="contact-card p-6 rounded-2xl text-center">
           <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <img src="/images/telephone.png" alt="Phone" class="w-8 h-8">
+            <i class="fas fa-phone text-white text-2xl"></i>
           </div>
           <h3 class="font-bold text-gray-900 mb-2">Call Us</h3>
           <p class="text-gray-600">0922 223 3688</p>
@@ -344,7 +469,7 @@ include 'service-grid.php';
         <!-- Viber -->
         <div class="contact-card p-6 rounded-2xl text-center">
           <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <img src="/images/viber.png" alt="Viber" class="w-8 h-8">
+            <i class="fab fa-viber text-white text-2xl"></i>
           </div>
           <h3 class="font-bold text-gray-900 mb-2">Viber</h3>
           <p class="text-gray-600">+63 922 223 3688</p>
@@ -353,7 +478,7 @@ include 'service-grid.php';
         <!-- Email -->
         <div class="contact-card p-6 rounded-2xl text-center sm:col-span-2 lg:col-span-1">
           <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <img src="../images/email.png" alt="Email" class="w-8 h-8">
+            <i class="fas fa-envelope text-white text-2xl"></i>
           </div>
           <h3 class="font-bold text-gray-900 mb-2">Email</h3>
           <p class="text-gray-600 break-all">halilidentalcare@gmail.com</p>
@@ -408,33 +533,28 @@ include 'service-grid.php';
 
     // Create slide indicators
     for (let i = 0; i < totalSlides; i++) {
-      const dot = document.createElement('button');
-      dot.className = 'w-2 h-2 rounded-full transition-all duration-300';
-      dot.onclick = () => goToSlide(i);
-      indicatorsContainer.appendChild(dot);
+      const indicator = document.createElement('div');
+      indicator.className = 'slide-indicator';
+      indicator.onclick = () => goToSlide(i);
+      indicatorsContainer.appendChild(indicator);
     }
 
     function updateIndicators() {
-      const dots = indicatorsContainer.children;
-      for (let i = 0; i < dots.length; i++) {
+      const indicators = indicatorsContainer.children;
+      for (let i = 0; i < indicators.length; i++) {
         if (i === currentIndex) {
-          dots[i].className = 'w-8 h-2 rounded-full bg-purple-600 transition-all duration-300';
+          indicators[i].classList.add('active');
         } else {
-          dots[i].className = 'w-2 h-2 rounded-full bg-gray-300 hover:bg-gray-400 transition-all duration-300';
+          indicators[i].classList.remove('active');
         }
       }
     }
 
-      function updateSlider() {
-      const slideWidth = slides[0].offsetWidth;
+    function updateSlider() {
+      const slideWidth = slider.offsetWidth;
       slider.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
       updateIndicators();
-}
-
-    window.addEventListener('resize', updateSlider);
-    window.addEventListener('load', updateSlider);
-    updateSlider();
-
+    }
 
     function goToSlide(index) {
       currentIndex = index;
@@ -454,7 +574,7 @@ include 'service-grid.php';
       resetAutoSlide();
     });
 
-    // Auto-slide - ONE AT A TIME
+    // Auto-slide every 4 seconds
     let autoSlideInterval = setInterval(() => {
       currentIndex = (currentIndex + 1) % totalSlides;
       updateSlider();
@@ -472,7 +592,11 @@ include 'service-grid.php';
     slider.addEventListener('mouseenter', () => clearInterval(autoSlideInterval));
     slider.addEventListener('mouseleave', resetAutoSlide);
 
+    // Handle window resize
     window.addEventListener('resize', updateSlider);
+    window.addEventListener('load', updateSlider);
+    
+    // Initialize
     updateSlider();
 
     // Smooth Scrolling
