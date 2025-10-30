@@ -258,6 +258,17 @@ include 'service-grid.php';
           <p class="text-gray-600">Personalized treatment plans designed around your specific needs and comfort.</p>
         </div>
       </div>
+      <div class="flex justify-center mb-12">
+  <iframe
+  class="w-full max-w-3xl aspect-video rounded-2xl shadow-lg"
+  src="https://www.youtube.com/embed/8ZF4Z0fmJyw"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen>
+</iframe>
+
+</div>
+    </div>
     </div>
   </section>
 
@@ -317,7 +328,7 @@ include 'service-grid.php';
       <div class="text-center mb-12">
         <img src="/images/halili-logo.png" alt="Halili's Dental Clinic" class="w-24 sm:w-32 h-auto mx-auto mb-6 bg-white p-4 rounded-2xl shadow-xl">
         <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Get In Touch With Us</h2>
-        <p class="text-purple-100 text-lg max-w-2xl mx-auto">Halili Dental Clinic by Doc Kyle Halili, Rodriguez, Philippines</p>
+        <p class="text-purple-100 text-lg max-w-2xl mx-auto">Halili Dental Clinic by Doc Kyle Halili DMD, Rodriguez, Philippines</p>
       </div>
 
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
