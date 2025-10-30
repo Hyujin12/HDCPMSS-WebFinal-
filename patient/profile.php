@@ -114,51 +114,70 @@ unset($_SESSION['update_success']);
                 flex: 1;
                 overflow-y: auto;
                 margin-bottom: 0;
-                display: flex;
-                flex-direction: column;
+                min-height: 0;
             }
             
             .profile-banner {
-                height: 100px;
+                height: 80px;
             }
             
             .profile-image-container {
-                margin-top: -50px;
+                margin-top: -40px;
                 margin-bottom: 0.5rem;
             }
             
             .profile-image {
-                width: 100px;
-                height: 100px;
+                width: 80px;
+                height: 80px;
+                border: 4px solid white;
             }
             
             .profile-name {
-                font-size: 1.5rem;
+                font-size: 1.35rem;
                 margin-bottom: 0.25rem;
             }
             
             .profile-email {
-                font-size: 0.9rem;
-                margin-bottom: 1rem;
+                font-size: 0.875rem;
+                margin-bottom: 0.75rem;
+            }
+            
+            .verified-badge {
+                padding: 0.4rem 0.875rem;
+                font-size: 0.8rem;
             }
             
             .profile-progress {
-                margin: 0 1.5rem 1rem 1.5rem;
+                margin: 0 1.5rem 0.75rem 1.5rem;
                 padding: 0.75rem;
             }
             
             .info-grid {
                 padding: 1rem 1.5rem;
-                gap: 1rem;
-                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 0.875rem;
+                grid-template-columns: repeat(2, 1fr);
             }
             
             .info-card {
                 padding: 1rem;
             }
             
+            .info-label {
+                font-size: 0.75rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .info-value {
+                font-size: 1rem;
+            }
+            
             .action-buttons {
-                padding: 0 1.5rem 1.25rem 1.5rem;
+                padding: 0.75rem 1.5rem 1rem 1.5rem;
+            }
+            
+            .btn-edit-profile {
+                padding: 0.75rem 1.75rem;
+                font-size: 0.9rem;
             }
             
             .stat-card {
@@ -173,6 +192,16 @@ unset($_SESSION['update_success']);
             
             .stat-info h4 {
                 font-size: 1.25rem;
+            }
+            
+            .stat-info p {
+                font-size: 0.8rem;
+            }
+        }
+        
+        @media (min-width: 1400px) {
+            .info-grid {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
         
@@ -216,20 +245,22 @@ unset($_SESSION['update_success']);
 
         .profile-banner {
             background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-            height: 140px;
+            height: 120px;
             position: relative;
+            flex-shrink: 0;
         }
 
         .profile-image-container {
             position: relative;
-            margin-top: -70px;
+            margin-top: -60px;
             text-align: center;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
+            flex-shrink: 0;
         }
 
         .profile-image {
-            width: 140px;
-            height: 140px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             border: 5px solid white;
             object-fit: cover;
@@ -268,17 +299,41 @@ unset($_SESSION['update_success']);
         /* Info Grid */
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            padding: 2rem;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            padding: 1.5rem;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        @media (min-width: 576px) {
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 1200px) {
+            .info-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
 
         .info-card {
             background: #f8fafc;
             border-radius: 12px;
-            padding: 1.5rem;
+            padding: 1.25rem;
             border-left: 4px solid #3b82f6;
             transition: all 0.3s;
+        }
+        
+        .info-card.full-width {
+            grid-column: 1 / -1;
         }
 
         .info-card:hover {
@@ -474,11 +529,15 @@ unset($_SESSION['update_success']);
         /* Responsive Design */
         @media (max-width: 768px) {
             .page-header {
-                padding: 1.5rem;
+                padding: 1.25rem;
             }
             
             .page-title {
-                font-size: 1.5rem;
+                font-size: 1.35rem;
+            }
+            
+            .page-subtitle {
+                font-size: 0.8rem;
             }
 
             .profile-banner {
@@ -492,24 +551,93 @@ unset($_SESSION['update_success']);
             .profile-image {
                 width: 100px;
                 height: 100px;
+                border: 4px solid white;
             }
 
             .profile-name {
-                font-size: 1.5rem;
+                font-size: 1.35rem;
+            }
+            
+            .profile-email {
+                font-size: 0.875rem;
+            }
+            
+            .verified-badge {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.875rem;
             }
 
             .info-grid {
                 grid-template-columns: 1fr;
-                padding: 1.5rem;
+                padding: 1.25rem;
                 gap: 1rem;
             }
 
             .action-buttons {
-                padding: 0 1.5rem 1.5rem 1.5rem;
+                padding: 0 1.25rem 1.25rem 1.25rem;
+            }
+            
+            .btn-edit-profile {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.9rem;
+                width: 100%;
             }
 
             .stats-container {
                 grid-template-columns: 1fr;
+            }
+            
+            .stat-card {
+                padding: 1.25rem;
+            }
+            
+            .profile-progress {
+                margin: 0 1.25rem 1rem 1.25rem;
+            }
+        }
+        
+        /* Small Mobile */
+        @media (max-width: 480px) {
+            .profile-banner {
+                height: 80px;
+            }
+            
+            .profile-image-container {
+                margin-top: -40px;
+            }
+            
+            .profile-image {
+                width: 80px;
+                height: 80px;
+                border: 3px solid white;
+            }
+            
+            .profile-name {
+                font-size: 1.2rem;
+            }
+            
+            .profile-email {
+                font-size: 0.8rem;
+            }
+            
+            .info-card {
+                padding: 1rem;
+            }
+            
+            .info-label {
+                font-size: 0.75rem;
+            }
+            
+            .info-value {
+                font-size: 0.95rem;
+            }
+        }
+        
+        /* Medium Tablets */
+        @media (min-width: 769px) and (max-width: 991px) {
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+                padding: 1.5rem;
             }
         }
 
@@ -524,7 +652,8 @@ unset($_SESSION['update_success']);
             background: #f1f5f9;
             border-radius: 8px;
             padding: 1rem;
-            margin: 0 2rem 1.5rem 2rem;
+            margin: 0 1.5rem 1rem 1.5rem;
+            flex-shrink: 0;
         }
 
         .progress-label {
@@ -688,7 +817,7 @@ unset($_SESSION['update_success']);
                     </div>
                 </div>
 
-                <div class="info-card" style="grid-column: span 2;">
+                <div class="info-card full-width">
                     <div class="info-label">
                         <i class="bi bi-geo-alt"></i>
                         Address
