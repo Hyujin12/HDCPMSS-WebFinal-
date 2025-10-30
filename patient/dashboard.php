@@ -57,6 +57,8 @@ body {
   background: #f8f9fa;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   overflow-x: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 .main-content {
@@ -64,6 +66,21 @@ body {
   padding: 1rem;
   display: flex;
   flex-direction: column;
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
+}
+
+/* Sidebar adjustments */
+@media (min-width: 992px) {
+  .main-content {
+    margin-left: 250px;
+  }
+}
+
+@media (max-width: 991px) {
+  .main-content {
+    margin-left: 0;
+  }
 }
 
 .dashboard-container {
@@ -753,11 +770,11 @@ document.addEventListener('DOMContentLoaded', function() {
   var appointmentModal = new bootstrap.Modal(document.getElementById('appointmentModal'));
 
   var calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: window.innerWidth < 768 ? 'listMonth' : 'dayGridMonth',
+    initialView: 'dayGridMonth',
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
-      right: window.innerWidth < 768 ? '' : 'dayGridMonth,listMonth'
+      right: ''
     },
     themeSystem: 'bootstrap5',
     events: 'get_user_appointments.php',
@@ -765,6 +782,8 @@ document.addEventListener('DOMContentLoaded', function() {
     eventTextColor: '#fff',
     height: '100%',
     contentHeight: 'auto',
+    selectable: false,
+    editable: false,
     eventClick: function(info) {
       const data = info.event.extendedProps;
       const eventDate = info.event.start;
@@ -781,11 +800,6 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('modalNotes').innerText = data.notes || 'No additional notes';
 
       appointmentModal.show();
-    },
-    windowResize: function(view) {
-      if (window.innerWidth < 768) {
-        calendar.changeView('listMonth');
-      }
     }
   });
 
