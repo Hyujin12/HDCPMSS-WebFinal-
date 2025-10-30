@@ -41,6 +41,7 @@ $totalUpcoming = $appointmentsCollection->countDocuments([
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dashboard - Halili Dental</title>
+<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
@@ -57,8 +58,6 @@ body {
   background: #f8f9fa;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   overflow-x: hidden;
-  margin: 0;
-  padding: 0;
 }
 
 .main-content {
@@ -67,12 +66,12 @@ body {
   display: flex;
   flex-direction: column;
   margin-left: 0;
+  transition: margin-left 0.3s ease;
 }
 
-/* If you have a sidebar, adjust these values */
-@media (min-width: 992px) {
+@media (min-width: 768px) {
   .main-content {
-    /* margin-left: 250px; */ /* Uncomment and adjust if using sidebar */
+    margin-left: 16rem;
   }
 }
 
@@ -150,6 +149,7 @@ body {
 @media (max-width: 767px) {
   .main-content {
     padding: 0.75rem;
+    padding-top: 5rem;
   }
   
   .dashboard-grid {
@@ -203,7 +203,7 @@ body {
   height: 90px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #0d6efd;
+  border: 3px solid #1d4ed8;
   margin-bottom: 0.75rem;
 }
 
@@ -268,13 +268,13 @@ body {
 }
 
 .stat-card.primary {
-  background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
   color: white;
   border: none;
 }
 
 .stat-card.success {
-  background: linear-gradient(135deg, #198754 0%, #146c43 100%);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
   color: white;
   border: none;
 }
@@ -299,7 +299,7 @@ body {
 
 .appointment-card {
   background: #f8f9fa;
-  border-left: 3px solid #0d6efd;
+  border-left: 3px solid #1d4ed8;
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 1rem;
@@ -326,26 +326,7 @@ body {
   width: 16px;
   text-align: center;
   margin-right: 0.5rem;
-  color: #0d6efd;
-}
-
-.badge-status {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  margin-top: 0.5rem;
-}
-
-.badge-pending {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.badge-confirmed {
-  background: #d1e7dd;
-  color: #0f5132;
+  color: #1d4ed8;
 }
 
 /* Calendar */
@@ -378,13 +359,13 @@ body {
 }
 
 .fc .fc-button-primary {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
 }
 
 .fc .fc-button-primary:hover {
-  background-color: #0a58ca;
-  border-color: #0a58ca;
+  background-color: #1e40af;
+  border-color: #1e40af;
 }
 
 .fc-event {
@@ -399,44 +380,18 @@ body {
   padding: 0.6rem;
   font-size: 0.9rem;
   font-weight: 600;
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
 }
 
-.btn-link-custom {
-  color: #0d6efd;
-  text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-}
-
-.btn-link-custom:hover {
-  text-decoration: underline;
-}
-
-/* Empty State */
-.empty-state {
-  text-align: center;
-  padding: 2rem 1rem;
-  color: #6c757d;
-}
-
-.empty-state i {
-  font-size: 2.5rem;
-  color: #dee2e6;
-  margin-bottom: 1rem;
-}
-
-.empty-state p {
-  margin: 0;
-  font-size: 0.9rem;
+.btn-edit:hover {
+  background-color: #1e40af;
+  border-color: #1e40af;
 }
 
 /* Modal Improvements */
 .modal-header {
-  background: #0d6efd;
+  background: #1d4ed8;
   color: white;
   border-bottom: none;
 }
@@ -461,8 +416,8 @@ body {
 }
 
 .form-control:focus, .form-select:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 0.2rem rgba(29, 78, 216, 0.15);
 }
 
 /* Scrollbar Styling */
@@ -518,7 +473,9 @@ body {
 </style>
 </head>
 <body>
-  <?php include 'sidebar.php'; ?>
+
+<?php include 'sidebar.php'; ?>
+
 <main class="main-content">
   <div class="dashboard-container">
     <div class="dashboard-grid">
@@ -756,6 +713,7 @@ body {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+// Calendar
 document.addEventListener('DOMContentLoaded', function() {
   var calendarEl = document.getElementById('calendar');
   var appointmentModal = new bootstrap.Modal(document.getElementById('appointmentModal'));
@@ -769,7 +727,7 @@ document.addEventListener('DOMContentLoaded', function() {
     },
     themeSystem: 'bootstrap5',
     events: 'get_user_appointments.php',
-    eventColor: '#0d6efd',
+    eventColor: '#1d4ed8',
     eventTextColor: '#fff',
     height: '100%',
     contentHeight: 'auto',
