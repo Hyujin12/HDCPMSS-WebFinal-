@@ -67,20 +67,29 @@ foreach ($appointments as $appt) {
 
     <style>
         * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             font-family: 'Inter', sans-serif;
         }
         
         body {
-            display: flex;
-            min-height: 100vh;
             background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            overflow-x: hidden;
         }
         
         .content {
-            margin-left: 16rem;
-            padding: 2rem;
-            flex: 1;
-            width: 100%;
+            min-height: 100vh;
+            padding: 1rem;
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+        }
+        
+        @media (min-width: 768px) {
+            .content {
+                margin-left: 16rem;
+                padding: 2rem;
+            }
         }
         
         /* Stats Cards */
