@@ -328,6 +328,22 @@ $userContact = $user['contactNumber'] ?? '';
       cursor: not-allowed;
     }
 
+    .form-control.error {
+      border-color: #dc2626;
+      background: #fef2f2;
+    }
+
+    .error-message {
+      color: #dc2626;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
     .btn-submit {
       width: 100%;
       background: linear-gradient(135deg, #059669 0%, #047857 100%);
@@ -349,6 +365,12 @@ $userContact = $user['contactNumber'] ?? '';
     .btn-submit:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
+    }
+
+    .btn-submit:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
     }
 
     .service-badge {
@@ -511,6 +533,7 @@ $userContact = $user['contactNumber'] ?? '';
           <i class="fas fa-calendar-day"></i>Appointment Date
         </label>
         <input type="date" id="date" name="date" class="form-control" required />
+        <div id="dateError" class="error-message">Please select a future date</div>
       </div>
 
       <div class="form-group">
@@ -518,9 +541,10 @@ $userContact = $user['contactNumber'] ?? '';
           <i class="fas fa-clock"></i>Appointment Time
         </label>
         <input type="time" id="time" name="time" class="form-control" required />
+        <div id="timeError" class="error-message">Please select a future time</div>
       </div>
 
-      <button type="submit" class="btn-submit">
+      <button type="submit" class="btn-submit" id="submitBtn">
         <i class="fas fa-check-circle"></i>
         Confirm Booking
       </button>
@@ -529,6 +553,7 @@ $userContact = $user['contactNumber'] ?? '';
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
   const userFullName = <?php echo json_encode($_SESSION['username'] ?? $user['fullname'] ?? ''); ?>;
   const userEmail = <?php echo json_encode($_SESSION['email'] ?? $user['email'] ?? ''); ?>;
@@ -545,15 +570,65 @@ $userContact = $user['contactNumber'] ?? '';
     const closeBtn = modal.querySelector('.modal-close');
     const bookingForm = document.getElementById('bookingForm');
     const dateInput = document.getElementById('date');
+    const timeInput = document.getElementById('time');
+    const dateError = document.getElementById('dateError');
+    const timeError = document.getElementById('timeError');
+    const submitBtn = document.getElementById('submitBtn');
 
+    // Get today's date in YYYY-MM-DD format
+    const today = new Date();
+    const todayString = today.toISOString().split('T')[0];
+    
     // Set minimum date to today
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.setAttribute('min', today);
+    dateInput.setAttribute('min', todayString);
 
     // Pre-fill user data
     fullnameInput.value = userFullName;
     emailInput.value = userEmail;
     contactInput.value = userContact;
+
+    // Validate date - disable past dates
+    dateInput.addEventListener('change', () => {
+      const selectedDate = dateInput.value;
+      
+      if (selectedDate < todayString) {
+        dateInput.classList.add('error');
+        dateError.classList.add('show');
+        submitBtn.disabled = true;
+      } else {
+        dateInput.classList.remove('error');
+        dateError.classList.remove('show');
+        validateDateTime();
+      }
+    });
+
+    // Validate time - disable past times if today is selected
+    timeInput.addEventListener('change', validateDateTime);
+
+    function validateDateTime() {
+      const selectedDate = dateInput.value;
+      const selectedTime = timeInput.value;
+      
+      if (!selectedDate || !selectedTime) {
+        submitBtn.disabled = false;
+        return;
+      }
+
+      const now = new Date();
+      const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
+      
+      // Check if selected date and time is in the past
+      if (selectedDateTime < now) {
+        timeInput.classList.add('error');
+        timeError.classList.add('show');
+        timeError.textContent = 'Please select a future time';
+        submitBtn.disabled = true;
+      } else {
+        timeInput.classList.remove('error');
+        timeError.classList.remove('show');
+        submitBtn.disabled = false;
+      }
+    }
 
     // Open modal when clicking book button
     document.getElementById('servicesContainer').addEventListener('click', (e) => {
@@ -577,6 +652,11 @@ $userContact = $user['contactNumber'] ?? '';
       fullnameInput.value = userFullName;
       emailInput.value = userEmail;
       contactInput.value = userContact;
+      dateInput.classList.remove('error');
+      timeInput.classList.remove('error');
+      dateError.classList.remove('show');
+      timeError.classList.remove('show');
+      submitBtn.disabled = false;
     };
 
     // Close button click
@@ -588,8 +668,58 @@ $userContact = $user['contactNumber'] ?? '';
     // Form submission
     bookingForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      
+      // Final validation before submission
+      const selectedDate = dateInput.value;
+      const selectedTime = timeInput.value;
+      const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
+      const now = new Date();
+      
+      if (selectedDateTime < now) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Invalid Time',
+          text: 'Cannot book appointment in the past. Please select a future date and time.',
+          confirmButtonColor: '#1d4ed8',
+          background: '#f9fafb',
+          customClass: {
+            popup: 'rounded-xl shadow-lg',
+            confirmButton: 'px-4 py-2 font-semibold'
+          }
+        });
+        return;
+      }
+
+      if (selectedDate < todayString) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Invalid Date',
+          text: 'Cannot book appointment for a past date. Please select today or a future date.',
+          confirmButtonColor: '#1d4ed8',
+          background: '#f9fafb',
+          customClass: {
+            popup: 'rounded-xl shadow-lg',
+            confirmButton: 'px-4 py-2 font-semibold'
+          }
+        });
+        return;
+      }
+
       const formData = new FormData(bookingForm);
       const data = Object.fromEntries(formData.entries());
+
+      // Show loading state
+      Swal.fire({
+        title: 'Processing...',
+        text: 'Please wait while we confirm your booking.',
+        icon: 'info',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
 
       try {
         const response = await fetch('submit-booking.php', {
@@ -601,13 +731,69 @@ $userContact = $user['contactNumber'] ?? '';
         const text = await response.text();
 
         if (response.ok) {
-          alert(`✓ Booking Confirmed!\n\nService: ${data.serviceName}\nDate: ${data.date}\nTime: ${data.time}\n\nThank you, ${data.username}!\n\nWe'll send you a confirmation email shortly.`);
-          closeModal();
+          // Format date and time for display
+          const formattedDate = new Date(data.date).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+          
+          const formattedTime = new Date(`2000-01-01T${data.time}`).toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+          });
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Booking Confirmed!',
+            html: `
+              <div style="text-align: left; padding: 1rem;">
+                <p style="margin-bottom: 0.75rem;"><strong>Service:</strong> ${data.serviceName}</p>
+                <p style="margin-bottom: 0.75rem;"><strong>Date:</strong> ${formattedDate}</p>
+                <p style="margin-bottom: 0.75rem;"><strong>Time:</strong> ${formattedTime}</p>
+                <p style="margin-bottom: 0.75rem;"><strong>Patient:</strong> ${data.username}</p>
+                <hr style="margin: 1rem 0; border-color: #e5e7eb;">
+                <p style="color: #6b7280; font-size: 0.9rem; margin: 0;">We'll send you a confirmation email shortly at <strong>${data.email}</strong></p>
+              </div>
+            `,
+            confirmButtonText: 'Got it!',
+            confirmButtonColor: '#059669',
+            background: '#f9fafb',
+            customClass: {
+              popup: 'rounded-xl shadow-lg',
+              confirmButton: 'px-6 py-2 font-semibold'
+            }
+          }).then(() => {
+            closeModal();
+          });
         } else {
-          alert('❌ Booking failed: ' + text);
+          Swal.fire({
+            icon: 'error',
+            title: 'Booking Failed',
+            text: text || 'There was an error processing your booking. Please try again.',
+            confirmButtonColor: '#dc2626',
+            background: '#f9fafb',
+            customClass: {
+              popup: 'rounded-xl shadow-lg',
+              confirmButton: 'px-4 py-2 font-semibold'
+            }
+          });
         }
       } catch (error) {
-        alert('❌ Error submitting booking: ' + error.message);
+        Swal.fire({
+          icon: 'error',
+          title: 'Connection Error',
+          text: 'Unable to submit booking. Please check your internet connection and try again.',
+          footer: `<small style="color: #6b7280;">Error: ${error.message}</small>`,
+          confirmButtonColor: '#dc2626',
+          background: '#f9fafb',
+          customClass: {
+            popup: 'rounded-xl shadow-lg',
+            confirmButton: 'px-4 py-2 font-semibold'
+          }
+        });
       }
     });
   });

@@ -385,12 +385,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           <span>Profile</span>
         </a>
       </li>
-      <li>
-        <a href="feedback.php" class="sidebar-link <?= $currentPage === 'feedback.php' ? 'active' : '' ?>">
-          <i class="fas fa-comment-dots"></i>
-          <span>Feedback & Surveys</span>
-        </a>
-      </li>
     </ul>
   </nav>
 
