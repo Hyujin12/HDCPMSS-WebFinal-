@@ -114,6 +114,7 @@ include 'service-grid.php';
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
+      text-decoration: none;
     }
 
     .btn-book-landing:hover {
@@ -124,8 +125,8 @@ include 'service-grid.php';
 </head>
 <body class="bg-gray-50 text-gray-900">
 
-  <!-- HEADER -->
-  <header class="sticky top-0 z-50 bg-white shadow-md">
+ <!-- HEADER -->
+  <header class="sticky top-0 z-40 bg-white shadow-md">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center py-4">
         <div class="flex items-center space-x-3">
@@ -156,7 +157,7 @@ include 'service-grid.php';
   </header>
 
   <!-- HERO -->
-  <section id="home" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+  <section id="home" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 scroll-mt-20">
     <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
       <div class="order-2 lg:order-1 text-center lg:text-left">
         <div class="inline-block px-4 py-2 bg-purple-100 rounded-full mb-6">
@@ -193,7 +194,7 @@ include 'service-grid.php';
   </section>
 
   <!-- ABOUT -->
-  <section id="about" class="bg-white py-16 sm:py-20">
+  <section id="about" class="bg-white py-16 sm:py-20 scroll-mt-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-3xl mx-auto mb-12">
         <h2 class="text-3xl sm:text-4xl font-bold mb-4">Why Choose <span class="gradient-text">Halili's Dental Clinic?</span></h2>
@@ -226,7 +227,7 @@ include 'service-grid.php';
   </section>
 
   <!-- SERVICES -->
-  <section id="services" class="py-16 sm:py-20 bg-gray-50">
+  <section id="services" class="py-16 sm:py-20 bg-gray-50 scroll-mt-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-3xl mx-auto mb-12">
         <h2 class="text-3xl sm:text-4xl font-bold mb-4">Our <span class="gradient-text">Dental Services</span></h2>
@@ -243,12 +244,12 @@ include 'service-grid.php';
               <p class="text-gray-600 text-sm mb-4 flex-1"><?= htmlspecialchars($service['description']) ?></p>
               <div class="flex justify-between items-center pt-2 border-t border-gray-100">
                 <span class="text-sm text-gray-500">Professional Care</span>
-                <button class="btn-book-landing">
+                <a href="log-in.php" class="btn-book-landing">
                   <?= htmlspecialchars($service['btn']) ?>
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                   </svg>
-                </button>
+                </a>
               </div>
             </div>
           </div>
@@ -258,7 +259,7 @@ include 'service-grid.php';
   </section>
 
   <!-- CONTACT -->
-  <section id="contact" class="bg-gradient-to-br from-purple-600 to-blue-600 py-16 sm:py-20">
+  <section id="contact" class="bg-gradient-to-br from-purple-600 to-blue-600 py-16 sm:py-20 scroll-mt-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <img src="/images/halili-logo.png" alt="Halili's Dental Clinic" class="w-24 sm:w-32 mx-auto mb-6 bg-white p-4 rounded-2xl shadow-xl">
       <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Get In Touch With Us</h2>
@@ -285,6 +286,59 @@ include 'service-grid.php';
     <p>&copy; 2025 Halili's Dental Clinic. All rights reserved.</p>
     <p class="text-sm mt-2">Excellence in Dental Care Since 1981</p>
   </footer>
+
+
+  <!-- Mobile Menu -->
+  <div id="mobileMenu" class="hidden fixed inset-0 z-50 bg-black bg-opacity-50 md:hidden">
+    <div class="fixed right-0 top-0 bottom-0 w-64 bg-white shadow-xl transform transition-transform duration-300">
+      <div class="p-6">
+        <button id="closeMenu" class="absolute top-4 right-4 text-gray-700 hover:text-purple-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+        <nav class="flex flex-col space-y-4 mt-8">
+          <a href="#home" class="mobile-nav-link text-gray-700 font-medium hover:text-purple-600 transition py-2">Home</a>
+          <a href="#about" class="mobile-nav-link text-gray-700 font-medium hover:text-purple-600 transition py-2">About</a>
+          <a href="#services" class="mobile-nav-link text-gray-700 font-medium hover:text-purple-600 transition py-2">Services</a>
+          <a href="#contact" class="mobile-nav-link text-gray-700 font-medium hover:text-purple-600 transition py-2">Contact</a>
+          <a href="log-in.php">
+            <button class="hero-gradient text-white px-6 py-3 rounded-full font-medium hover:shadow-lg transition duration-300 w-full">Book Now</button>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Mobile menu toggle
+    const navToggle = document.getElementById('navToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const closeMenu = document.getElementById('closeMenu');
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+    navToggle.addEventListener('click', () => {
+      mobileMenu.classList.remove('hidden');
+    });
+
+    closeMenu.addEventListener('click', () => {
+      mobileMenu.classList.add('hidden');
+    });
+
+    // Close menu when clicking outside
+    mobileMenu.addEventListener('click', (e) => {
+      if (e.target === mobileMenu) {
+        mobileMenu.classList.add('hidden');
+      }
+    });
+
+    // Close menu when clicking on nav links
+    mobileNavLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+      });
+    });
+  </script>
 
 </body>
 </html>
