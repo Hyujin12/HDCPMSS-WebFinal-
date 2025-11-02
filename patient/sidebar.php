@@ -107,6 +107,14 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   flex: 1;
   overflow-y: auto;
   padding: 1rem 0;
+  /* Add padding at bottom on mobile to prevent content being hidden by browser tabs */
+  padding-bottom: 6rem;
+}
+
+@media (min-width: 768px) {
+  .sidebar-nav {
+    padding-bottom: 1rem;
+  }
 }
 
 .nav-section-title {
@@ -179,6 +187,14 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   padding: 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(0, 0, 0, 0.1);
+  /* Elevate footer on mobile to avoid browser tabs */
+  margin-bottom: 5rem;
+}
+
+@media (min-width: 768px) {
+  .sidebar-footer {
+    margin-bottom: 0;
+  }
 }
 
 .btn-logout {
