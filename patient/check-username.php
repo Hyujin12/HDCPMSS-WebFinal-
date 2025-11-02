@@ -14,6 +14,8 @@ $db = $mongoClient->selectDatabase('HaliliDentalClinic');
 $usersCollection = $db->selectCollection('users');
 
 header('Content-Type: application/json');
+    $input = json_decode(file_get_contents('php://input'), true);
+    $email = trim($input['email'] ?? '');
 
 // Only allow POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
