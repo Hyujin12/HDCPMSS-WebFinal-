@@ -559,6 +559,76 @@ $userContact = $user['contactNumber'] ?? '';
   const userEmail = <?php echo json_encode($_SESSION['email'] ?? $user['email'] ?? ''); ?>;
   const userContact = <?php echo json_encode($userContact); ?>;
 
+  // Clinic operating hours
+  const clinicHours = {
+    0: { open: '08:00', close: '12:00', closed: false }, // Sunday
+    1: { open: '08:00', close: '17:00', closed: false }, // Monday
+    2: { open: '08:00', close: '17:00', closed: false }, // Tuesday
+    3: { open: '08:00', close: '17:00', closed: false }, // Wednesday
+    4: { open: '08:00', close: '17:00', closed: false }, // Thursday
+    5: { open: '08:00', close: '17:00', closed: false }, // Friday
+    6: { open: '08:00', close: '17:00', closed: false }  // Saturday
+  };
+
+  // Additional evening hours
+  const eveningHours = {
+    1: { open: '16:00', close: '19:00' }, // Monday 4-7 PM
+    2: { open: '16:00', close: '19:00' }, // Tuesday 4-7 PM
+    3: { open: '16:00', close: '19:00' }, // Wednesday 4-7 PM
+    4: { open: '14:00', close: '19:00' }, // Thursday 2-7 PM
+    6: { open: '14:00', close: '19:00' }  // Saturday 2-7 PM
+  };
+
+  function isWithinOperatingHours(dayOfWeek, time) {
+    const hours = clinicHours[dayOfWeek];
+    
+    // Check if clinic is closed on this day
+    if (hours.closed) {
+      return false;
+    }
+
+    // Check regular hours
+    if (time >= hours.open && time <= hours.close) {
+      return true;
+    }
+
+    // Check evening hours if available
+    if (eveningHours[dayOfWeek]) {
+      const evening = eveningHours[dayOfWeek];
+      if (time >= evening.open && time <= evening.close) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function getOperatingHoursText(dayOfWeek) {
+    const hours = clinicHours[dayOfWeek];
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    
+    if (hours.closed) {
+      return `${dayNames[dayOfWeek]}: Closed`;
+    }
+
+    let hoursText = `${dayNames[dayOfWeek]}: ${formatTime(hours.open)} - ${formatTime(hours.close)}`;
+    
+    if (eveningHours[dayOfWeek]) {
+      const evening = eveningHours[dayOfWeek];
+      hoursText += ` and ${formatTime(evening.open)} - ${formatTime(evening.close)}`;
+    }
+
+    return hoursText;
+  }
+
+  function formatTime(time24) {
+    const [hours, minutes] = time24.split(':');
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour % 12 || 12;
+    return `${hour12}:${minutes} ${ampm}`;
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('bookingModal');
     const modalBackdrop = document.getElementById('modalBackdrop');
@@ -587,14 +657,51 @@ $userContact = $user['contactNumber'] ?? '';
     emailInput.value = userEmail;
     contactInput.value = userContact;
 
-    // Validate date - disable past dates
+    // Validate date - check if clinic is open
     dateInput.addEventListener('change', () => {
       const selectedDate = dateInput.value;
       
       if (selectedDate < todayString) {
         dateInput.classList.add('error');
+        dateError.textContent = 'Please select a future date';
         dateError.classList.add('show');
         submitBtn.disabled = true;
+        return;
+      }
+
+      const selectedDay = new Date(selectedDate + 'T00:00:00').getDay();
+      
+      if (clinicHours[selectedDay].closed) {
+        dateInput.classList.add('error');
+        dateError.textContent = 'Clinic is closed on this day. Please select another date.';
+        dateError.classList.add('show');
+        submitBtn.disabled = true;
+        
+        // Show operating hours
+        Swal.fire({
+          icon: 'info',
+          title: 'Clinic Closed',
+          html: `
+            <p>The clinic is closed on the selected day.</p>
+            <hr style="margin: 1rem 0;">
+            <div style="text-align: left; font-size: 0.9rem;">
+              <strong>Operating Hours:</strong><br>
+              ${getOperatingHoursText(1)}<br>
+              ${getOperatingHoursText(2)}<br>
+              ${getOperatingHoursText(3)}<br>
+              ${getOperatingHoursText(4)}<br>
+              ${getOperatingHoursText(5)}<br>
+              ${getOperatingHoursText(6)}<br>
+              ${getOperatingHoursText(0)}
+            </div>
+          `,
+          confirmButtonColor: '#1d4ed8',
+          background: '#f9fafb',
+          customClass: {
+            popup: 'rounded-xl shadow-lg',
+            confirmButton: 'px-4 py-2 font-semibold'
+          }
+        });
       } else {
         dateInput.classList.remove('error');
         dateError.classList.remove('show');
@@ -602,7 +709,7 @@ $userContact = $user['contactNumber'] ?? '';
       }
     });
 
-    // Validate time - disable past times if today is selected
+    // Validate time
     timeInput.addEventListener('change', validateDateTime);
 
     function validateDateTime() {
@@ -616,6 +723,7 @@ $userContact = $user['contactNumber'] ?? '';
 
       const now = new Date();
       const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
+      const selectedDay = new Date(selectedDate + 'T00:00:00').getDay();
       
       // Check if selected date and time is in the past
       if (selectedDateTime < now) {
@@ -623,6 +731,33 @@ $userContact = $user['contactNumber'] ?? '';
         timeError.classList.add('show');
         timeError.textContent = 'Please select a future time';
         submitBtn.disabled = true;
+        return;
+      }
+
+      // Check if time is within operating hours
+      if (!isWithinOperatingHours(selectedDay, selectedTime)) {
+        timeInput.classList.add('error');
+        timeError.classList.add('show');
+        timeError.textContent = `Outside operating hours. ${getOperatingHoursText(selectedDay)}`;
+        submitBtn.disabled = true;
+        
+        Swal.fire({
+          icon: 'warning',
+          title: 'Outside Operating Hours',
+          html: `
+            <p>The selected time is outside clinic operating hours.</p>
+            <hr style="margin: 1rem 0;">
+            <div style="text-align: left; font-size: 0.9rem;">
+              <strong>${getOperatingHoursText(selectedDay)}</strong>
+            </div>
+          `,
+          confirmButtonColor: '#1d4ed8',
+          background: '#f9fafb',
+          customClass: {
+            popup: 'rounded-xl shadow-lg',
+            confirmButton: 'px-4 py-2 font-semibold'
+          }
+        });
       } else {
         timeInput.classList.remove('error');
         timeError.classList.remove('show');
@@ -673,8 +808,42 @@ $userContact = $user['contactNumber'] ?? '';
       const selectedDate = dateInput.value;
       const selectedTime = timeInput.value;
       const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
+      const selectedDay = new Date(selectedDate + 'T00:00:00').getDay();
       const now = new Date();
       
+      // Check if date is in the past
+      if (selectedDate < todayString) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Invalid Date',
+          text: 'Cannot book appointment for a past date. Please select today or a future date.',
+          confirmButtonColor: '#1d4ed8',
+          background: '#f9fafb',
+          customClass: {
+            popup: 'rounded-xl shadow-lg',
+            confirmButton: 'px-4 py-2 font-semibold'
+          }
+        });
+        return;
+      }
+
+      // Check if clinic is closed on selected day
+      if (clinicHours[selectedDay].closed) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Clinic Closed',
+          text: 'The clinic is closed on the selected day. Please choose another date.',
+          confirmButtonColor: '#1d4ed8',
+          background: '#f9fafb',
+          customClass: {
+            popup: 'rounded-xl shadow-lg',
+            confirmButton: 'px-4 py-2 font-semibold'
+          }
+        });
+        return;
+      }
+
+      // Check if datetime is in the past
       if (selectedDateTime < now) {
         Swal.fire({
           icon: 'warning',
@@ -690,11 +859,18 @@ $userContact = $user['contactNumber'] ?? '';
         return;
       }
 
-      if (selectedDate < todayString) {
+      // Check if time is within operating hours
+      if (!isWithinOperatingHours(selectedDay, selectedTime)) {
         Swal.fire({
           icon: 'warning',
-          title: 'Invalid Date',
-          text: 'Cannot book appointment for a past date. Please select today or a future date.',
+          title: 'Outside Operating Hours',
+          html: `
+            <p>The selected time is outside clinic operating hours.</p>
+            <hr style="margin: 1rem 0;">
+            <div style="text-align: left; font-size: 0.9rem;">
+              <strong>${getOperatingHoursText(selectedDay)}</strong>
+            </div>
+          `,
           confirmButtonColor: '#1d4ed8',
           background: '#f9fafb',
           customClass: {
