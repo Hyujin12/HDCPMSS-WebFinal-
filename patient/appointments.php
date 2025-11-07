@@ -472,7 +472,7 @@ $appointments = iterator_to_array($appointmentsCursor);
                 <i class="fas fa-calendar-times"></i>
                 <h3>No Appointments Yet</h3>
                 <p>You haven't booked any appointments. Start by booking your first dental service!</p>
-                <a href="book-appointment.php" class="btn-book-now">
+                <a href="treatment-plan.php" class="btn-book-now">
                     <i class="fas fa-plus-circle"></i>
                     Book Appointment
                 </a>

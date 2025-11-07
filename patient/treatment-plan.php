@@ -224,7 +224,7 @@ $userContact = $user['contactNumber'] ?? '';
       border-radius: 16px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.3);
       z-index: 1050;
-      max-width: 500px;
+      max-width: 600px;
       width: 90%;
       max-height: 90vh;
       overflow-y: auto;
@@ -287,6 +287,32 @@ $userContact = $user['contactNumber'] ?? '';
       padding: 1.5rem;
     }
 
+    .form-section {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 2px solid #f3f4f6;
+    }
+
+    .form-section:last-of-type {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .form-section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1d4ed8;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-section-title i {
+      font-size: 1.3rem;
+    }
+
     .form-group {
       margin-bottom: 1.25rem;
     }
@@ -303,6 +329,13 @@ $userContact = $user['contactNumber'] ?? '';
       color: #1d4ed8;
       margin-right: 0.5rem;
       width: 20px;
+    }
+
+    .form-label .optional {
+      color: #9ca3af;
+      font-weight: 400;
+      font-size: 0.85rem;
+      font-style: italic;
     }
 
     .form-control {
@@ -342,6 +375,20 @@ $userContact = $user['contactNumber'] ?? '';
 
     .error-message.show {
       display: block;
+    }
+
+    .form-helper-text {
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: start;
+      gap: 0.5rem;
+    }
+
+    .form-helper-text i {
+      color: #1d4ed8;
+      margin-top: 0.2rem;
     }
 
     .btn-submit {
@@ -491,57 +538,115 @@ $userContact = $user['contactNumber'] ?? '';
     </div>
     
     <form id="bookingForm">
-      <div class="form-group">
-        <label class="form-label">
-          <i class="fas fa-tooth"></i>Service
-        </label>
-        <input type="text" id="serviceName" name="serviceName" class="form-control" readonly />
+      <!-- Service Information Section -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <i class="fas fa-clipboard-list"></i>
+          Service Information
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-tooth"></i>Service
+          </label>
+          <input type="text" id="serviceName" name="serviceName" class="form-control" readonly />
+        </div>
       </div>
 
-      <div class="form-group">
-        <label class="form-label">
-          <i class="fas fa-user"></i>Full Name
-        </label>
-        <input type="text" id="username" name="username" class="form-control" readonly />
+      <!-- Personal Information Section -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <i class="fas fa-user-circle"></i>
+          Personal Information
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-user"></i>Full Name
+          </label>
+          <input type="text" id="username" name="username" class="form-control" readonly />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-envelope"></i>Email
+          </label>
+          <input type="email" id="email" name="email" class="form-control" readonly />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-phone"></i>Phone Number
+          </label>
+          <input type="tel" id="contactNumber" name="contactNumber" class="form-control" 
+                 placeholder="0912 345 6789" required />
+        </div>
       </div>
 
-      <div class="form-group">
-        <label class="form-label">
-          <i class="fas fa-envelope"></i>Email
-        </label>
-        <input type="email" id="email" name="email" class="form-control" readonly />
+      <!-- Medical Information Section -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <i class="fas fa-notes-medical"></i>
+          Medical Information
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-heartbeat"></i>Medical History / Illness
+            <span class="optional">(Optional)</span>
+          </label>
+          <textarea id="medicalHistory" name="medicalHistory" class="form-control" rows="3"
+                    placeholder="Please list any medical conditions, illnesses, or health issues (e.g., diabetes, heart disease, hypertension)"></textarea>
+          <div class="form-helper-text">
+            <i class="fas fa-info-circle"></i>
+            <span>Include any ongoing treatments or medications you're currently taking</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-allergies"></i>Allergies
+            <span class="optional">(Optional)</span>
+          </label>
+          <textarea id="allergies" name="allergies" class="form-control" rows="3"
+                    placeholder="List any allergies (e.g., medications, anesthesia, latex, foods)"></textarea>
+          <div class="form-helper-text">
+            <i class="fas fa-info-circle"></i>
+            <span>This helps us ensure your safety during treatment</span>
+          </div>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label class="form-label">
-          <i class="fas fa-phone"></i>Phone Number
-        </label>
-        <input type="tel" id="contactNumber" name="contactNumber" class="form-control" 
-               placeholder="0912 345 6789" required />
-      </div>
+      <!-- Appointment Details Section -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <i class="fas fa-calendar-alt"></i>
+          Appointment Details
+        </div>
 
-      <div class="form-group">
-        <label class="form-label">
-          <i class="fas fa-comment-medical"></i>Description / Reason for Visit
-        </label>
-        <textarea id="description" name="description" class="form-control" rows="3"
-                  placeholder="Please describe your dental concern or reason for visit" required></textarea>
-      </div>
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-comment-medical"></i>Reason for Visit
+          </label>
+          <textarea id="description" name="description" class="form-control" rows="3"
+                    placeholder="Please describe your dental concern or reason for visit" required></textarea>
+        </div>
 
-      <div class="form-group">
-        <label class="form-label">
-          <i class="fas fa-calendar-day"></i>Appointment Date
-        </label>
-        <input type="date" id="date" name="date" class="form-control" required />
-        <div id="dateError" class="error-message">Please select a future date</div>
-      </div>
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-calendar-day"></i>Appointment Date
+          </label>
+          <input type="date" id="date" name="date" class="form-control" required />
+          <div id="dateError" class="error-message">Please select a future date</div>
+        </div>
 
-      <div class="form-group">
-        <label class="form-label">
-          <i class="fas fa-clock"></i>Appointment Time
-        </label>
-        <input type="time" id="time" name="time" class="form-control" required />
-        <div id="timeError" class="error-message">Please select a future time</div>
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-clock"></i>Appointment Time
+          </label>
+          <input type="time" id="time" name="time" class="form-control" required />
+          <div id="timeError" class="error-message">Please select a future time</div>
+        </div>
       </div>
 
       <button type="submit" class="btn-submit" id="submitBtn">
@@ -582,17 +687,14 @@ $userContact = $user['contactNumber'] ?? '';
   function isWithinOperatingHours(dayOfWeek, time) {
     const hours = clinicHours[dayOfWeek];
     
-    // Check if clinic is closed on this day
     if (hours.closed) {
       return false;
     }
 
-    // Check regular hours
     if (time >= hours.open && time <= hours.close) {
       return true;
     }
 
-    // Check evening hours if available
     if (eveningHours[dayOfWeek]) {
       const evening = eveningHours[dayOfWeek];
       if (time >= evening.open && time <= evening.close) {
@@ -677,7 +779,6 @@ $userContact = $user['contactNumber'] ?? '';
         dateError.classList.add('show');
         submitBtn.disabled = true;
         
-        // Show operating hours
         Swal.fire({
           icon: 'info',
           title: 'Clinic Closed',
@@ -709,7 +810,6 @@ $userContact = $user['contactNumber'] ?? '';
       }
     });
 
-    // Validate time
     timeInput.addEventListener('change', validateDateTime);
 
     function validateDateTime() {
@@ -725,7 +825,6 @@ $userContact = $user['contactNumber'] ?? '';
       const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
       const selectedDay = new Date(selectedDate + 'T00:00:00').getDay();
       
-      // Check if selected date and time is in the past
       if (selectedDateTime < now) {
         timeInput.classList.add('error');
         timeError.classList.add('show');
@@ -734,7 +833,6 @@ $userContact = $user['contactNumber'] ?? '';
         return;
       }
 
-      // Check if time is within operating hours
       if (!isWithinOperatingHours(selectedDay, selectedTime)) {
         timeInput.classList.add('error');
         timeError.classList.add('show');
@@ -765,7 +863,6 @@ $userContact = $user['contactNumber'] ?? '';
       }
     }
 
-    // Open modal when clicking book button
     document.getElementById('servicesContainer').addEventListener('click', (e) => {
       if (e.target.closest('.btn-book')) {
         const card = e.target.closest('.service-card');
@@ -778,7 +875,6 @@ $userContact = $user['contactNumber'] ?? '';
       }
     });
 
-    // Close modal function
     const closeModal = () => {
       modal.classList.remove('show');
       modalBackdrop.classList.remove('show');
@@ -794,24 +890,18 @@ $userContact = $user['contactNumber'] ?? '';
       submitBtn.disabled = false;
     };
 
-    // Close button click
     closeBtn.addEventListener('click', closeModal);
-
-    // Click outside modal
     modalBackdrop.addEventListener('click', closeModal);
 
-    // Form submission
     bookingForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      // Final validation before submission
       const selectedDate = dateInput.value;
       const selectedTime = timeInput.value;
       const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
       const selectedDay = new Date(selectedDate + 'T00:00:00').getDay();
       const now = new Date();
       
-      // Check if date is in the past
       if (selectedDate < todayString) {
         Swal.fire({
           icon: 'warning',
@@ -827,7 +917,6 @@ $userContact = $user['contactNumber'] ?? '';
         return;
       }
 
-      // Check if clinic is closed on selected day
       if (clinicHours[selectedDay].closed) {
         Swal.fire({
           icon: 'warning',
@@ -843,7 +932,6 @@ $userContact = $user['contactNumber'] ?? '';
         return;
       }
 
-      // Check if datetime is in the past
       if (selectedDateTime < now) {
         Swal.fire({
           icon: 'warning',
@@ -859,7 +947,6 @@ $userContact = $user['contactNumber'] ?? '';
         return;
       }
 
-      // Check if time is within operating hours
       if (!isWithinOperatingHours(selectedDay, selectedTime)) {
         Swal.fire({
           icon: 'warning',
@@ -884,7 +971,6 @@ $userContact = $user['contactNumber'] ?? '';
       const formData = new FormData(bookingForm);
       const data = Object.fromEntries(formData.entries());
 
-      // Show loading state
       Swal.fire({
         title: 'Processing...',
         text: 'Please wait while we confirm your booking.',
@@ -907,7 +993,6 @@ $userContact = $user['contactNumber'] ?? '';
         const text = await response.text();
 
         if (response.ok) {
-          // Format date and time for display
           const formattedDate = new Date(data.date).toLocaleDateString('en-US', {
             weekday: 'long',
             year: 'numeric',
@@ -921,6 +1006,17 @@ $userContact = $user['contactNumber'] ?? '';
             hour12: true
           });
 
+          let medicalInfo = '';
+          if (data.medicalHistory || data.allergies) {
+            medicalInfo = '<hr style="margin: 1rem 0; border-color: #e5e7eb;">';
+            if (data.medicalHistory) {
+              medicalInfo += `<p style="margin-bottom: 0.5rem;"><strong>Medical History:</strong> ${data.medicalHistory}</p>`;
+            }
+            if (data.allergies) {
+              medicalInfo += `<p style="margin-bottom: 0.5rem;"><strong>Allergies:</strong> ${data.allergies}</p>`;
+            }
+          }
+
           Swal.fire({
             icon: 'success',
             title: 'Booking Confirmed!',
@@ -930,6 +1026,7 @@ $userContact = $user['contactNumber'] ?? '';
                 <p style="margin-bottom: 0.75rem;"><strong>Date:</strong> ${formattedDate}</p>
                 <p style="margin-bottom: 0.75rem;"><strong>Time:</strong> ${formattedTime}</p>
                 <p style="margin-bottom: 0.75rem;"><strong>Patient:</strong> ${data.username}</p>
+                ${medicalInfo}
                 <hr style="margin: 1rem 0; border-color: #e5e7eb;">
                 <p style="color: #6b7280; font-size: 0.9rem; margin: 0;">We'll send you a confirmation email shortly at <strong>${data.email}</strong></p>
               </div>
