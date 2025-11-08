@@ -71,6 +71,8 @@ try {
         'description' => $data['description'],
         'date'        => $data['date'],
         'time'        => $data['time'],
+        'medicalHistory' => !empty($data['medicalHistory']) ? trim($data['medicalHistory']) : 'N/A',
+        'allergies' => !empty($data['allergies']) ? trim($data['allergies']) : 'N/A',
         'createdAt'   => new MongoDB\BSON\UTCDateTime(),
     ];
 
@@ -86,3 +88,4 @@ try {
     http_response_code(500);
     echo 'Error: ' . $e->getMessage();
 }
+?>
