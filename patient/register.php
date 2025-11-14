@@ -217,7 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <div class="hidden md:flex md:w-1/2 branding-bg items-center justify-center text-white p-10 order-1 md:order-1">
     <div class="max-w-md text-center">
       <img src="/images/newlogohalili.png" alt="Clinic Logo" class="w-24 h-24 mx-auto mb-6 drop-shadow-lg">
-      <h1 class="text-4xl font-bold mb-4 drop-shadow-lg">Halili's Dental Clinic</h1>
+      <h1 class="text-4xl font-bold mb-4 drop-shadow-lg">Halili Dental Clinic</h1>
       <p class="text-lg leading-relaxed drop-shadow-lg">
         Excellence in Dental Care. Bringing you the best smiles with comfort and care.
       </p>
@@ -350,29 +350,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <input type="text" name="occupation" value="<?= htmlspecialchars($_POST['occupation'] ?? '') ?>" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400" required>
         </div>
 
-        <div>
-          <label class="block text-sm font-semibold mb-1">
-            <i class="fas fa-lock text-blue-600 mr-2"></i>Password
-          </label>
-          <input type="password" 
-                 name="password" 
-                 id="password"
-                 class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400" 
-                 required>
-          <div id="passwordCheck" class="input-feedback" style="display: none;"></div>
-        </div>
+              <div>
+              <label class="block text-sm font-semibold mb-1">
+                <i class="fas fa-lock text-blue-600 mr-2"></i>Password
+              </label>
+              <div class="relative">
+                <input type="password" 
+                      name="password" 
+                      id="password"
+                      class="w-full border p-2 pr-10 rounded focus:ring-2 focus:ring-blue-400" 
+                      required>
+                <button type="button" 
+                        onclick="togglePassword('password', 'togglePasswordIcon')"
+                        class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
+                  <i id="togglePasswordIcon" class="fas fa-eye"></i>
+                </button>
+              </div>
+              <div id="passwordCheck" class="input-feedback" style="display: none;"></div>
+            </div>
 
-        <div>
-          <label class="block text-sm font-semibold mb-1">
-            <i class="fas fa-check-circle text-blue-600 mr-2"></i>Confirm Password
-          </label>
-          <input type="password" 
-                 name="confirm_password" 
-                 id="confirm_password"
-                 class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400" 
-                 required>
-          <div id="confirmPasswordCheck" class="input-feedback" style="display: none;"></div>
-        </div>
+            <!-- Confirm Password Field with Toggle -->
+            <div>
+              <label class="block text-sm font-semibold mb-1">
+                <i class="fas fa-check-circle text-blue-600 mr-2"></i>Confirm Password
+              </label>
+              <div class="relative">
+                <input type="password" 
+                      name="confirm_password" 
+                      id="confirm_password"
+                      class="w-full border p-2 pr-10 rounded focus:ring-2 focus:ring-blue-400" 
+                      required>
+                <button type="button" 
+                        onclick="togglePassword('confirm_password', 'toggleConfirmPasswordIcon')"
+                        class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
+                  <i id="toggleConfirmPasswordIcon" class="fas fa-eye"></i>
+                </button>
+              </div>
+              <div id="confirmPasswordCheck" class="input-feedback" style="display: none;"></div>
+            </div>
+
       </div>
 
       <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition" id="submitBtn">
@@ -700,6 +716,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       return false;
     }
   });
+  function togglePassword(inputId, iconId) {
+  const input = document.getElementById(inputId);
+  const icon = document.getElementById(iconId);
+  
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.classList.remove('fa-eye');
+    icon.classList.add('fa-eye-slash');
+  } else {
+    input.type = 'password';
+    icon.classList.remove('fa-eye-slash');
+    icon.classList.add('fa-eye');
+  }
+}
 </script>
 
 </body>
