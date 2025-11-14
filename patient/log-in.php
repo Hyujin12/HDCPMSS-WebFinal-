@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <div class="flex-1 flex items-center justify-center bg-gray-50 p-8 order-2 md:order-1">
     <form method="POST" class="w-full max-w-md bg-white shadow-2xl rounded-2xl p-8">
       <div class="text-center mb-6">
-        <img src="/images/halili-logo.png" alt="Halili Logo" class="w-20 h-20 mx-auto mb-4">
+        <img src="/images/newhalililogo.png" alt="Halili Logo" class="w-20 h-20 mx-auto mb-4">
         <h2 class="text-2xl font-bold gradient-text mb-2">Welcome Back</h2>
         <p class="text-gray-600 text-sm">Please log in to access your dashboard</p>
       </div>
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <!-- Right Side Image / Branding -->
   <div class="hidden md:flex md:w-1/2 branding-bg items-center justify-center text-white p-10 order-1 md:order-2">
     <div class="max-w-md text-center">
-      <img src="/images/logodental.png" alt="Clinic Logo" class="w-24 h-24 mx-auto mb-6 drop-shadow-lg">
+      <img src="/images/newlogohalili.png" alt="Clinic Logo" class="w-24 h-24 mx-auto mb-6 drop-shadow-lg">
       <h1 class="text-4xl font-bold mb-4 drop-shadow-lg">Halili's Dental Clinic</h1>
       <p class="text-lg leading-relaxed drop-shadow-lg">
         Excellence in Dental Care. Bringing you the best smiles with comfort and care.

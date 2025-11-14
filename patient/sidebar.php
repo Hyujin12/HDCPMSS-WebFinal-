@@ -322,7 +322,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <!-- Mobile Top Bar -->
 <div class="mobile-topbar">
   <div class="mobile-brand">
-    <img src="../images/halili-logo.png" alt="Halili Dental Logo">
+    <img src="../images/newlogohalili.png" alt="Halili Dental Logo">
     <span class="mobile-brand-text">Halili Dental</span>
   </div>
   <button id="burgerBtn" class="burger-btn">
@@ -337,7 +337,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   <!-- Sidebar Header -->
   <div class="sidebar-header">
     <div class="sidebar-logo">
-      <img src="/images/halili-logo.png" alt="Halili Dental Logo">
+      <img src="/images/newlogohalili.png" alt="Halili Dental Logo">
       <span class="sidebar-title">Halili Dental<br>Clinic PMSS</span>
     </div>
   </div>

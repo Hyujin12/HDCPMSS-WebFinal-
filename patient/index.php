@@ -130,7 +130,7 @@ include 'service-grid.php';
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center py-4">
         <div class="flex items-center space-x-3">
-          <img src="/images/logodental.png" alt="Halili's Dental Clinic Logo" class="w-12 h-12 sm:w-14 sm:h-14 object-contain">
+          <img src="/images/newhalililogo.png" alt="Halili's Dental Clinic Logo" class="w-12 h-12 sm:w-14 sm:h-14 object-contain">
           <div>
             <h2 class="text-lg sm:text-xl font-bold gradient-text">Halili's Dental Clinic</h2>
             <p class="text-xs text-gray-500 hidden sm:block">Excellence in Dental Care</p>
@@ -261,21 +261,25 @@ include 'service-grid.php';
   <!-- CONTACT -->
   <section id="contact" class="bg-gradient-to-br from-purple-600 to-blue-600 py-16 sm:py-20 scroll-mt-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <img src="/images/halili-logo.png" alt="Halili's Dental Clinic" class="w-24 sm:w-32 mx-auto mb-6 bg-white p-4 rounded-2xl shadow-xl">
+      <img src="/images/newlogohalili.png" alt="Halili's Dental Clinic" class="w-24 sm:w-32 mx-auto mb-6 bg-white p-4 rounded-2xl shadow-xl">
       <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Get In Touch With Us</h2>
       <p class="text-purple-100 text-lg mb-10">Halili Dental Clinic by Doc Kyle Halili DMD, Rodriguez, Philippines</p>
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
         <div class="contact-card p-6 rounded-2xl text-center">
-          <h3 class="font-bold text-gray-900 mb-2">📞 Call Us</h3>
-          <p class="text-gray-600">0922 223 3688</p>
+          <h3 class="font-bold text-gray-900 mb-2"> Call Us</h3>
+          <p class="text-gray-600">0920 669 3290</p>
         </div>
         <div class="contact-card p-6 rounded-2xl text-center">
-          <h3 class="font-bold text-gray-900 mb-2">💬 Viber</h3>
-          <p class="text-gray-600">+63 922 223 3688</p>
+          <h3 class="font-bold text-gray-900 mb-2"> Viber</h3>
+          <p class="text-gray-600">0920 669 3290</p>
         </div>
         <div class="contact-card p-6 rounded-2xl text-center sm:col-span-2 lg:col-span-1">
-          <h3 class="font-bold text-gray-900 mb-2">📧 Email</h3>
-          <p class="text-gray-600 break-all">halilidentalcare@gmail.com</p>
+          <h3 class="font-bold text-gray-900 mb-2"> Email</h3>
+          <p class="text-gray-600 break-all">DrKyleHalili@gmail.com</p>
+        </div>
+        <div class="contact-card p-6 rounded-2xl text-center sm:col-span-2 lg:col-span-1">
+          <h3 class="font-bold text-gray-900 mb-2"> Facebook</h3>
+          <p class="text-gray-600 break-all">facebook.com/DrKyle</p>
         </div>
       </div>
     </div>

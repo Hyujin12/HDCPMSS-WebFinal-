@@ -156,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
   .branding-bg {
     background-image: linear-gradient(135deg, rgba(102, 126, 234, 0.85) 0%, rgba(118, 75, 162, 0.85) 100%), 
-                      url('/images/dental-background.jpg');
+                      url('/images/halilibackground.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -216,7 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <!-- Left Side Image / Branding -->
   <div class="hidden md:flex md:w-1/2 branding-bg items-center justify-center text-white p-10 order-1 md:order-1">
     <div class="max-w-md text-center">
-      <img src="/images/logodental.png" alt="Clinic Logo" class="w-24 h-24 mx-auto mb-6 drop-shadow-lg">
+      <img src="/images/newlogohalili.png" alt="Clinic Logo" class="w-24 h-24 mx-auto mb-6 drop-shadow-lg">
       <h1 class="text-4xl font-bold mb-4 drop-shadow-lg">Halili's Dental Clinic</h1>
       <p class="text-lg leading-relaxed drop-shadow-lg">
         Excellence in Dental Care. Bringing you the best smiles with comfort and care.
