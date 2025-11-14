@@ -1,12 +1,13 @@
 <?php
 include 'service-grid.php';
+include 'review-grid.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Halili's Dental Clinic - Your Trusted Dental Care Partner</title>
+  <title>Halili Dental Clinic - Your Trusted Dental Care Partner</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     * {
@@ -121,6 +122,45 @@ include 'service-grid.php';
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
     }
+
+    /* Testimonial Card Styles */
+    .testimonial-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      border: 1px solid #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .testimonial-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+    }
+
+    .patient-image {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #f3f4f6;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .star-rating {
+      color: #fbbf24;
+      font-size: 1.1rem;
+    }
+
+    .quote-icon {
+      font-size: 3rem;
+      color: #e9d5ff;
+      line-height: 1;
+      opacity: 0.5;
+    }
   </style>
 </head>
 <body class="bg-gray-50 text-gray-900">
@@ -130,9 +170,9 @@ include 'service-grid.php';
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center py-4">
         <div class="flex items-center space-x-3">
-          <img src="/images/newlogohalili.png" alt="Halili's Dental Clinic Logo" class="w-12 h-12 sm:w-14 sm:h-14 object-contain">
+          <img src="/images/newlogohalili.png" alt="Halili Dental Clinic Logo" class="w-12 h-12 sm:w-14 sm:h-14 object-contain">
           <div>
-            <h2 class="text-lg sm:text-xl font-bold gradient-text">Halili's Dental Clinic</h2>
+            <h2 class="text-lg sm:text-xl font-bold gradient-text">Halili Dental Clinic</h2>
             <p class="text-xs text-gray-500 hidden sm:block">Excellence in Dental Care</p>
           </div>
         </div>
@@ -161,7 +201,7 @@ include 'service-grid.php';
     <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
       <div class="order-2 lg:order-1 text-center lg:text-left">
         <div class="inline-block px-4 py-2 bg-purple-100 rounded-full mb-6">
-          <span class="text-purple-700 font-medium text-sm">🦷 Trusted by 5,000+ Happy Patients</span>
+          <span class="text-purple-700 font-medium text-sm">🦷 Trusted by 1000+ Happy Patients</span>
         </div>
         <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
           We Are Ready To Help & Take Care of Your 
@@ -197,7 +237,7 @@ include 'service-grid.php';
   <section id="about" class="bg-white py-16 sm:py-20 scroll-mt-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-3xl mx-auto mb-12">
-        <h2 class="text-3xl sm:text-4xl font-bold mb-4">Why Choose <span class="gradient-text">Halili's Dental Clinic?</span></h2>
+        <h2 class="text-3xl sm:text-4xl font-bold mb-4">Why Choose <span class="gradient-text">Halili Dental Clinic?</span></h2>
         <p class="text-gray-600 text-lg">We combine state-of-the-art technology with compassionate care.</p>
       </div>
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -222,6 +262,58 @@ include 'service-grid.php';
           <h3 class="text-xl font-bold mb-3">Patient-Centered Care</h3>
           <p class="text-gray-600">Personalized treatment focused on your comfort and needs.</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="py-16 sm:py-20 bg-gradient-to-br from-purple-50 via-blue-50 to-purple-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-12">
+        <h2 class="text-3xl sm:text-4xl font-bold mb-4">What Our <span class="gradient-text">Patients Say</span></h2>
+        <p class="text-gray-600 text-lg">Real experiences from our valued patients who trust us with their smiles.</p>
+      </div>
+
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <?php foreach ($testimonials as $testimonial): ?>
+          <div class="testimonial-card">
+            <div class="quote-icon mb-3">"</div>
+            
+            <div class="flex items-center gap-4 mb-4">
+              <img src="<?= htmlspecialchars($testimonial['image']) ?>" 
+                   alt="<?= htmlspecialchars($testimonial['name']) ?>" 
+                   class="patient-image">
+              <div>
+                <h3 class="font-bold text-gray-900 text-lg"><?= htmlspecialchars($testimonial['name']) ?></h3>
+                <p class="text-sm text-gray-500"><?= htmlspecialchars($testimonial['location']) ?></p>
+                <div class="star-rating mt-1">
+                  <?php for ($i = 0; $i < $testimonial['rating']; $i++): ?>
+                    ★
+                  <?php endfor; ?>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-gray-600 leading-relaxed mb-4 flex-1">
+              "<?= htmlspecialchars($testimonial['review']) ?>"
+            </p>
+
+            <div class="pt-3 border-t border-gray-100">
+              <span class="inline-block px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
+                <?= htmlspecialchars($testimonial['treatment']) ?>
+              </span>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      </div>
+
+      <div class="text-center mt-12">
+        <p class="text-gray-600 mb-6">Join thousands of satisfied patients who trust Halili Dental Clinic</p>
+        <a href="log-in.php">
+          <button class="hero-gradient text-white px-8 py-4 rounded-full font-semibold hover:shadow-xl transition duration-300 transform hover:scale-105">
+            Book Your Appointment Today
+          </button>
+        </a>
       </div>
     </div>
   </section>
@@ -261,24 +353,24 @@ include 'service-grid.php';
   <!-- CONTACT -->
   <section id="contact" class="bg-gradient-to-br from-purple-600 to-blue-600 py-16 sm:py-20 scroll-mt-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <img src="/images/newlogohalili.png" alt="Halili's Dental Clinic" class="w-24 sm:w-32 mx-auto mb-6 bg-white p-4 rounded-2xl shadow-xl">
+      <img src="/images/newlogohalili.png" alt="Halili Dental Clinic" class="w-24 sm:w-32 mx-auto mb-6 bg-white p-4 rounded-2xl shadow-xl">
       <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Get In Touch With Us</h2>
       <p class="text-purple-100 text-lg mb-10">Halili Dental Clinic by Doc Kyle Halili DMD, Rodriguez, Philippines</p>
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
         <div class="contact-card p-6 rounded-2xl text-center">
-          <h3 class="font-bold text-gray-900 mb-2"> Call Us</h3>
+          <h3 class="font-bold text-gray-900 mb-2">📞 Call Us</h3>
           <p class="text-gray-600">0920 669 3290</p>
         </div>
         <div class="contact-card p-6 rounded-2xl text-center">
-          <h3 class="font-bold text-gray-900 mb-2"> Viber</h3>
+          <h3 class="font-bold text-gray-900 mb-2">📱 Viber</h3>
           <p class="text-gray-600">0920 669 3290</p>
         </div>
         <div class="contact-card p-6 rounded-2xl text-center sm:col-span-2 lg:col-span-1">
-          <h3 class="font-bold text-gray-900 mb-2"> Email</h3>
+          <h3 class="font-bold text-gray-900 mb-2">✉️ Email</h3>
           <p class="text-gray-600 break-all">DrKyleHalili@gmail.com</p>
         </div>
         <div class="contact-card p-6 rounded-2xl text-center sm:col-span-2 lg:col-span-1">
-          <h3 class="font-bold text-gray-900 mb-2"> Facebook</h3>
+          <h3 class="font-bold text-gray-900 mb-2">📘 Facebook</h3>
           <p class="text-gray-600 break-all">facebook.com/DrKyle</p>
         </div>
       </div>
@@ -287,7 +379,7 @@ include 'service-grid.php';
 
   <!-- FOOTER -->
   <footer class="bg-gray-900 text-gray-300 py-8 text-center">
-    <p>&copy; 2025 Halili's Dental Clinic. All rights reserved.</p>
+    <p>&copy; 2025 Halili Dental Clinic. All rights reserved.</p>
     <p class="text-sm mt-2">Excellence in Dental Care Since 1981</p>
   </footer>
 
