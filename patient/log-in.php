@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <div class="flex-1 flex items-center justify-center bg-gray-50 p-8 order-2 md:order-1">
     <form method="POST" class="w-full max-w-md bg-white shadow-2xl rounded-2xl p-8">
       <div class="text-center mb-6">
-        <img src="/images/newhalililogo.png" alt="Halili Logo" class="w-20 h-20 mx-auto mb-4">
+        <img src="/images/newlogohalili.png" alt="Halili Logo" class="w-20 h-20 mx-auto mb-4">
         <h2 class="text-2xl font-bold gradient-text mb-2">Welcome Back</h2>
         <p class="text-gray-600 text-sm">Please log in to access your dashboard</p>
       </div>

@@ -130,7 +130,7 @@ include 'service-grid.php';
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center py-4">
         <div class="flex items-center space-x-3">
-          <img src="/images/newhalililogo.png" alt="Halili's Dental Clinic Logo" class="w-12 h-12 sm:w-14 sm:h-14 object-contain">
+          <img src="/images/newlogohalili.png" alt="Halili's Dental Clinic Logo" class="w-12 h-12 sm:w-14 sm:h-14 object-contain">
           <div>
             <h2 class="text-lg sm:text-xl font-bold gradient-text">Halili's Dental Clinic</h2>
             <p class="text-xs text-gray-500 hidden sm:block">Excellence in Dental Care</p>
