@@ -89,10 +89,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
       </div>
 
-      <div class="mb-6">
+      <div class="mb-4">
         <label class="block font-semibold mb-2 text-gray-700">Password</label>
         <input type="password" name="password" required
           class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+      </div>
+
+      <div class="mb-6 text-right">
+        <a href="forgot-password.php" class="text-sm text-purple-600 hover:underline font-medium">
+          Forgot Password?
+        </a>
       </div>
 
       <button type="submit"
@@ -111,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <div class="hidden md:flex md:w-1/2 branding-bg items-center justify-center text-white p-10 order-1 md:order-2">
     <div class="max-w-md text-center">
       <img src="/images/newlogohalili.png" alt="Clinic Logo" class="w-24 h-24 mx-auto mb-6 drop-shadow-lg">
-      <h1 class="text-4xl font-bold mb-4 drop-shadow-lg">Halili's Dental Clinic</h1>
+      <h1 class="text-4xl font-bold mb-4 drop-shadow-lg">Halili Dental Clinic</h1>
       <p class="text-lg leading-relaxed drop-shadow-lg">
         Excellence in Dental Care. Bringing you the best smiles with comfort and care.
       </p>
