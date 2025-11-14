@@ -188,7 +188,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </a>
       </p>
       <p class="text-gray-700">
-        <a href="login.php" class="text-purple-600 font-semibold hover:underline">
+        <a href="log-in.php" class="text-purple-600 font-semibold hover:underline">
           Back to Login
         </a>
       </p>
