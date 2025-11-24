@@ -14,6 +14,48 @@ $usersCollection = $db->selectCollection('users');
 
 $error = '';
 
+// Function to send verification code
+function sendVerificationCode($usersCollection, $email, $username) {
+    $newCode = random_int(100000, 999999);
+
+    $updateResult = $usersCollection->updateOne(
+        ['email' => $email],
+        ['$set' => [
+            'verificationCode' => (string)$newCode,
+            'codeExpires' => new MongoDB\BSON\UTCDateTime((time() + 900) * 1000)
+        ]]
+    );
+
+    if ($updateResult->getModifiedCount() === 1 || $updateResult->getMatchedCount() === 1) {
+        $apiKey = $_ENV['RESEND_API_KEY'];
+        $url = "https://api.resend.com/emails";
+        $data = [
+            "from" => "Halili Dental Clinic <no-reply@halilidentalclinic.shop>",
+            "to" => [$email],
+            "subject" => "Your Halili Dental Clinic Verification Code",
+            "html" => "<p>Hi " . htmlspecialchars($username) . ",</p>
+                       <p>Your verification code is: <strong>$newCode</strong></p>
+                       <p>This code will expire in 15 minutes.</p>"
+        ];
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Authorization: Bearer $apiKey",
+            "Content-Type: application/json"
+        ]);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        return $httpCode >= 200 && $httpCode < 300;
+    }
+    return false;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
@@ -30,7 +72,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (!password_verify($password, $user['password'])) {
             $error = "Incorrect password.";
         } elseif (empty($user['isVerified']) || !$user['isVerified']) {
-            $error = "Please verify your email first.";
+            // Account exists but not verified - send code and redirect
+            if (sendVerificationCode($usersCollection, $email, $user['username'])) {
+                $_SESSION['verification_email'] = $email;
+                $_SESSION['verification_message'] = "A verification code has been sent to your email.";
+                header("Location: verify-code.php?email=" . urlencode($email));
+                exit();
+            } else {
+                $error = "Failed to send verification code. Please try again.";
+            }
         } else {
             $_SESSION['email'] = $email;
             $_SESSION['username'] = $user['username'];

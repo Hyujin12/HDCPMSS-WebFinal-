@@ -16,8 +16,13 @@ $error = '';
 $success = '';
 $email = $_GET['email'] ?? $_POST['email'] ?? '';
 
+// Check for message from login redirect
+if (isset($_SESSION['verification_message'])) {
+    $success = $_SESSION['verification_message'];
+    unset($_SESSION['verification_message']);
+}
 
-// ✅ Check if account already verified (auto check on page load)
+// Check if account already verified (auto check on page load)
 if (!empty($email)) {
     $existingUser = $usersCollection->findOne(['email' => $email]);
     if ($existingUser && !empty($existingUser['isVerified']) && $existingUser['isVerified'] === true) {
@@ -25,7 +30,7 @@ if (!empty($email)) {
     }
 }
 
-// ✅ Function to resend verification code
+// Function to resend verification code
 function resendVerificationCode($usersCollection, $email)
 {
     $user = $usersCollection->findOne(['email' => $email]);
@@ -49,7 +54,8 @@ function resendVerificationCode($usersCollection, $email)
             "to" => [$email],
             "subject" => "Your Halili Dental Clinic Verification Code",
             "html" => "<p>Hi " . htmlspecialchars($user['username']) . ",</p>
-                       <p>Your new verification code is: <strong>$newCode</strong></p>"
+                       <p>Your new verification code is: <strong>$newCode</strong></p>
+                       <p>This code will expire in 15 minutes.</p>"
         ];
 
         $ch = curl_init($url);
@@ -76,7 +82,7 @@ function resendVerificationCode($usersCollection, $email)
     return false;
 }
 
-// ✅ Handle form submission
+// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $code = trim($_POST['code'] ?? '');
     $email = trim($_POST['email'] ?? '');
@@ -107,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// ✅ Handle resend request
+// Handle resend request
 if (isset($_GET['resend']) && $email) {
     if (resendVerificationCode($usersCollection, $email)) {
         $success = "A new verification code has been sent to your email.";
@@ -121,31 +127,50 @@ if (isset($_GET['resend']) && $email) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Verify Email - Halili's Dental Clinic</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Email - Halili Dental Clinic</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
 </head>
-<body class="bg-white text-gray-900 flex items-center justify-center min-h-screen">
+<body class="bg-gray-50 text-gray-900 flex items-center justify-center min-h-screen">
 
-<form method="POST" action="verify-code.php" class="max-w-md w-full p-8 border rounded-lg shadow-lg">
-    <h2 class="text-2xl font-bold mb-6 text-center">Verify Your Email</h2>
+<form method="POST" action="verify-code.php" class="max-w-md w-full p-8 bg-white border rounded-2xl shadow-2xl">
+    <div class="text-center mb-6">
+        <img src="/images/newlogohalili.png" alt="Halili Logo" class="w-20 h-20 mx-auto mb-4">
+        <h2 class="text-2xl font-bold mb-2">Verify Your Email</h2>
+        <p class="text-gray-600 text-sm">Enter the 6-digit code sent to your email</p>
+    </div>
 
     <input type="hidden" name="email" value="<?= htmlspecialchars($email) ?>">
 
-    <label class="block mb-2 font-semibold" for="code">Verification Code</label>
-    <input type="text" name="code" id="code" class="w-full p-2 border rounded mb-6" required>
+    <div class="mb-4">
+        <label class="block mb-2 font-semibold text-gray-700" for="code">Verification Code</label>
+        <input type="text" name="code" id="code" 
+               class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition text-center text-xl tracking-widest" 
+               maxlength="6" pattern="\d{6}" placeholder="000000" required>
+    </div>
 
-    <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded font-bold hover:bg-blue-700 transition">
-        Verify
+    <button type="submit" 
+            class="w-full gradient-bg text-white py-3 rounded-lg font-bold hover:opacity-90 transition duration-300 shadow-md">
+        Verify Email
     </button>
 
     <p class="mt-6 text-center text-gray-700">
         Didn't receive a code? 
-        <a href="?email=<?= urlencode($email) ?>&resend=1" class="text-blue-600 hover:underline">Resend Code</a>
+        <a href="?email=<?= urlencode($email) ?>&resend=1" class="text-purple-600 font-semibold hover:underline">Resend Code</a>
+    </p>
+
+    <p class="mt-4 text-center text-gray-700">
+        <a href="log-in.php" class="text-purple-600 hover:underline">Back to Login</a>
     </p>
 </form>
 
-<!-- ✅ SweetAlert Notifications -->
+<!-- SweetAlert Notifications -->
 <?php if (!empty($error)) : ?>
 <script>
 Swal.fire({ icon: 'error', title: 'Error', text: '<?= htmlspecialchars($error) ?>' });
@@ -160,10 +185,7 @@ Swal.fire({
     text: '<?= htmlspecialchars($success) ?>',
     confirmButtonText: 'OK'
 }).then(() => {
-    // ✅ If already verified, redirect to login
-    <?php if (str_contains($success, 'already verified')): ?>
-        window.location.href = 'log-in.php';
-    <?php elseif (str_contains($success, 'Email verified successfully')): ?>
+    <?php if (str_contains($success, 'already verified') || str_contains($success, 'Email verified successfully')): ?>
         window.location.href = 'log-in.php';
     <?php else: ?>
         window.location.href = 'verify-code.php?email=<?= urlencode($email) ?>';
