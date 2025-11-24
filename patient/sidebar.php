@@ -411,6 +411,15 @@ body {
 }
 </style>
 
+<!-- Apply theme immediately before any rendering -->
+<script>
+  // This runs IMMEDIATELY before the page renders
+  (function() {
+    const savedTheme = '<?= $theme ?>';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  })();
+</script>
+
 <!-- Mobile Top Bar -->
 <div class="mobile-topbar">
   <div class="mobile-brand">
@@ -512,9 +521,8 @@ body {
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 (function() {
-  // Initialize theme IMMEDIATELY on page load - before any render
+  // Get the current theme from PHP
   const currentTheme = '<?= $theme ?>';
-  document.documentElement.setAttribute('data-theme', currentTheme);
   
   // Wait for DOM to be ready
   if (document.readyState === 'loading') {
@@ -531,7 +539,7 @@ body {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
     
-    // Set initial theme UI state
+    // Set initial theme UI state based on session
     updateThemeUI(currentTheme);
     
     // Theme toggle functionality
@@ -545,6 +553,10 @@ body {
           body: formData
         });
         
+        if (!response.ok) {
+          throw new Error('Failed to toggle theme');
+        }
+        
         const data = await response.json();
         const newTheme = data.theme;
         
@@ -554,6 +566,8 @@ body {
         
       } catch (error) {
         console.error('Error toggling theme:', error);
+        // Show error to user
+        alert('Failed to save theme preference. Please try again.');
       }
     });
     
