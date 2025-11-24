@@ -34,6 +34,43 @@ $userContact = $user['contactNumber'] ?? '';
   <title>Dental Services - Halili Dental</title>
   
   <style>
+    /* Theme Variables */
+    :root {
+      --bg-primary: #f8f9fa;
+      --bg-secondary: #ffffff;
+      --text-primary: #111827;
+      --text-secondary: #6b7280;
+      --border-color: #e5e7eb;
+
+      --accent-start: #1d4ed8;
+      --accent-end: #1e40af;
+
+      --success-start: #059669;
+      --success-end: #047857;
+
+      --muted-bg: #f3f4f6;
+      --card-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      --card-shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #0b1220;       /* page background */
+      --bg-secondary: #0f1724;     /* card / content background */
+      --text-primary: #f9fafb;
+      --text-secondary: #cbd5e1;
+      --border-color: #22303f;
+
+      --accent-start: #1e40af;
+      --accent-end: #1e293b;
+
+      --success-start: #059669;
+      --success-end: #064e3b;
+
+      --muted-bg: #111827;
+      --card-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      --card-shadow-hover: 0 12px 36px rgba(0,0,0,0.6);
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -41,9 +78,11 @@ $userContact = $user['contactNumber'] ?? '';
     }
 
     body { 
-      background: #f8f9fa;
+      background: var(--bg-primary);
+      color: var(--text-primary);
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     main {
@@ -51,6 +90,7 @@ $userContact = $user['contactNumber'] ?? '';
       padding: 1rem;
       min-height: 100vh;
       transition: margin-left 0.3s ease;
+      background: transparent;
     }
 
     @media (min-width: 768px) {
@@ -68,12 +108,12 @@ $userContact = $user['contactNumber'] ?? '';
 
     /* Header Section */
     .page-header {
-      background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+      background: linear-gradient(135deg, var(--accent-start) 0%, var(--accent-end) 100%);
       color: white;
       padding: 2.5rem 1.5rem;
       border-radius: 16px;
       margin-bottom: 2rem;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.12);
     }
 
     .page-header h1 {
@@ -119,26 +159,26 @@ $userContact = $user['contactNumber'] ?? '';
 
     /* Service Card */
     .service-card {
-      background: white;
+      background: var(--bg-secondary);
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-shadow: var(--card-shadow);
       transition: all 0.3s ease;
       display: flex;
       flex-direction: column;
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--border-color);
     }
 
     .service-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      box-shadow: var(--card-shadow-hover);
     }
 
     .service-card-image {
       width: 100%;
       height: 200px;
       object-fit: cover;
-      background: #f3f4f6;
+      background: var(--muted-bg);
     }
 
     .service-card-content {
@@ -149,14 +189,14 @@ $userContact = $user['contactNumber'] ?? '';
     }
 
     .service-card-title {
-      color: #1d4ed8;
+      color: var(--accent-start);
       font-size: 1.4rem;
       font-weight: 700;
       margin-bottom: 0.75rem;
     }
 
     .service-card-description {
-      color: #6b7280;
+      color: var(--text-secondary);
       font-size: 0.95rem;
       line-height: 1.6;
       margin-bottom: 1.25rem;
@@ -168,17 +208,17 @@ $userContact = $user['contactNumber'] ?? '';
       justify-content: space-between;
       align-items: center;
       padding-top: 1rem;
-      border-top: 1px solid #f3f4f6;
+      border-top: 1px solid var(--muted-bg);
     }
 
     .service-price {
       font-size: 0.85rem;
-      color: #6b7280;
+      color: var(--text-secondary);
       font-weight: 500;
     }
 
     .btn-book {
-      background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+      background: linear-gradient(135deg, var(--accent-start) 0%, var(--accent-end) 100%);
       color: white;
       border: none;
       padding: 0.65rem 1.5rem;
@@ -194,7 +234,7 @@ $userContact = $user['contactNumber'] ?? '';
 
     .btn-book:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(29, 78, 216, 0.4);
+      box-shadow: 0 4px 12px rgba(29, 78, 216, 0.18);
     }
 
     /* Modal Styles */
@@ -220,7 +260,7 @@ $userContact = $user['contactNumber'] ?? '';
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: white;
+      background: var(--bg-secondary);
       border-radius: 16px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.3);
       z-index: 1050;
@@ -228,6 +268,7 @@ $userContact = $user['contactNumber'] ?? '';
       width: 90%;
       max-height: 90vh;
       overflow-y: auto;
+      border: 1px solid var(--border-color);
     }
 
     .booking-modal.show {
@@ -247,7 +288,7 @@ $userContact = $user['contactNumber'] ?? '';
     }
 
     .modal-header {
-      background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+      background: linear-gradient(135deg, var(--accent-start) 0%, var(--accent-end) 100%);
       color: white;
       padding: 1.5rem;
       border-radius: 16px 16px 0 0;
@@ -285,12 +326,14 @@ $userContact = $user['contactNumber'] ?? '';
 
     .modal-body {
       padding: 1.5rem;
+      color: var(--text-primary);
+      background: var(--bg-secondary);
     }
 
     .form-section {
       margin-bottom: 1.5rem;
       padding-bottom: 1.5rem;
-      border-bottom: 2px solid #f3f4f6;
+      border-bottom: 2px solid var(--muted-bg);
     }
 
     .form-section:last-of-type {
@@ -302,7 +345,7 @@ $userContact = $user['contactNumber'] ?? '';
     .form-section-title {
       font-size: 1.1rem;
       font-weight: 700;
-      color: #1d4ed8;
+      color: var(--accent-start);
       margin-bottom: 1rem;
       display: flex;
       align-items: center;
@@ -320,19 +363,19 @@ $userContact = $user['contactNumber'] ?? '';
     .form-label {
       display: block;
       font-weight: 600;
-      color: #374151;
+      color: var(--text-primary);
       margin-bottom: 0.5rem;
       font-size: 0.9rem;
     }
 
     .form-label i {
-      color: #1d4ed8;
+      color: var(--accent-start);
       margin-right: 0.5rem;
       width: 20px;
     }
 
     .form-label .optional {
-      color: #9ca3af;
+      color: var(--text-secondary);
       font-weight: 400;
       font-size: 0.85rem;
       font-style: italic;
@@ -341,23 +384,24 @@ $userContact = $user['contactNumber'] ?? '';
     .form-control {
       width: 100%;
       padding: 0.75rem 1rem;
-      border: 2px solid #e5e7eb;
+      border: 2px solid var(--border-color);
       border-radius: 10px;
       font-size: 0.95rem;
       transition: all 0.3s ease;
-      background: #f9fafb;
+      background: var(--muted-bg);
+      color: var(--text-primary);
     }
 
     .form-control:focus {
       outline: none;
-      border-color: #1d4ed8;
-      background: white;
-      box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
+      border-color: var(--accent-start);
+      background: var(--bg-secondary);
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.06);
     }
 
     .form-control:read-only {
-      background: #f3f4f6;
-      color: #6b7280;
+      background: var(--muted-bg);
+      color: var(--text-secondary);
       cursor: not-allowed;
     }
 
@@ -379,7 +423,7 @@ $userContact = $user['contactNumber'] ?? '';
 
     .form-helper-text {
       font-size: 0.85rem;
-      color: #6b7280;
+      color: var(--text-secondary);
       margin-top: 0.5rem;
       display: flex;
       align-items: start;
@@ -387,13 +431,13 @@ $userContact = $user['contactNumber'] ?? '';
     }
 
     .form-helper-text i {
-      color: #1d4ed8;
+      color: var(--accent-start);
       margin-top: 0.2rem;
     }
 
     .btn-submit {
       width: 100%;
-      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      background: linear-gradient(135deg, var(--success-start) 0%, var(--success-end) 100%);
       color: white;
       border: none;
       padding: 1rem;
@@ -411,7 +455,7 @@ $userContact = $user['contactNumber'] ?? '';
 
     .btn-submit:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
+      box-shadow: 0 6px 16px rgba(5, 150, 105, 0.18);
     }
 
     .btn-submit:disabled {
@@ -424,35 +468,37 @@ $userContact = $user['contactNumber'] ?? '';
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      background: #dbeafe;
-      color: #1e40af;
+      background: rgba(219,234,254,0.14);
+      color: var(--accent-start);
       padding: 0.5rem 1rem;
       border-radius: 20px;
       font-size: 0.85rem;
       font-weight: 600;
       margin-bottom: 1rem;
+      border: 1px solid var(--border-color);
     }
 
     /* Info Banner */
     .info-banner {
-      background: #dbeafe;
-      border-left: 4px solid #1d4ed8;
+      background: linear-gradient(90deg, rgba(219,234,254,0.08), rgba(219,234,254,0.02));
+      border-left: 4px solid var(--accent-start);
       padding: 1rem 1.25rem;
       border-radius: 8px;
       margin-bottom: 2rem;
       display: flex;
       align-items: center;
       gap: 1rem;
+      color: var(--text-primary);
     }
 
     .info-banner i {
-      color: #1d4ed8;
+      color: var(--accent-start);
       font-size: 1.5rem;
     }
 
     .info-banner-content p {
       margin: 0;
-      color: #1e40af;
+      color: var(--accent-end);
       font-weight: 500;
     }
 
@@ -462,16 +508,22 @@ $userContact = $user['contactNumber'] ?? '';
     }
 
     .booking-modal::-webkit-scrollbar-track {
-      background: #f1f1f1;
+      background: var(--muted-bg);
     }
 
     .booking-modal::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
+      background: var(--border-color);
       border-radius: 10px;
     }
 
     .booking-modal::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
+      background: var(--text-secondary);
+    }
+
+    /* Utility: error highlight for inputs */
+    input.error, textarea.error {
+      border-color: #dc2626 !important;
+      background: #fff5f5;
     }
   </style>
 </head>
@@ -664,6 +716,27 @@ $userContact = $user['contactNumber'] ?? '';
   const userEmail = <?php echo json_encode($_SESSION['email'] ?? $user['email'] ?? ''); ?>;
   const userContact = <?php echo json_encode($userContact); ?>;
 
+  // Helper to read CSS variables (returns trimmed string)
+  function cssVar(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
+  // Build SweetAlert options that are theme aware
+  function swalThemeOptions(extra = {}) {
+    const background = cssVar('--bg-secondary') || '#f9fafb';
+    const color = cssVar('--text-primary') || '#111827';
+    const buttonColor = cssVar('--accent-start') || '#1d4ed8';
+    return Object.assign({
+      background,
+      color,
+      confirmButtonColor: buttonColor,
+      customClass: {
+        popup: 'rounded-xl shadow-lg',
+        confirmButton: 'px-4 py-2 font-semibold'
+      }
+    }, extra);
+  }
+
   // Clinic operating hours
   const clinicHours = {
     0: { open: '08:00', close: '12:00', closed: false }, // Sunday
@@ -779,7 +852,7 @@ $userContact = $user['contactNumber'] ?? '';
         dateError.classList.add('show');
         submitBtn.disabled = true;
         
-        Swal.fire({
+        Swal.fire(Object.assign({
           icon: 'info',
           title: 'Clinic Closed',
           html: `
@@ -795,14 +868,8 @@ $userContact = $user['contactNumber'] ?? '';
               ${getOperatingHoursText(6)}<br>
               ${getOperatingHoursText(0)}
             </div>
-          `,
-          confirmButtonColor: '#1d4ed8',
-          background: '#f9fafb',
-          customClass: {
-            popup: 'rounded-xl shadow-lg',
-            confirmButton: 'px-4 py-2 font-semibold'
-          }
-        });
+          `
+        }, swalThemeOptions()));
       } else {
         dateInput.classList.remove('error');
         dateError.classList.remove('show');
@@ -839,7 +906,7 @@ $userContact = $user['contactNumber'] ?? '';
         timeError.textContent = `Outside operating hours. ${getOperatingHoursText(selectedDay)}`;
         submitBtn.disabled = true;
         
-        Swal.fire({
+        Swal.fire(Object.assign({
           icon: 'warning',
           title: 'Outside Operating Hours',
           html: `
@@ -848,14 +915,8 @@ $userContact = $user['contactNumber'] ?? '';
             <div style="text-align: left; font-size: 0.9rem;">
               <strong>${getOperatingHoursText(selectedDay)}</strong>
             </div>
-          `,
-          confirmButtonColor: '#1d4ed8',
-          background: '#f9fafb',
-          customClass: {
-            popup: 'rounded-xl shadow-lg',
-            confirmButton: 'px-4 py-2 font-semibold'
-          }
-        });
+          `
+        }, swalThemeOptions({ confirmButtonColor: cssVar('--accent-start') })));
       } else {
         timeInput.classList.remove('error');
         timeError.classList.remove('show');
@@ -903,52 +964,34 @@ $userContact = $user['contactNumber'] ?? '';
       const now = new Date();
       
       if (selectedDate < todayString) {
-        Swal.fire({
+        Swal.fire(Object.assign({
           icon: 'warning',
           title: 'Invalid Date',
-          text: 'Cannot book appointment for a past date. Please select today or a future date.',
-          confirmButtonColor: '#1d4ed8',
-          background: '#f9fafb',
-          customClass: {
-            popup: 'rounded-xl shadow-lg',
-            confirmButton: 'px-4 py-2 font-semibold'
-          }
-        });
+          text: 'Cannot book appointment for a past date. Please select today or a future date.'
+        }, swalThemeOptions()));
         return;
       }
 
       if (clinicHours[selectedDay].closed) {
-        Swal.fire({
+        Swal.fire(Object.assign({
           icon: 'warning',
           title: 'Clinic Closed',
-          text: 'The clinic is closed on the selected day. Please choose another date.',
-          confirmButtonColor: '#1d4ed8',
-          background: '#f9fafb',
-          customClass: {
-            popup: 'rounded-xl shadow-lg',
-            confirmButton: 'px-4 py-2 font-semibold'
-          }
-        });
+          text: 'The clinic is closed on the selected day. Please choose another date.'
+        }, swalThemeOptions()));
         return;
       }
 
       if (selectedDateTime < now) {
-        Swal.fire({
+        Swal.fire(Object.assign({
           icon: 'warning',
           title: 'Invalid Time',
-          text: 'Cannot book appointment in the past. Please select a future date and time.',
-          confirmButtonColor: '#1d4ed8',
-          background: '#f9fafb',
-          customClass: {
-            popup: 'rounded-xl shadow-lg',
-            confirmButton: 'px-4 py-2 font-semibold'
-          }
-        });
+          text: 'Cannot book appointment in the past. Please select a future date and time.'
+        }, swalThemeOptions()));
         return;
       }
 
       if (!isWithinOperatingHours(selectedDay, selectedTime)) {
-        Swal.fire({
+        Swal.fire(Object.assign({
           icon: 'warning',
           title: 'Outside Operating Hours',
           html: `
@@ -957,21 +1000,15 @@ $userContact = $user['contactNumber'] ?? '';
             <div style="text-align: left; font-size: 0.9rem;">
               <strong>${getOperatingHoursText(selectedDay)}</strong>
             </div>
-          `,
-          confirmButtonColor: '#1d4ed8',
-          background: '#f9fafb',
-          customClass: {
-            popup: 'rounded-xl shadow-lg',
-            confirmButton: 'px-4 py-2 font-semibold'
-          }
-        });
+          `
+        }, swalThemeOptions()));
         return;
       }
 
       const formData = new FormData(bookingForm);
       const data = Object.fromEntries(formData.entries());
 
-      Swal.fire({
+      Swal.fire(Object.assign({
         title: 'Processing...',
         text: 'Please wait while we confirm your booking.',
         icon: 'info',
@@ -981,7 +1018,7 @@ $userContact = $user['contactNumber'] ?? '';
         didOpen: () => {
           Swal.showLoading();
         }
-      });
+      }, swalThemeOptions()));
 
       try {
         const response = await fetch('submit-booking.php', {
@@ -1008,7 +1045,7 @@ $userContact = $user['contactNumber'] ?? '';
 
           let medicalInfo = '';
           if (data.medicalHistory || data.allergies) {
-            medicalInfo = '<hr style="margin: 1rem 0; border-color: #e5e7eb;">';
+            medicalInfo = `<hr style="margin: 1rem 0; border-color: ${cssVar('--border-color') || '#e5e7eb'};">`;
             if (data.medicalHistory) {
               medicalInfo += `<p style="margin-bottom: 0.5rem;"><strong>Medical History:</strong> ${data.medicalHistory}</p>`;
             }
@@ -1017,56 +1054,44 @@ $userContact = $user['contactNumber'] ?? '';
             }
           }
 
-          Swal.fire({
+          Swal.fire(Object.assign({
             icon: 'success',
             title: 'Booking Confirmed!',
             html: `
-              <div style="text-align: left; padding: 1rem;">
+              <div style="text-align: left; padding: 1rem; color: ${cssVar('--text-primary')}">
                 <p style="margin-bottom: 0.75rem;"><strong>Service:</strong> ${data.serviceName}</p>
                 <p style="margin-bottom: 0.75rem;"><strong>Date:</strong> ${formattedDate}</p>
                 <p style="margin-bottom: 0.75rem;"><strong>Time:</strong> ${formattedTime}</p>
                 <p style="margin-bottom: 0.75rem;"><strong>Patient:</strong> ${data.username}</p>
                 ${medicalInfo}
-                <hr style="margin: 1rem 0; border-color: #e5e7eb;">
-                <p style="color: #6b7280; font-size: 0.9rem; margin: 0;">We'll send you a confirmation email shortly at <strong>${data.email}</strong></p>
+                <hr style="margin: 1rem 0; border-color: ${cssVar('--border-color')}">
+                <p style="color: ${cssVar('--text-secondary')}; font-size: 0.9rem; margin: 0;">We'll send you a confirmation email shortly at <strong>${data.email}</strong></p>
               </div>
             `,
             confirmButtonText: 'Got it!',
-            confirmButtonColor: '#059669',
-            background: '#f9fafb',
-            customClass: {
-              popup: 'rounded-xl shadow-lg',
-              confirmButton: 'px-6 py-2 font-semibold'
-            }
-          }).then(() => {
-            closeModal();
-          });
+            confirmButtonColor: cssVar('--success-start') || '#059669'
+          }, swalThemeOptions()));
+          
+          // close modal after confirmation
+          Swal.getPopup && Swal.getPopup(); // ensure swal is mounted
+          closeModal();
+
         } else {
-          Swal.fire({
+          Swal.fire(Object.assign({
             icon: 'error',
             title: 'Booking Failed',
             text: text || 'There was an error processing your booking. Please try again.',
-            confirmButtonColor: '#dc2626',
-            background: '#f9fafb',
-            customClass: {
-              popup: 'rounded-xl shadow-lg',
-              confirmButton: 'px-4 py-2 font-semibold'
-            }
-          });
+            confirmButtonColor: '#dc2626'
+          }, swalThemeOptions()));
         }
       } catch (error) {
-        Swal.fire({
+        Swal.fire(Object.assign({
           icon: 'error',
           title: 'Connection Error',
           text: 'Unable to submit booking. Please check your internet connection and try again.',
-          footer: `<small style="color: #6b7280;">Error: ${error.message}</small>`,
-          confirmButtonColor: '#dc2626',
-          background: '#f9fafb',
-          customClass: {
-            popup: 'rounded-xl shadow-lg',
-            confirmButton: 'px-4 py-2 font-semibold'
-          }
-        });
+          footer: `<small style="color: ${cssVar('--text-secondary')}">Error: ${error.message}</small>`,
+          confirmButtonColor: '#dc2626'
+        }, swalThemeOptions()));
       }
     });
   });
