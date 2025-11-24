@@ -1,8 +1,42 @@
 <?php
+session_start();
+
+// Handle theme toggle
+if (isset($_POST['toggle_theme'])) {
+    $current_theme = isset($_SESSION['theme']) ? $_SESSION['theme'] : 'light';
+    $_SESSION['theme'] = ($current_theme === 'light') ? 'dark' : 'light';
+    echo json_encode(['theme' => $_SESSION['theme']]);
+    exit;
+}
+
 $currentPage = basename($_SERVER['PHP_SELF']);
+$theme = isset($_SESSION['theme']) ? $_SESSION['theme'] : 'light';
 ?>
 
 <style>
+/* Theme Variables */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --border-color: #e5e7eb;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #1f2937;
+  --bg-secondary: #111827;
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --border-color: #374151;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 /* Sidebar Styles */
 .sidebar {
   width: 16rem;
@@ -19,6 +53,11 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
+}
+
+[data-theme="dark"] .sidebar {
+  background: linear-gradient(180deg, #1e3a8a 0%, #1e293b 100%);
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.4);
 }
 
 @media (min-width: 768px) {
@@ -107,7 +146,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   flex: 1;
   overflow-y: auto;
   padding: 1rem 0;
-  /* Add padding at bottom on mobile to prevent content being hidden by browser tabs */
   padding-bottom: 6rem;
 }
 
@@ -172,14 +210,64 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   font-size: 1.1rem;
 }
 
-.sidebar-link .badge {
-  margin-left: auto;
-  background: rgba(239, 68, 68, 0.9);
-  color: white;
-  padding: 0.2rem 0.5rem;
-  border-radius: 12px;
-  font-size: 0.7rem;
-  font-weight: 700;
+/* Theme Toggle Section */
+.theme-toggle-section {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.theme-toggle-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.theme-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.theme-toggle-label i {
+  font-size: 1rem;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 34px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.toggle-switch.active {
+  background: rgba(59, 130, 246, 0.6);
+  border-color: rgba(59, 130, 246, 0.8);
+}
+
+.toggle-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch.active .toggle-slider {
+  transform: translateX(24px);
 }
 
 /* Logout Button */
@@ -187,7 +275,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   padding: 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(0, 0, 0, 0.1);
-  /* Elevate footer on mobile to avoid browser tabs */
   margin-bottom: 5rem;
 }
 
@@ -234,6 +321,10 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   right: 0;
   z-index: 999;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .mobile-topbar {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%);
 }
 
 @media (min-width: 768px) {
@@ -346,7 +437,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   <div class="sidebar-user">
     <div class="user-avatar">
       <?php
-      // Get first letter of username for avatar
       $username = $_SESSION['username'] ?? 'User';
       echo strtoupper(substr($username, 0, 1));
       ?>
@@ -388,6 +478,19 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     </ul>
   </nav>
 
+  <!-- Theme Toggle Section -->
+  <div class="theme-toggle-section">
+    <div class="theme-toggle-container">
+      <div class="theme-toggle-label">
+        <i class="fas fa-moon" id="themeIcon"></i>
+        <span id="themeText">Dark Mode</span>
+      </div>
+      <div class="toggle-switch" id="themeToggle">
+        <div class="toggle-slider"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Sidebar Footer -->
   <div class="sidebar-footer">
     <button type="button" class="btn-logout" onclick="confirmLogout()">
@@ -407,6 +510,56 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+  // Initialize theme
+  const currentTheme = '<?= $theme ?>';
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  
+  const themeToggle = document.getElementById('themeToggle');
+  const themeIcon = document.getElementById('themeIcon');
+  const themeText = document.getElementById('themeText');
+  
+  // Set initial state
+  if (currentTheme === 'dark') {
+    themeToggle.classList.add('active');
+    themeIcon.classList.remove('fa-moon');
+    themeIcon.classList.add('fa-sun');
+    themeText.textContent = 'Light Mode';
+  }
+  
+  // Theme toggle functionality
+  themeToggle.addEventListener('click', async function() {
+    const formData = new FormData();
+    formData.append('toggle_theme', '1');
+    
+    try {
+      const response = await fetch(window.location.href, {
+        method: 'POST',
+        body: formData
+      });
+      
+      const data = await response.json();
+      const newTheme = data.theme;
+      
+      // Update UI
+      document.documentElement.setAttribute('data-theme', newTheme);
+      
+      if (newTheme === 'dark') {
+        themeToggle.classList.add('active');
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+        themeText.textContent = 'Light Mode';
+      } else {
+        themeToggle.classList.remove('active');
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+        themeText.textContent = 'Dark Mode';
+      }
+    } catch (error) {
+      console.error('Error toggling theme:', error);
+    }
+  });
+
+  // Sidebar functionality
   const burgerBtn = document.getElementById('burgerBtn');
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('overlay');
@@ -433,14 +586,13 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
   overlay.addEventListener('click', closeSidebar);
 
-  // Close sidebar when clicking a link on mobile
   if (window.innerWidth < 768) {
     document.querySelectorAll('.sidebar-link').forEach(link => {
       link.addEventListener('click', closeSidebar);
     });
   }
 
-  // SweetAlert logout confirmation
+  // Logout confirmation
   function confirmLogout() {
     Swal.fire({
       title: 'Are you sure?',
@@ -451,7 +603,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, logout',
       cancelButtonText: 'Cancel',
-      background: '#f9fafb',
+      background: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1f2937' : '#f9fafb',
+      color: document.documentElement.getAttribute('data-theme') === 'dark' ? '#f9fafb' : '#1f2937',
       customClass: {
         popup: 'rounded-xl shadow-lg',
         confirmButton: 'px-4 py-2 font-semibold',
@@ -465,6 +618,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           icon: 'info',
           showConfirmButton: false,
           timer: 1200,
+          background: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1f2937' : '#f9fafb',
+          color: document.documentElement.getAttribute('data-theme') === 'dark' ? '#f9fafb' : '#1f2937',
           didClose: () => {
             document.getElementById('logoutForm').submit();
           }

@@ -54,10 +54,31 @@ $totalUpcoming = $appointmentsCollection->countDocuments([
   box-sizing: border-box;
 }
 
+/* Theme Variables */
+:root {
+  --bg-primary: #f8f9fa;
+  --bg-card: #ffffff;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --border-color: #e9ecef;
+  --shadow: 0 2px 4px rgba(0,0,0,0.04);
+}
+
+[data-theme="dark"] {
+  --bg-primary: #111827;
+  --bg-card: #1f2937;
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --border-color: #374151;
+  --shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
 body { 
-  background: #f8f9fa;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .main-content {
@@ -161,27 +182,30 @@ body {
 
 /* Card Styles */
 .card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
-  border: 1px solid #e9ecef;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
   height: 100%;
   display: flex;
   flex-direction: column;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .card-header {
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid #e9ecef;
-  background: white;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-card);
   border-radius: 12px 12px 0 0;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .card-title {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #212529;
+  color: var(--text-primary);
   margin: 0;
+  transition: color 0.3s ease;
 }
 
 .card-body {
@@ -194,8 +218,9 @@ body {
 .profile-header {
   text-align: center;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid var(--border-color);
   margin-bottom: 1rem;
+  transition: border-color 0.3s ease;
 }
 
 .profile-img {
@@ -210,20 +235,23 @@ body {
 .profile-name {
   font-size: 1.15rem;
   font-weight: 600;
-  color: #212529;
+  color: var(--text-primary);
   margin-bottom: 0.25rem;
+  transition: color 0.3s ease;
 }
 
 .profile-email {
   font-size: 0.85rem;
-  color: #6c757d;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
 }
 
 .info-row {
   display: flex;
   justify-content: space-between;
   padding: 0.6rem 0;
-  border-bottom: 1px solid #f8f9fa;
+  border-bottom: 1px solid var(--border-color);
+  transition: border-color 0.3s ease;
 }
 
 .info-row:last-child {
@@ -232,15 +260,17 @@ body {
 
 .info-label {
   font-size: 0.85rem;
-  color: #6c757d;
+  color: var(--text-secondary);
   font-weight: 500;
+  transition: color 0.3s ease;
 }
 
 .info-value {
   font-size: 0.85rem;
-  color: #212529;
+  color: var(--text-primary);
   font-weight: 600;
   text-align: right;
+  transition: color 0.3s ease;
 }
 
 /* Stats Cards */
@@ -260,11 +290,16 @@ body {
 .stat-card {
   background: white;
   border-radius: 12px;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--border-color);
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme="dark"] .stat-card {
+  background: var(--bg-card);
 }
 
 .stat-card.primary {
@@ -298,11 +333,12 @@ body {
 }
 
 .appointment-card {
-  background: #f8f9fa;
+  background: var(--border-color);
   border-left: 3px solid #1d4ed8;
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 1rem;
+  transition: background-color 0.3s ease;
 }
 
 .appointment-card:last-child {
@@ -312,14 +348,16 @@ body {
 .appointment-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #212529;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
+  transition: color 0.3s ease;
 }
 
 .appointment-detail {
   font-size: 0.85rem;
-  color: #6c757d;
+  color: var(--text-secondary);
   margin-bottom: 0.25rem;
+  transition: color 0.3s ease;
 }
 
 .appointment-detail i {
@@ -349,8 +387,44 @@ body {
   height: 100% !important;
 }
 
+/* Dark mode calendar adjustments */
+[data-theme="dark"] .fc {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .fc-toolbar-title {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .fc-col-header-cell {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .fc-daygrid-day {
+  background-color: var(--bg-card);
+}
+
+[data-theme="dark"] .fc-daygrid-day-number {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .fc-day-today {
+  background-color: rgba(29, 78, 216, 0.1) !important;
+}
+
+[data-theme="dark"] .fc-scrollgrid {
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .fc td,
+[data-theme="dark"] .fc th {
+  border-color: var(--border-color);
+}
+
 .fc-toolbar-title {
   font-size: 1.1rem !important;
+  color: var(--text-primary);
 }
 
 .fc .fc-button {
@@ -382,6 +456,7 @@ body {
   font-weight: 600;
   background-color: #1d4ed8;
   border-color: #1d4ed8;
+  color: white;
 }
 
 .btn-edit:hover {
@@ -390,6 +465,12 @@ body {
 }
 
 /* Modal Improvements */
+.modal-content {
+  background-color: var(--bg-card);
+  border-color: var(--border-color);
+  transition: background-color 0.3s ease;
+}
+
 .modal-header {
   background: #1d4ed8;
   color: white;
@@ -401,23 +482,43 @@ body {
   font-weight: 600;
 }
 
+.modal-body {
+  background-color: var(--bg-card);
+}
+
+.modal-footer {
+  background-color: var(--bg-card);
+  border-top: 1px solid var(--border-color);
+}
+
 .form-label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #495057;
+  color: var(--text-primary);
   margin-bottom: 0.4rem;
+  transition: color 0.3s ease;
 }
 
 .form-control, .form-select {
   font-size: 0.9rem;
   border-radius: 6px;
-  border: 1px solid #ced4da;
+  border: 1px solid var(--border-color);
   padding: 0.6rem 0.75rem;
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+  background-color: #374151;
 }
 
 .form-control:focus, .form-select:focus {
   border-color: #1d4ed8;
   box-shadow: 0 0 0 0.2rem rgba(29, 78, 216, 0.15);
+  background-color: var(--bg-card);
+  color: var(--text-primary);
 }
 
 /* Scrollbar Styling */
@@ -428,19 +529,19 @@ body {
 
 .card-body::-webkit-scrollbar-track,
 .profile-section::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--border-color);
   border-radius: 10px;
 }
 
 .card-body::-webkit-scrollbar-thumb,
 .profile-section::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--text-secondary);
   border-radius: 10px;
 }
 
 .card-body::-webkit-scrollbar-thumb:hover,
 .profile-section::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--text-primary);
 }
 
 /* Responsive adjustments */
@@ -713,6 +814,10 @@ body {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+// Initialize theme from sidebar
+const currentTheme = '<?= isset($_SESSION['theme']) ? $_SESSION['theme'] : 'light' ?>';
+document.documentElement.setAttribute('data-theme', currentTheme);
+
 // Calendar
 document.addEventListener('DOMContentLoaded', function() {
   var calendarEl = document.getElementById('calendar');
