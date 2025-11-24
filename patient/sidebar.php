@@ -1,10 +1,11 @@
 <?php
-session_start();
+// Don't call session_start() here - it's already started in the main page
 
 // Handle theme toggle
 if (isset($_POST['toggle_theme'])) {
     $current_theme = isset($_SESSION['theme']) ? $_SESSION['theme'] : 'light';
     $_SESSION['theme'] = ($current_theme === 'light') ? 'dark' : 'light';
+    header('Content-Type: application/json');
     echo json_encode(['theme' => $_SESSION['theme']]);
     exit;
 }
@@ -510,86 +511,89 @@ body {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-  // Initialize theme
-  const currentTheme = '<?= $theme ?>';
-  document.documentElement.setAttribute('data-theme', currentTheme);
-  
-  const themeToggle = document.getElementById('themeToggle');
-  const themeIcon = document.getElementById('themeIcon');
-  const themeText = document.getElementById('themeText');
-  
-  // Set initial state
-  if (currentTheme === 'dark') {
-    themeToggle.classList.add('active');
-    themeIcon.classList.remove('fa-moon');
-    themeIcon.classList.add('fa-sun');
-    themeText.textContent = 'Light Mode';
-  }
-  
-  // Theme toggle functionality
-  themeToggle.addEventListener('click', async function() {
-    const formData = new FormData();
-    formData.append('toggle_theme', '1');
+  // Initialize theme - only if not already initialized
+  if (!window.themeInitialized) {
+    const currentTheme = '<?= $theme ?>';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    window.themeInitialized = true;
     
-    try {
-      const response = await fetch(window.location.href, {
-        method: 'POST',
-        body: formData
-      });
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
+    
+    // Set initial state
+    if (currentTheme === 'dark') {
+      themeToggle.classList.add('active');
+      themeIcon.classList.remove('fa-moon');
+      themeIcon.classList.add('fa-sun');
+      themeText.textContent = 'Light Mode';
+    }
+    
+    // Theme toggle functionality
+    themeToggle.addEventListener('click', async function() {
+      const formData = new FormData();
+      formData.append('toggle_theme', '1');
       
-      const data = await response.json();
-      const newTheme = data.theme;
-      
-      // Update UI
-      document.documentElement.setAttribute('data-theme', newTheme);
-      
-      if (newTheme === 'dark') {
-        themeToggle.classList.add('active');
-        themeIcon.classList.remove('fa-moon');
-        themeIcon.classList.add('fa-sun');
-        themeText.textContent = 'Light Mode';
-      } else {
-        themeToggle.classList.remove('active');
-        themeIcon.classList.remove('fa-sun');
-        themeIcon.classList.add('fa-moon');
-        themeText.textContent = 'Dark Mode';
+      try {
+        const response = await fetch('sidebar.php', {
+          method: 'POST',
+          body: formData
+        });
+        
+        const data = await response.json();
+        const newTheme = data.theme;
+        
+        // Update UI
+        document.documentElement.setAttribute('data-theme', newTheme);
+        
+        if (newTheme === 'dark') {
+          themeToggle.classList.add('active');
+          themeIcon.classList.remove('fa-moon');
+          themeIcon.classList.add('fa-sun');
+          themeText.textContent = 'Light Mode';
+        } else {
+          themeToggle.classList.remove('active');
+          themeIcon.classList.remove('fa-sun');
+          themeIcon.classList.add('fa-moon');
+          themeText.textContent = 'Dark Mode';
+        }
+      } catch (error) {
+        console.error('Error toggling theme:', error);
       }
-    } catch (error) {
-      console.error('Error toggling theme:', error);
-    }
-  });
-
-  // Sidebar functionality
-  const burgerBtn = document.getElementById('burgerBtn');
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('overlay');
-
-  function openSidebar() {
-    sidebar.classList.add('open');
-    overlay.classList.add('show');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeSidebar() {
-    sidebar.classList.remove('open');
-    overlay.classList.remove('show');
-    document.body.style.overflow = '';
-  }
-
-  burgerBtn.addEventListener('click', () => {
-    if (sidebar.classList.contains('open')) {
-      closeSidebar();
-    } else {
-      openSidebar();
-    }
-  });
-
-  overlay.addEventListener('click', closeSidebar);
-
-  if (window.innerWidth < 768) {
-    document.querySelectorAll('.sidebar-link').forEach(link => {
-      link.addEventListener('click', closeSidebar);
     });
+
+    // Sidebar functionality
+    const burgerBtn = document.getElementById('burgerBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+
+    function openSidebar() {
+      sidebar.classList.add('open');
+      overlay.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    burgerBtn.addEventListener('click', () => {
+      if (sidebar.classList.contains('open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    });
+
+    overlay.addEventListener('click', closeSidebar);
+
+    if (window.innerWidth < 768) {
+      document.querySelectorAll('.sidebar-link').forEach(link => {
+        link.addEventListener('click', closeSidebar);
+      });
+    }
   }
 
   // Logout confirmation

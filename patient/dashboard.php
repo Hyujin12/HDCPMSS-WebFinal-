@@ -814,10 +814,6 @@ body {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// Initialize theme from sidebar
-const currentTheme = '<?= isset($_SESSION['theme']) ? $_SESSION['theme'] : 'light' ?>';
-document.documentElement.setAttribute('data-theme', currentTheme);
-
 // Calendar
 document.addEventListener('DOMContentLoaded', function() {
   var calendarEl = document.getElementById('calendar');
