@@ -1,15 +1,5 @@
 <?php
 // Don't call session_start() here - it's already started in the main page
-
-// Handle theme toggle
-if (isset($_POST['toggle_theme'])) {
-    $current_theme = isset($_SESSION['theme']) ? $_SESSION['theme'] : 'light';
-    $_SESSION['theme'] = ($current_theme === 'light') ? 'dark' : 'light';
-    header('Content-Type: application/json');
-    echo json_encode(['theme' => $_SESSION['theme']]);
-    exit;
-}
-
 $currentPage = basename($_SERVER['PHP_SELF']);
 $theme = isset($_SESSION['theme']) ? $_SESSION['theme'] : 'light';
 ?>
@@ -411,13 +401,12 @@ body {
 }
 </style>
 
-<!-- Apply theme immediately before any rendering -->
+<!-- Apply theme IMMEDIATELY - Critical for preventing flash -->
 <script>
-  // This runs IMMEDIATELY before the page renders
-  (function() {
-    const savedTheme = '<?= $theme ?>';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-  })();
+(function() {
+  const theme = '<?= $theme ?>';
+  document.documentElement.setAttribute('data-theme', theme);
+})();
 </script>
 
 <!-- Mobile Top Bar -->
@@ -521,17 +510,19 @@ body {
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 (function() {
-  // Get the current theme from PHP
-  const currentTheme = '<?= $theme ?>';
+  'use strict';
   
-  // Wait for DOM to be ready
+  // Get theme from PHP session
+  const serverTheme = '<?= $theme ?>';
+  
+  // Initialize when DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeSidebar);
+    document.addEventListener('DOMContentLoaded', init);
   } else {
-    initializeSidebar();
+    init();
   }
   
-  function initializeSidebar() {
+  function init() {
     const themeToggle = document.getElementById('themeToggle');
     const themeIcon = document.getElementById('themeIcon');
     const themeText = document.getElementById('themeText');
@@ -539,53 +530,63 @@ body {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
     
-    // Set initial theme UI state based on session
-    updateThemeUI(currentTheme);
+    // Initialize theme UI based on server session
+    updateThemeUI(serverTheme);
     
-    // Theme toggle functionality
-    themeToggle.addEventListener('click', async function() {
-      const formData = new FormData();
-      formData.append('toggle_theme', '1');
-      
+    // Theme toggle click handler
+    themeToggle.addEventListener('click', toggleTheme);
+    
+    async function toggleTheme() {
       try {
-        const response = await fetch('sidebar.php', {
+        const formData = new FormData();
+        formData.append('toggle_theme', '1');
+        
+        // Use toggle_theme.php instead of sidebar.php
+        const response = await fetch('toggle_theme.php', {
           method: 'POST',
           body: formData
         });
         
         if (!response.ok) {
-          throw new Error('Failed to toggle theme');
+          throw new Error('Server error: ' + response.status);
         }
         
         const data = await response.json();
-        const newTheme = data.theme;
         
-        // Update theme immediately
-        document.documentElement.setAttribute('data-theme', newTheme);
-        updateThemeUI(newTheme);
+        if (data.success) {
+          // Apply new theme
+          document.documentElement.setAttribute('data-theme', data.theme);
+          updateThemeUI(data.theme);
+        } else {
+          throw new Error(data.message || 'Failed to toggle theme');
+        }
         
       } catch (error) {
-        console.error('Error toggling theme:', error);
-        // Show error to user
-        alert('Failed to save theme preference. Please try again.');
+        console.error('Theme toggle error:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops!',
+          text: 'Failed to save theme preference. Please try again.',
+          confirmButtonColor: '#dc2626'
+        });
       }
-    });
+    }
     
     function updateThemeUI(theme) {
-      if (theme === 'dark') {
+      const isDark = theme === 'dark';
+      
+      if (isDark) {
         themeToggle.classList.add('active');
-        themeIcon.classList.remove('fa-moon');
-        themeIcon.classList.add('fa-sun');
+        themeIcon.className = 'fas fa-sun';
         themeText.textContent = 'Light Mode';
       } else {
         themeToggle.classList.remove('active');
-        themeIcon.classList.remove('fa-sun');
-        themeIcon.classList.add('fa-moon');
+        themeIcon.className = 'fas fa-moon';
         themeText.textContent = 'Dark Mode';
       }
     }
 
-    // Sidebar functionality
+    // Sidebar toggle functions
     function openSidebar() {
       sidebar.classList.add('open');
       overlay.classList.add('show');
@@ -598,16 +599,19 @@ body {
       document.body.style.overflow = '';
     }
 
-    burgerBtn.addEventListener('click', () => {
+    function toggleSidebar() {
       if (sidebar.classList.contains('open')) {
         closeSidebar();
       } else {
         openSidebar();
       }
-    });
+    }
 
+    // Event listeners
+    burgerBtn.addEventListener('click', toggleSidebar);
     overlay.addEventListener('click', closeSidebar);
 
+    // Auto-close sidebar on mobile when clicking links
     if (window.innerWidth < 768) {
       document.querySelectorAll('.sidebar-link').forEach(link => {
         link.addEventListener('click', closeSidebar);
@@ -616,9 +620,10 @@ body {
   }
 })();
 
-// Logout confirmation
+// Logout confirmation (global function)
 function confirmLogout() {
   const currentTheme = document.documentElement.getAttribute('data-theme');
+  const isDark = currentTheme === 'dark';
   
   Swal.fire({
     title: 'Are you sure?',
@@ -629,8 +634,8 @@ function confirmLogout() {
     cancelButtonColor: '#d33',
     confirmButtonText: 'Yes, logout',
     cancelButtonText: 'Cancel',
-    background: currentTheme === 'dark' ? '#1f2937' : '#f9fafb',
-    color: currentTheme === 'dark' ? '#f9fafb' : '#1f2937',
+    background: isDark ? '#1f2937' : '#f9fafb',
+    color: isDark ? '#f9fafb' : '#1f2937',
     customClass: {
       popup: 'rounded-xl shadow-lg',
       confirmButton: 'px-4 py-2 font-semibold',
@@ -644,8 +649,8 @@ function confirmLogout() {
         icon: 'info',
         showConfirmButton: false,
         timer: 1200,
-        background: currentTheme === 'dark' ? '#1f2937' : '#f9fafb',
-        color: currentTheme === 'dark' ? '#f9fafb' : '#1f2937',
+        background: isDark ? '#1f2937' : '#f9fafb',
+        color: isDark ? '#f9fafb' : '#1f2937',
         didClose: () => {
           document.getElementById('logoutForm').submit();
         }
