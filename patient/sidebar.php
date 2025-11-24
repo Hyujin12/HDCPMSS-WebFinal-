@@ -511,23 +511,28 @@ body {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-  // Initialize theme - only if not already initialized
-  if (!window.themeInitialized) {
-    const currentTheme = '<?= $theme ?>';
-    document.documentElement.setAttribute('data-theme', currentTheme);
-    window.themeInitialized = true;
-    
+(function() {
+  // Initialize theme IMMEDIATELY on page load - before any render
+  const currentTheme = '<?= $theme ?>';
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  
+  // Wait for DOM to be ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeSidebar);
+  } else {
+    initializeSidebar();
+  }
+  
+  function initializeSidebar() {
     const themeToggle = document.getElementById('themeToggle');
     const themeIcon = document.getElementById('themeIcon');
     const themeText = document.getElementById('themeText');
+    const burgerBtn = document.getElementById('burgerBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
     
-    // Set initial state
-    if (currentTheme === 'dark') {
-      themeToggle.classList.add('active');
-      themeIcon.classList.remove('fa-moon');
-      themeIcon.classList.add('fa-sun');
-      themeText.textContent = 'Light Mode';
-    }
+    // Set initial theme UI state
+    updateThemeUI(currentTheme);
     
     // Theme toggle functionality
     themeToggle.addEventListener('click', async function() {
@@ -543,30 +548,30 @@ body {
         const data = await response.json();
         const newTheme = data.theme;
         
-        // Update UI
+        // Update theme immediately
         document.documentElement.setAttribute('data-theme', newTheme);
+        updateThemeUI(newTheme);
         
-        if (newTheme === 'dark') {
-          themeToggle.classList.add('active');
-          themeIcon.classList.remove('fa-moon');
-          themeIcon.classList.add('fa-sun');
-          themeText.textContent = 'Light Mode';
-        } else {
-          themeToggle.classList.remove('active');
-          themeIcon.classList.remove('fa-sun');
-          themeIcon.classList.add('fa-moon');
-          themeText.textContent = 'Dark Mode';
-        }
       } catch (error) {
         console.error('Error toggling theme:', error);
       }
     });
+    
+    function updateThemeUI(theme) {
+      if (theme === 'dark') {
+        themeToggle.classList.add('active');
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+        themeText.textContent = 'Light Mode';
+      } else {
+        themeToggle.classList.remove('active');
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+        themeText.textContent = 'Dark Mode';
+      }
+    }
 
     // Sidebar functionality
-    const burgerBtn = document.getElementById('burgerBtn');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-
     function openSidebar() {
       sidebar.classList.add('open');
       overlay.classList.add('show');
@@ -595,40 +600,43 @@ body {
       });
     }
   }
+})();
 
-  // Logout confirmation
-  function confirmLogout() {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'You will be logged out from your account.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#2563eb',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, logout',
-      cancelButtonText: 'Cancel',
-      background: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1f2937' : '#f9fafb',
-      color: document.documentElement.getAttribute('data-theme') === 'dark' ? '#f9fafb' : '#1f2937',
-      customClass: {
-        popup: 'rounded-xl shadow-lg',
-        confirmButton: 'px-4 py-2 font-semibold',
-        cancelButton: 'px-4 py-2 font-semibold'
-      }
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: 'Logging out...',
-          text: 'Please wait a moment.',
-          icon: 'info',
-          showConfirmButton: false,
-          timer: 1200,
-          background: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1f2937' : '#f9fafb',
-          color: document.documentElement.getAttribute('data-theme') === 'dark' ? '#f9fafb' : '#1f2937',
-          didClose: () => {
-            document.getElementById('logoutForm').submit();
-          }
-        });
-      }
-    });
-  }
+// Logout confirmation
+function confirmLogout() {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  
+  Swal.fire({
+    title: 'Are you sure?',
+    text: 'You will be logged out from your account.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#2563eb',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, logout',
+    cancelButtonText: 'Cancel',
+    background: currentTheme === 'dark' ? '#1f2937' : '#f9fafb',
+    color: currentTheme === 'dark' ? '#f9fafb' : '#1f2937',
+    customClass: {
+      popup: 'rounded-xl shadow-lg',
+      confirmButton: 'px-4 py-2 font-semibold',
+      cancelButton: 'px-4 py-2 font-semibold'
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: 'Logging out...',
+        text: 'Please wait a moment.',
+        icon: 'info',
+        showConfirmButton: false,
+        timer: 1200,
+        background: currentTheme === 'dark' ? '#1f2937' : '#f9fafb',
+        color: currentTheme === 'dark' ? '#f9fafb' : '#1f2937',
+        didClose: () => {
+          document.getElementById('logoutForm').submit();
+        }
+      });
+    }
+  });
+}
 </script>
