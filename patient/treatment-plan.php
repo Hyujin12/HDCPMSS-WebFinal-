@@ -61,7 +61,8 @@ $userContact = $user['contactNumber'] ?? '';
       --border-color: #22303f;
 
       --accent-start: #1e40af;
-      --accent-end: #1e293b;
+      --accent-end: #5e697aff;
+      
 
       --success-start: #059669;
       --success-end: #064e3b;
