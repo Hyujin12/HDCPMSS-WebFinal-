@@ -36,17 +36,48 @@ try {
     $db = $mongoClient->HaliliDentalClinic;
     $bookingsCollection = $db->bookings;
     
-    // Check if there's already an accepted booking at this date and time
-    $existingBooking = $bookingsCollection->findOne([
+    // Convert requested time to minutes for comparison
+    list($reqHour, $reqMin) = explode(':', $requestedTime);
+    $requestedMinutes = ($reqHour * 60) + $reqMin;
+    
+    // Find all accepted bookings on the same date
+    $existingBookings = $bookingsCollection->find([
         'date' => $requestedDate,
-        'time' => $requestedTime,
-        'status' => 'accepted' // Only check for accepted bookings
+        'status' => 'accepted'
     ]);
     
-    if ($existingBooking) {
+    $isAvailable = true;
+    $conflictingTime = null;
+    
+    foreach ($existingBookings as $booking) {
+        $bookingTime = $booking['time'];
+        list($bookHour, $bookMin) = explode(':', $bookingTime);
+        $bookingMinutes = ($bookHour * 60) + $bookMin;
+        
+        // Check if the requested time is within 30 minutes of an existing booking
+        // This prevents bookings from requestedTime to requestedTime + 30 minutes
+        $timeDifference = abs($requestedMinutes - $bookingMinutes);
+        
+        if ($timeDifference < 30) {
+            $isAvailable = false;
+            $conflictingTime = $bookingTime;
+            break;
+        }
+    }
+    
+    if (!$isAvailable) {
+        // Format the conflicting time for display
+        $conflictDateTime = DateTime::createFromFormat('H:i', $conflictingTime);
+        $formattedTime = $conflictDateTime->format('g:i A');
+        
+        // Calculate the end time (30 minutes after)
+        $endDateTime = clone $conflictDateTime;
+        $endDateTime->modify('+30 minutes');
+        $formattedEndTime = $endDateTime->format('g:i A');
+        
         echo json_encode([
             'available' => false,
-            'message' => 'This time slot is already booked'
+            'message' => "This time slot conflicts with an existing appointment at {$formattedTime}. Please select a time after {$formattedEndTime}."
         ]);
     } else {
         echo json_encode([
