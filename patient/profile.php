@@ -32,13 +32,16 @@ if (!$user) {
     die("User not found.");
 }
 
+// Get theme
+$theme = isset($_SESSION['theme']) ? $_SESSION['theme'] : 'light';
+
 // SweetAlert flag
 $updateSuccess = $_SESSION['update_success'] ?? null;
 unset($_SESSION['update_success']);
 ?>
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="<?= $theme ?>">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -56,6 +59,39 @@ unset($_SESSION['update_success']);
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
+        /* Theme Variables */
+        :root {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-hover: 0 6px 20px rgba(0,0,0,0.12);
+            --gradient-start: #1e3a8a;
+            --gradient-end: #3b82f6;
+            --info-card-bg: #f8fafc;
+            --info-card-border: #3b82f6;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --shadow: 0 4px 12px rgba(0,0,0,0.4);
+            --shadow-hover: 0 6px 20px rgba(0,0,0,0.6);
+            --gradient-start: #1e3a8a;
+            --gradient-end: #2563eb;
+            --info-card-bg: #334155;
+            --info-card-border: #3b82f6;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -64,9 +100,11 @@ unset($_SESSION['update_success']);
         }
         
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            background: var(--bg-primary);
+            color: var(--text-primary);
             overflow-x: hidden;
             min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         
         .content {
@@ -99,7 +137,7 @@ unset($_SESSION['update_success']);
             
             .page-header {
                 margin-bottom: 1rem;
-                padding: 1rem;
+                padding: 1.25rem;
                 flex-shrink: 0;
             }
             
@@ -113,126 +151,90 @@ unset($_SESSION['update_success']);
             }
             
             .profile-banner {
-                height: 70px;
+                height: 90px;
                 flex-shrink: 0;
             }
             
-            .profile-image-container {
-                margin-top: -35px;
-                margin-bottom: 0.5rem;
+            .profile-header-content {
+                padding: 1rem 2rem;
                 flex-shrink: 0;
             }
             
             .profile-image {
-                width: 70px;
-                height: 70px;
-                border: 3px solid white;
+                width: 90px;
+                height: 90px;
+                border: 3px solid var(--bg-card);
             }
             
             .profile-name {
-                font-size: 1.25rem;
+                font-size: 1.5rem;
                 margin-bottom: 0.25rem;
             }
             
             .profile-email {
-                font-size: 0.8rem;
-                margin-bottom: 0.5rem;
-            }
-            
-            .verified-badge {
-                padding: 0.35rem 0.75rem;
-                font-size: 0.75rem;
-                margin-bottom: 0.5rem;
-            }
-            
-            .profile-progress {
-                margin: 0 1.5rem 0.75rem 1.5rem;
-                padding: 0.6rem;
-                flex-shrink: 0;
-            }
-            
-            .progress-label {
-                font-size: 0.75rem;
-                margin-bottom: 0.35rem;
-            }
-            
-            .progress {
-                height: 6px;
+                font-size: 0.875rem;
             }
             
             .info-grid {
-                padding: 0.75rem 1.5rem;
-                gap: 0.75rem;
+                padding: 1rem 2rem;
+                gap: 1rem;
                 grid-template-columns: repeat(3, 1fr);
-                overflow: hidden;
+                overflow-y: auto;
                 flex: 1;
             }
             
             .info-card {
-                padding: 0.75rem;
+                padding: 1rem;
             }
             
             .info-label {
-                font-size: 0.7rem;
-                margin-bottom: 0.4rem;
+                font-size: 0.75rem;
+                margin-bottom: 0.5rem;
             }
             
             .info-label i {
-                font-size: 0.85rem;
-            }
-            
-            .info-value {
                 font-size: 0.9rem;
             }
             
+            .info-value {
+                font-size: 1rem;
+            }
+            
             .action-buttons {
-                padding: 0.75rem 1.5rem 0.75rem 1.5rem;
+                padding: 1rem 2rem;
                 flex-shrink: 0;
             }
             
             .btn-edit-profile {
-                padding: 0.6rem 1.5rem;
-                font-size: 0.85rem;
+                padding: 0.75rem 2rem;
+                font-size: 0.95rem;
             }
         }
         
         @media (min-width: 1200px) {
             .profile-banner {
-                height: 80px;
-            }
-            
-            .profile-image-container {
-                margin-top: -40px;
+                height: 100px;
             }
             
             .profile-image {
-                width: 80px;
-                height: 80px;
+                width: 100px;
+                height: 100px;
             }
             
             .profile-name {
-                font-size: 1.35rem;
+                font-size: 1.75rem;
             }
             
             .profile-email {
-                font-size: 0.85rem;
-            }
-            
-            .info-grid {
-                padding: 1rem 1.5rem;
-                gap: 1rem;
-            }
-            
-            .info-card {
-                padding: 0.875rem;
+                font-size: 0.95rem;
             }
             
             .info-label {
-                font-size: 0.75rem;
+                font-size: 0.8rem;
             }
             
             .info-value {
-                font-size: 0.95rem;
+                font-size: 1.05rem;
             }
         }
         
@@ -244,95 +246,102 @@ unset($_SESSION['update_success']);
 
         /* Page Header */
         .page-header {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
             margin-bottom: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
         }
         
         .page-title {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             font-weight: 700;
-            color: #1e293b;
+            color: var(--text-primary);
             margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .page-title i {
+            color: var(--gradient-end);
         }
         
         .page-subtitle {
-            color: #64748b;
-            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
         }
 
         /* Profile Card */
         .profile-card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            background: var(--bg-card);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
             overflow: hidden;
             margin-bottom: 0;
             display: flex;
             flex-direction: column;
+            border: 1px solid var(--border-color);
         }
 
         .profile-banner {
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-            height: 120px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            height: 140px;
             position: relative;
             flex-shrink: 0;
         }
 
-        .profile-image-container {
-            position: relative;
-            margin-top: -60px;
-            text-align: center;
-            margin-bottom: 0.75rem;
+        .profile-header-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            padding: 0 2rem;
+            margin-top: -50px;
+            margin-bottom: 1.5rem;
             flex-shrink: 0;
         }
 
         .profile-image {
             width: 120px;
             height: 120px;
-            border-radius: 50%;
-            border: 5px solid white;
+            border-radius: 20px;
+            border: 4px solid var(--bg-card);
             object-fit: cover;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            flex-shrink: 0;
+        }
+
+        .profile-info {
+            flex: 1;
+            padding-top: 60px;
         }
 
         .profile-name {
-            font-size: 1.75rem;
+            font-size: 2rem;
             font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 0.25rem;
-            text-align: center;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
         }
 
         .profile-email {
-            color: #64748b;
+            color: var(--text-secondary);
             font-size: 1rem;
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .verified-badge {
-            display: inline-flex;
+            display: flex;
             align-items: center;
             gap: 0.5rem;
-            background: #d1fae5;
-            color: #065f46;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin: 0 auto;
-            justify-content: center;
+        }
+
+        .profile-email i {
+            color: var(--gradient-end);
         }
 
         /* Info Grid */
         .info-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 1rem;
-            padding: 1.5rem;
+            gap: 1.25rem;
+            padding: 0 2rem 1.5rem 2rem;
             flex: 1;
             overflow-y: auto;
         }
@@ -356,11 +365,13 @@ unset($_SESSION['update_success']);
         }
 
         .info-card {
-            background: #f8fafc;
+            background: var(--info-card-bg);
             border-radius: 12px;
             padding: 1.25rem;
-            border-left: 4px solid #3b82f6;
-            transition: all 0.3s;
+            border-left: 3px solid var(--info-card-border);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--info-card-border);
         }
         
         .info-card.full-width {
@@ -369,30 +380,36 @@ unset($_SESSION['update_success']);
 
         .info-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: var(--shadow-hover);
         }
 
         .info-label {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            color: #64748b;
+            color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 0.75rem;
         }
 
         .info-label i {
-            color: #3b82f6;
+            color: var(--gradient-end);
             font-size: 1rem;
         }
 
         .info-value {
             font-size: 1.125rem;
-            color: #1e293b;
+            color: var(--text-primary);
             font-weight: 600;
+        }
+
+        .empty-value {
+            color: var(--text-muted);
+            font-style: italic;
+            font-weight: 400;
         }
 
         /* Action Buttons */
@@ -402,133 +419,95 @@ unset($_SESSION['update_success']);
             justify-content: center;
             padding: 0 2rem 2rem 2rem;
             flex-wrap: wrap;
+            flex-shrink: 0;
         }
 
         .btn-edit-profile {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            background: linear-gradient(135deg, var(--gradient-end) 0%, var(--gradient-start) 100%);
             border: none;
             color: white;
-            padding: 0.875rem 2rem;
-            border-radius: 10px;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
             font-weight: 600;
             font-size: 1rem;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
         .btn-edit-profile:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
-        }
-
-        /* Stats Cards */
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            transition: all 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-        }
-
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .stat-card.profile-complete .stat-icon {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .stat-card.account-age .stat-icon {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .stat-card.last-update .stat-icon {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .stat-info h4 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-info p {
-            font-size: 0.875rem;
-            color: #64748b;
-            margin: 0;
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
         }
 
         /* Modal Enhancements */
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+        }
+
         .modal-header {
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
             color: white;
             border-bottom: none;
             padding: 1.5rem;
+            border-radius: 16px 16px 0 0;
         }
 
         .modal-title {
-            font-size: 1.25rem;
+            font-size: 1.35rem;
             font-weight: 700;
         }
 
         .modal-body {
             padding: 2rem;
+            background: var(--bg-card);
         }
 
         .form-label {
-            font-size: 0.875rem;
+            font-size: 0.9rem;
             font-weight: 600;
-            color: #475569;
+            color: var(--text-secondary);
             margin-bottom: 0.5rem;
         }
 
         .form-control, .form-select {
-            border-radius: 8px;
-            border: 1px solid #cbd5e1;
-            padding: 0.75rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            padding: 0.875rem;
             font-size: 0.95rem;
             transition: all 0.2s;
+            background: var(--bg-primary);
+            color: var(--text-primary);
         }
 
         .form-control:focus, .form-select:focus {
-            border-color: #3b82f6;
+            border-color: var(--gradient-end);
             box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.15);
+            background: var(--bg-card);
+        }
+
+        .form-control:disabled, .form-control[readonly] {
+            background: var(--info-card-bg);
+            color: var(--text-muted);
+        }
+
+        .modal-footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 0 0 16px 16px;
         }
 
         .btn-save {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             border: none;
             color: white;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
+            padding: 0.875rem 2rem;
+            border-radius: 10px;
             font-weight: 600;
             transition: all 0.2s;
         }
@@ -538,109 +517,122 @@ unset($_SESSION['update_success']);
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
-        /* Scrollbar Styling for Profile Card */
-        .profile-card::-webkit-scrollbar {
+        .btn-secondary {
+            background: var(--text-muted);
+            border: none;
+            color: white;
+            padding: 0.875rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .btn-secondary:hover {
+            background: var(--text-secondary);
+        }
+
+        /* Scrollbar Styling */
+        .info-grid::-webkit-scrollbar {
             width: 8px;
         }
 
-        .profile-card::-webkit-scrollbar-track {
-            background: #f1f5f9;
+        .info-grid::-webkit-scrollbar-track {
+            background: var(--bg-primary);
             border-radius: 10px;
         }
 
-        .profile-card::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+        .info-grid::-webkit-scrollbar-thumb {
+            background: var(--border-color);
             border-radius: 10px;
         }
 
-        .profile-card::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+        .info-grid::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
         }
 
         /* Responsive Design */
         @media (max-width: 768px) {
             .page-header {
-                padding: 1.25rem;
+                padding: 1.25rem 1.5rem;
             }
             
             .page-title {
-                font-size: 1.35rem;
+                font-size: 1.5rem;
             }
             
             .page-subtitle {
-                font-size: 0.8rem;
+                font-size: 0.875rem;
             }
 
             .profile-banner {
-                height: 100px;
+                height: 120px;
             }
 
-            .profile-image-container {
-                margin-top: -50px;
+            .profile-header-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                padding: 0 1.5rem;
+                margin-top: -60px;
             }
 
             .profile-image {
-                width: 100px;
-                height: 100px;
-                border: 4px solid white;
+                width: 110px;
+                height: 110px;
+                border: 4px solid var(--bg-card);
+            }
+
+            .profile-info {
+                padding-top: 0;
             }
 
             .profile-name {
-                font-size: 1.35rem;
+                font-size: 1.5rem;
             }
             
             .profile-email {
-                font-size: 0.875rem;
-            }
-            
-            .verified-badge {
-                font-size: 0.8rem;
-                padding: 0.4rem 0.875rem;
+                font-size: 0.95rem;
+                justify-content: center;
             }
 
             .info-grid {
                 grid-template-columns: 1fr;
-                padding: 1.25rem;
+                padding: 1.5rem;
                 gap: 1rem;
             }
 
             .action-buttons {
-                padding: 0 1.25rem 1.25rem 1.25rem;
+                padding: 0 1.5rem 1.5rem 1.5rem;
             }
             
             .btn-edit-profile {
-                padding: 0.75rem 1.5rem;
-                font-size: 0.9rem;
+                padding: 0.875rem 2rem;
+                font-size: 0.95rem;
                 width: 100%;
-            }
-            
-            .profile-progress {
-                margin: 0 1.25rem 1rem 1.25rem;
             }
         }
         
         /* Small Mobile */
         @media (max-width: 480px) {
             .profile-banner {
-                height: 80px;
+                height: 100px;
             }
             
-            .profile-image-container {
-                margin-top: -40px;
+            .profile-header-content {
+                margin-top: -50px;
             }
             
             .profile-image {
-                width: 80px;
-                height: 80px;
-                border: 3px solid white;
+                width: 90px;
+                height: 90px;
+                border: 3px solid var(--bg-card);
             }
             
             .profile-name {
-                font-size: 1.2rem;
+                font-size: 1.35rem;
             }
             
             .profile-email {
-                font-size: 0.8rem;
+                font-size: 0.85rem;
             }
             
             .info-card {
@@ -652,51 +644,40 @@ unset($_SESSION['update_success']);
             }
             
             .info-value {
-                font-size: 0.95rem;
+                font-size: 1rem;
             }
         }
         
-        /* Medium Tablets */
-        @media (min-width: 769px) and (max-width: 991px) {
-            .info-grid {
-                grid-template-columns: repeat(2, 1fr);
-                padding: 1.5rem;
-            }
-        }
-
-        /* Empty State */
-        .empty-value {
-            color: #94a3b8;
-            font-style: italic;
-        }
-
-        /* Progress Bar */
-        .profile-progress {
-            background: #f1f5f9;
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 0 1.5rem 1rem 1.5rem;
-            flex-shrink: 0;
-        }
-
-        .progress-label {
+        /* Section Headers in Modal */
+        .section-header {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: #475569;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border-color);
         }
 
-        .progress {
-            height: 8px;
-            border-radius: 8px;
-            background: #e2e8f0;
+        .section-header h6 {
+            font-weight: 700;
+            color: var(--gradient-end);
+            margin: 0;
+            font-size: 1rem;
         }
 
-        .progress-bar {
-            background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
-            border-radius: 8px;
+        .section-header i {
+            color: var(--gradient-end);
+            font-size: 1.1rem;
+        }
+
+        /* Profile Image Preview in Modal */
+        .profile-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 16px;
+            object-fit: cover;
+            border: 3px solid var(--gradient-end);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
         }
     </style>
 </head>
@@ -709,10 +690,10 @@ unset($_SESSION['update_success']);
             <div class="d-flex justify-content-between align-items-center flex-wrap">
                 <div>
                     <h1 class="page-title">
-                        <i class="bi bi-person-circle text-primary"></i> Patient Profile
+                        <i class="bi bi-person-circle"></i> Patient Profile
                     </h1>
                     <p class="page-subtitle mb-0">
-                        Manage your personal information and account settings
+                        View and manage your personal information
                     </p>
                 </div>
             </div>
@@ -723,35 +704,20 @@ unset($_SESSION['update_success']);
             <!-- Banner -->
             <div class="profile-banner"></div>
 
-            <!-- Profile Image -->
-            <div class="profile-image-container">
+            <!-- Profile Header -->
+            <div class="profile-header-content">
                 <img src="<?= !empty($user->profile_image) 
                               ? htmlspecialchars($user->profile_image) 
                               : 'https://cdn-icons-png.flaticon.com/512/847/847969.png' ?>" 
                      class="profile-image" 
                      alt="Profile">
-            </div>
-
-            <!-- Profile Info -->
-            <div class="text-center px-4">
-                <h2 class="profile-name"><?= htmlspecialchars($user->username ?? 'Patient') ?></h2>
-                <p class="profile-email">
-                    <i class="bi bi-envelope me-2"></i><?= htmlspecialchars($user->email ?? '') ?>
-                </p>
-                <div class="verified-badge">
-                    <i class="bi bi-patch-check-fill"></i>
-                    Verified Patient
-                </div>
-            </div>
-
-            <!-- Profile Progress -->
-            <div class="profile-progress">
-                <div class="progress-label">
-                    <span>Profile Completion</span>
-                    <span>95%</span>
-                </div>
-                <div class="progress">
-                    <div class="progress-bar" role="progressbar" style="width: 95%" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
+                
+                <div class="profile-info">
+                    <h2 class="profile-name"><?= htmlspecialchars($user->username ?? 'Patient') ?></h2>
+                    <p class="profile-email">
+                        <i class="bi bi-envelope-fill"></i>
+                        <?= htmlspecialchars($user->email ?? '') ?>
+                    </p>
                 </div>
             </div>
 
@@ -869,15 +835,14 @@ unset($_SESSION['update_success']);
                         <img src="<?= !empty($user->profile_image) 
                                       ? htmlspecialchars($user->profile_image) 
                                       : 'https://cdn-icons-png.flaticon.com/512/847/847969.png' ?>" 
-                             class="rounded-circle mb-3" 
-                             width="100" height="100"
-                             style="object-fit: cover; border: 3px solid #3b82f6;"
+                             class="profile-preview mb-3" 
+                             id="profilePreview"
                              alt="Current Profile">
                         <div>
                             <label class="form-label">
                                 <i class="bi bi-camera-fill me-2"></i>Change Profile Picture
                             </label>
-                            <input type="file" class="form-control" name="profile_image" accept="image/*">
+                            <input type="file" class="form-control" name="profile_image" id="profileImageInput" accept="image/*">
                             <small class="text-muted">Supported formats: JPG, PNG, GIF (Max 5MB)</small>
                         </div>
                     </div>
@@ -887,9 +852,10 @@ unset($_SESSION['update_success']);
                     <div class="row g-3">
                         <!-- Personal Information Section -->
                         <div class="col-12">
-                            <h6 class="fw-bold text-primary mb-3">
-                                <i class="bi bi-person-fill me-2"></i>Personal Information
-                            </h6>
+                            <div class="section-header">
+                                <i class="bi bi-person-fill"></i>
+                                <h6>Personal Information</h6>
+                            </div>
                         </div>
 
                         <div class="col-md-6">
@@ -945,9 +911,10 @@ unset($_SESSION['update_success']);
 
                         <!-- Contact Information Section -->
                         <div class="col-12 mt-4">
-                            <h6 class="fw-bold text-primary mb-3">
-                                <i class="bi bi-telephone-fill me-2"></i>Contact Information
-                            </h6>
+                            <div class="section-header">
+                                <i class="bi bi-telephone-fill"></i>
+                                <h6>Contact Information</h6>
+                            </div>
                         </div>
 
                         <div class="col-md-6">
@@ -979,9 +946,10 @@ unset($_SESSION['update_success']);
 
                         <!-- Professional Information Section -->
                         <div class="col-12 mt-4">
-                            <h6 class="fw-bold text-primary mb-3">
-                                <i class="bi bi-briefcase-fill me-2"></i>Professional Information
-                            </h6>
+                            <div class="section-header">
+                                <i class="bi bi-briefcase-fill"></i>
+                                <h6>Professional Information</h6>
+                            </div>
                         </div>
 
                         <div class="col-md-6">
@@ -1024,6 +992,8 @@ unset($_SESSION['update_success']);
         document.addEventListener("DOMContentLoaded", function() {
             const dobInput = document.getElementById("dobInput");
             const ageInput = document.getElementById("ageInput");
+            const profileImageInput = document.getElementById("profileImageInput");
+            const profilePreview = document.getElementById("profilePreview");
 
             function calculateAge(dob) {
                 if (!dob) return "";
@@ -1046,6 +1016,30 @@ unset($_SESSION['update_success']);
             if (dobInput.value) {
                 ageInput.value = calculateAge(dobInput.value);
             }
+
+            // Preview image before upload
+            profileImageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Check file size (5MB max)
+                    if (file.size > 5 * 1024 * 1024) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'File Too Large',
+                            text: 'Please select an image smaller than 5MB',
+                            confirmButtonColor: '#ef4444'
+                        });
+                        profileImageInput.value = '';
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        profilePreview.src = event.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
         });
 
         // Success Alert
@@ -1055,7 +1049,9 @@ unset($_SESSION['update_success']);
             title: 'Profile Updated!',
             text: 'Your profile information has been successfully updated.',
             confirmButtonColor: '#3b82f6',
-            confirmButtonText: 'Great!'
+            confirmButtonText: 'Great!',
+            background: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1e293b' : '#ffffff',
+            color: document.documentElement.getAttribute('data-theme') === 'dark' ? '#f1f5f9' : '#1e293b'
         });
         <?php endif; ?>
 
@@ -1066,21 +1062,11 @@ unset($_SESSION['update_success']);
             title: 'Update Failed',
             text: '<?= htmlspecialchars($_SESSION['update_error']) ?>',
             confirmButtonColor: '#ef4444',
-            confirmButtonText: 'Try Again'
+            confirmButtonText: 'Try Again',
+            background: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1e293b' : '#ffffff',
+            color: document.documentElement.getAttribute('data-theme') === 'dark' ? '#f1f5f9' : '#1e293b'
         });
         <?php unset($_SESSION['update_error']); endif; ?>
-
-        // Preview image before upload
-        document.querySelector('input[name="profile_image"]').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    document.querySelector('.modal-body img').src = event.target.result;
-                }
-                reader.readAsDataURL(file);
-            }
-        });
     </script>
 </body>
 </html>
