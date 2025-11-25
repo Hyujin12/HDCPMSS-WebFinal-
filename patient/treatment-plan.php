@@ -955,7 +955,7 @@ $userContact = $user['contactNumber'] ?? '';
     closeBtn.addEventListener('click', closeModal);
     modalBackdrop.addEventListener('click', closeModal);
 
-    bookingForm.addEventListener('submit', async (e) => {
+   bookingForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const selectedDate = dateInput.value;
@@ -1002,6 +1002,57 @@ $userContact = $user['contactNumber'] ?? '';
               <strong>${getOperatingHoursText(selectedDay)}</strong>
             </div>
           `
+        }, swalThemeOptions()));
+        return;
+      }
+
+      // Check for existing booking at this date and time
+      Swal.fire(Object.assign({
+        title: 'Checking availability...',
+        text: 'Please wait while we verify the time slot.',
+        icon: 'info',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      }, swalThemeOptions()));
+
+      try {
+        const checkResponse = await fetch('check-booking-availability.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            date: selectedDate,
+            time: selectedTime
+          }),
+        });
+
+        const availabilityResult = await checkResponse.json();
+
+        if (!checkResponse.ok || !availabilityResult.available) {
+          Swal.fire(Object.assign({
+            icon: 'error',
+            title: 'Time Slot Unavailable',
+            html: `
+              <p>This time slot is already booked.</p>
+              <hr style="margin: 1rem 0;">
+              <p style="color: ${cssVar('--text-secondary')}; font-size: 0.9rem;">
+                Please select a different date or time for your appointment.
+              </p>
+            `,
+            confirmButtonColor: '#dc2626'
+          }, swalThemeOptions()));
+          return;
+        }
+      } catch (error) {
+        Swal.fire(Object.assign({
+          icon: 'error',
+          title: 'Connection Error',
+          text: 'Unable to verify time slot availability. Please try again.',
+          footer: `<small style="color: ${cssVar('--text-secondary')}">Error: ${error.message}</small>`,
+          confirmButtonColor: '#dc2626'
         }, swalThemeOptions()));
         return;
       }
