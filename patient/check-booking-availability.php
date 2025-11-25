@@ -34,17 +34,28 @@ try {
     // Connect to MongoDB
     $mongoClient = new Client($_ENV['MONGO_URI']);
     $db = $mongoClient->HaliliDentalClinic;
-    $bookingsCollection = $db->bookings;
+    $bookingsCollection = $db->bookedservices;
     
     // Convert requested time to minutes for comparison
     list($reqHour, $reqMin) = explode(':', $requestedTime);
     $requestedMinutes = ($reqHour * 60) + (int)$reqMin;
     
-    // Find all accepted bookings on the same date
+    // FIX: Find ALL bookings on the same date that are NOT rejected
+    // This includes: accepted bookings, pending bookings, and bookings without status
     $existingBookings = $bookingsCollection->find([
         'date' => $requestedDate,
-        'status' => 'accepted'
+        '$or' => [
+            ['status' => 'accepted'],
+            ['status' => ['$exists' => false]],  // Bookings without status field
+            ['status' => 'pending']              // If you use pending status
+        ]
     ]);
+    
+    // Alternative simpler approach: Exclude only rejected bookings
+    // $existingBookings = $bookingsCollection->find([
+    //     'date' => $requestedDate,
+    //     'status' => ['$ne' => 'rejected']  // Not equal to rejected
+    // ]);
     
     $isAvailable = true;
     $conflictingTime = null;
@@ -58,7 +69,6 @@ try {
         $bookingEndMinutes = $bookingMinutes + 30;
         
         // Check if the requested time falls within the existing booking's 30-minute window
-        // Requested time must be AFTER the existing booking's end time
         if ($requestedMinutes >= $bookingMinutes && $requestedMinutes < $bookingEndMinutes) {
             $isAvailable = false;
             $conflictingTime = $bookingTime;
