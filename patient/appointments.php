@@ -237,6 +237,11 @@ $theme = $_SESSION['theme'] ?? 'light';
                     'Pending'  => 'fa-clock',
                     default    => 'fa-clock',
                 };
+                
+                // Check if appointment can be cancelled
+                // Only Pending appointments can be cancelled
+                // Accepted, Completed, Rejected, and Cancelled cannot be cancelled
+                $canBeCancelled = $status === 'Pending';
             ?>
                 <div class="appointment-card">
                     <div class="appointment-card-header">
@@ -293,15 +298,15 @@ $theme = $_SESSION['theme'] ?? 'light';
                     </div>
 
                     <div class="appointment-card-footer">
-                        <?php if (in_array($status, ['Cancelled', 'Completed', 'Rejected'])): ?>
-                            <button class="btn-cancel" disabled>
-                                <i class="fas fa-ban"></i>
-                                Cannot Cancel
-                            </button>
-                        <?php else: ?>
+                        <?php if ($canBeCancelled): ?>
                             <button class="btn-cancel" onclick="cancelAppointment('<?= $appt['_id'] ?>')">
                                 <i class="fas fa-times-circle"></i>
                                 Cancel Appointment
+                            </button>
+                        <?php else: ?>
+                            <button class="btn-cancel" disabled>
+                                <i class="fas fa-ban"></i>
+                                Cannot Cancel
                             </button>
                         <?php endif; ?>
                     </div>
