@@ -10,6 +10,7 @@ $userFullName = $_SESSION['username'];
 
 require __DIR__ . '/../vendor/autoload.php';
 use MongoDB\Client;
+use MongoDB\BSON\UTCDateTime;
 use Dotenv\Dotenv;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
@@ -19,8 +20,51 @@ $mongoClient = new Client($_ENV['MONGO_URI']);
 $db = $mongoClient->HaliliDentalClinic;
 $usersCollection = $db->users;
 $appointmentsCollection = $db->bookedservices;
+$messagesCollection = $db->Messages;
 
 $user = $usersCollection->findOne(['email' => $userEmail]);
+$userId = (string)$user['_id'];
+
+// Handle sending new message via AJAX
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_message'])) {
+    $messageText = trim($_POST['ajax_message']);
+    
+    if (!empty($messageText)) {
+        $messagesCollection->insertOne([
+            'userId' => $userId,
+            'userEmail' => $userEmail,
+            'username' => $userFullName,
+            'message' => $messageText,
+            'sender' => 'patient',
+            'isRead' => false,
+            'createdAt' => new UTCDateTime()
+        ]);
+        
+        echo json_encode(['success' => true]);
+        exit();
+    }
+    echo json_encode(['success' => false]);
+    exit();
+}
+
+// Fetch messages for chat modal
+$messages = $messagesCollection->find(
+    ['userId' => $userId],
+    ['sort' => ['createdAt' => 1]]
+);
+
+// Mark admin messages as read
+$messagesCollection->updateMany(
+    ['userId' => $userId, 'sender' => 'admin', 'isRead' => false],
+    ['$set' => ['isRead' => true]]
+);
+
+// Count unread messages
+$unreadCount = $messagesCollection->countDocuments([
+    'userId' => $userId,
+    'sender' => 'admin',
+    'isRead' => false
+]);
 
 $today = date("Y-m-d");
 
@@ -544,6 +588,233 @@ body {
   background: var(--text-primary);
 }
 
+/* Floating Chat Button */
+.chat-float-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  border: none;
+}
+
+.chat-float-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+}
+
+.chat-float-btn i {
+  font-size: 1.5rem;
+}
+
+.chat-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ef4444;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border: 2px solid white;
+}
+
+/* Chat Modal Styles */
+#chatModal .modal-dialog {
+  max-width: 600px;
+  margin: 1.75rem auto;
+}
+
+#chatModal .modal-content {
+  border-radius: 20px;
+  overflow: hidden;
+  border: none;
+}
+
+#chatModal .modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 1.25rem 1.5rem;
+}
+
+.chat-messages-container {
+  height: 400px;
+  overflow-y: auto;
+  padding: 1.5rem;
+  background: #f8f9fa;
+}
+
+[data-theme="dark"] .chat-messages-container {
+  background: #1f2937;
+}
+
+.chat-message {
+  margin-bottom: 1rem;
+  display: flex;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-message.patient {
+  justify-content: flex-end;
+}
+
+.chat-message.admin {
+  justify-content: flex-start;
+}
+
+.message-bubble {
+  max-width: 70%;
+  padding: 0.875rem 1.125rem;
+  border-radius: 18px;
+  word-wrap: break-word;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.chat-message.patient .message-bubble {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-message.admin .message-bubble {
+  background: white;
+  color: #333;
+  border: 1px solid #e5e7eb;
+  border-bottom-left-radius: 4px;
+}
+
+[data-theme="dark"] .chat-message.admin .message-bubble {
+  background: #374151;
+  color: #f3f4f6;
+  border-color: #4b5563;
+}
+
+.message-sender {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  opacity: 0.8;
+}
+
+.message-time {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-top: 0.25rem;
+}
+
+.chat-input-container {
+  padding: 1.25rem;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+}
+
+[data-theme="dark"] .chat-input-container {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.chat-input-form {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 0.875rem 1.125rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.chat-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+[data-theme="dark"] .chat-input {
+  background: #374151;
+  border-color: #4b5563;
+  color: #f3f4f6;
+}
+
+.chat-send-btn {
+  padding: 0.875rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chat-send-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.chat-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #9ca3af;
+}
+
+.chat-empty-state i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.chat-messages-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.chat-messages-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.chat-messages-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
 /* Responsive adjustments */
 @media (max-width: 767px) {
   .profile-img {
@@ -569,6 +840,25 @@ body {
   
   .stat-icon {
     font-size: 1.75rem;
+  }
+
+  .chat-float-btn {
+    bottom: 1rem;
+    right: 1rem;
+    width: 55px;
+    height: 55px;
+  }
+
+  .chat-float-btn i {
+    font-size: 1.25rem;
+  }
+
+  #chatModal .modal-dialog {
+    margin: 0.5rem;
+  }
+
+  .chat-messages-container {
+    height: 350px;
   }
 }
 </style>
@@ -692,6 +982,85 @@ body {
     </div>
   </div>
 </main>
+
+<!-- Floating Chat Button -->
+<button class="chat-float-btn" onclick="openChatModal()">
+  <i class="fas fa-comments"></i>
+  <?php if ($unreadCount > 0): ?>
+    <span class="chat-badge"><?= $unreadCount ?></span>
+  <?php endif; ?>
+</button>
+
+<!-- Chat Modal -->
+<div class="modal fade" id="chatModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="d-flex align-items-center">
+          <div class="me-3">
+            <div style="width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+              <i class="fas fa-user-md" style="color: #667eea; font-size: 1.25rem;"></i>
+            </div>
+          </div>
+          <div>
+            <h5 class="modal-title mb-0">Admin Support</h5>
+            <p class="mb-0" style="font-size: 0.75rem; opacity: 0.9;">We typically respond within 24 hours</p>
+          </div>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      
+      <div class="chat-messages-container" id="chatMessagesContainer">
+        <?php 
+        $messagesArray = iterator_to_array($messages);
+        if (empty($messagesArray)): 
+        ?>
+          <div class="chat-empty-state">
+            <i class="fas fa-comments"></i>
+            <p class="mb-1" style="font-size: 1.1rem; font-weight: 600;">No messages yet</p>
+            <p style="font-size: 0.875rem;">Start a conversation with the admin</p>
+          </div>
+        <?php else: ?>
+          <?php foreach ($messagesArray as $msg): 
+            $isPatient = $msg['sender'] === 'patient';
+            $timestamp = $msg['createdAt']->toDateTime()->setTimezone(new DateTimeZone('Asia/Manila'));
+          ?>
+            <div class="chat-message <?= $isPatient ? 'patient' : 'admin' ?>">
+              <div>
+                <?php if (!$isPatient): ?>
+                  <div class="message-sender">Admin</div>
+                <?php endif; ?>
+                <div class="message-bubble">
+                  <?= nl2br(htmlspecialchars($msg['message'])) ?>
+                </div>
+                <div class="message-time <?= $isPatient ? 'text-end' : '' ?>">
+                  <?= $timestamp->format('M d, g:i A') ?>
+                </div>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </div>
+      
+      <div class="chat-input-container">
+        <form class="chat-input-form" id="chatForm" onsubmit="sendMessage(event)">
+          <input 
+            type="text" 
+            class="chat-input" 
+            id="chatInput"
+            placeholder="Type your message here..." 
+            required
+            autocomplete="off"
+          >
+          <button type="submit" class="chat-send-btn">
+            <span>Send</span>
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Appointment Detail Modal -->
 <div class="modal fade" id="appointmentModal" tabindex="-1" aria-hidden="true">
@@ -854,6 +1223,65 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   calendar.render();
+});
+
+// Chat Modal Functions
+var chatModal;
+
+function openChatModal() {
+  if (!chatModal) {
+    chatModal = new bootstrap.Modal(document.getElementById('chatModal'));
+  }
+  chatModal.show();
+  
+  // Scroll to bottom when opening
+  setTimeout(scrollToBottom, 100);
+}
+
+function scrollToBottom() {
+  const container = document.getElementById('chatMessagesContainer');
+  container.scrollTop = container.scrollHeight;
+}
+
+function sendMessage(event) {
+  event.preventDefault();
+  
+  const input = document.getElementById('chatInput');
+  const message = input.value.trim();
+  
+  if (!message) return;
+  
+  // Disable input while sending
+  input.disabled = true;
+  
+  // Send message via AJAX
+  fetch(window.location.href, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: 'ajax_message=' + encodeURIComponent(message)
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Reload to show new message
+      location.reload();
+    } else {
+      alert('Failed to send message. Please try again.');
+      input.disabled = false;
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('An error occurred. Please try again.');
+    input.disabled = false;
+  });
+}
+
+// Scroll to bottom when modal is shown
+document.getElementById('chatModal').addEventListener('shown.bs.modal', function () {
+  scrollToBottom();
 });
 </script>
 
