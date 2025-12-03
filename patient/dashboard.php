@@ -637,13 +637,26 @@ body {
 /* Chat Modal Styles */
 #chatModal .modal-dialog {
   max-width: 600px;
-  margin: 1.75rem auto;
+  margin: 0;
+  position: fixed;
+  bottom: 100px;
+  right: 2rem;
+  transform: none;
 }
 
 #chatModal .modal-content {
   border-radius: 20px;
   overflow: hidden;
   border: none;
+}
+
+@media (max-width: 767px) {
+  #chatModal .modal-dialog {
+    right: 1rem;
+    left: 1rem;
+    bottom: 80px;
+    max-width: none;
+  }
 }
 
 #chatModal .modal-header {
@@ -666,6 +679,7 @@ body {
   margin-bottom: 1rem;
   display: flex;
   animation: slideIn 0.3s ease;
+  width: 100%;
 }
 
 @keyframes slideIn {
@@ -719,12 +733,18 @@ body {
   font-weight: 600;
   margin-bottom: 0.25rem;
   opacity: 0.8;
+  padding-left: 0.5rem;
 }
 
 .message-time {
   font-size: 0.7rem;
   opacity: 0.7;
   margin-top: 0.25rem;
+  padding: 0 0.5rem;
+}
+
+.chat-message.patient .message-time {
+  text-align: right;
 }
 
 .chat-input-container {
@@ -1026,14 +1046,14 @@ body {
             $timestamp = $msg['createdAt']->toDateTime()->setTimezone(new DateTimeZone('Asia/Manila'));
           ?>
             <div class="chat-message <?= $isPatient ? 'patient' : 'admin' ?>">
-              <div>
+              <div style="width: 100%; display: flex; flex-direction: column; align-items: <?= $isPatient ? 'flex-end' : 'flex-start' ?>;">
                 <?php if (!$isPatient): ?>
                   <div class="message-sender">Admin</div>
                 <?php endif; ?>
                 <div class="message-bubble">
                   <?= nl2br(htmlspecialchars($msg['message'])) ?>
                 </div>
-                <div class="message-time <?= $isPatient ? 'text-end' : '' ?>">
+                <div class="message-time">
                   <?= $timestamp->format('M d, g:i A') ?>
                 </div>
               </div>
@@ -1253,6 +1273,10 @@ function sendMessage(event) {
   
   // Disable input while sending
   input.disabled = true;
+  const submitBtn = event.target.querySelector('button[type="submit"]');
+  const originalBtnText = submitBtn.innerHTML;
+  submitBtn.innerHTML = '<span>Sending...</span>';
+  submitBtn.disabled = true;
   
   // Send message via AJAX
   fetch(window.location.href, {
@@ -1265,17 +1289,62 @@ function sendMessage(event) {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      // Reload to show new message
-      location.reload();
+      // Clear input
+      input.value = '';
+      input.disabled = false;
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalBtnText;
+      
+      // Add message to chat without closing modal
+      const container = document.getElementById('chatMessagesContainer');
+      
+      // Remove empty state if exists
+      const emptyState = container.querySelector('.chat-empty-state');
+      if (emptyState) {
+        emptyState.remove();
+      }
+      
+      // Create new message element
+      const now = new Date();
+      const timeStr = now.toLocaleString('en-US', { 
+        month: 'short', 
+        day: 'numeric', 
+        hour: 'numeric', 
+        minute: '2-digit',
+        hour12: true 
+      });
+      
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'chat-message patient';
+      messageDiv.innerHTML = `
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: flex-end;">
+          <div class="message-bubble">
+            ${message.replace(/\n/g, '<br>')}
+          </div>
+          <div class="message-time">
+            ${timeStr}
+          </div>
+        </div>
+      `;
+      
+      container.appendChild(messageDiv);
+      scrollToBottom();
+      
+      // Focus back on input
+      input.focus();
     } else {
       alert('Failed to send message. Please try again.');
       input.disabled = false;
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalBtnText;
     }
   })
   .catch(error => {
     console.error('Error:', error);
     alert('An error occurred. Please try again.');
     input.disabled = false;
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalBtnText;
   });
 }
 
