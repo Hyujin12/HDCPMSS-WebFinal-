@@ -75,8 +75,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $gender = trim($_POST['gender'] ?? '');
     $nationality = trim($_POST['nationality'] ?? '');
     $occupation = trim($_POST['occupation'] ?? '');
+    $termsAccepted = isset($_POST['terms_accepted']);
 
-    if (!$username || !$email || !$password || !$confirmPassword || !$contactNumber || !$address || !$age || !$status || !$birthday || !$gender || !$nationality || !$occupation) {
+    if (!$termsAccepted) {
+        $error = "You must accept the Terms and Conditions to register.";
+    } elseif (!$username || !$email || !$password || !$confirmPassword || !$contactNumber || !$address || !$age || !$status || !$birthday || !$gender || !$nationality || !$occupation) {
         $error = "All fields are required.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Invalid email address.";
@@ -208,6 +211,171 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   .input-error {
     border-color: #ef4444 !important;
     background-color: #fef2f2 !important;
+  }
+
+  /* Modal styles */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 700px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    animation: slideIn 0.3s ease-out;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .modal-header {
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .close {
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    line-height: 1;
+  }
+
+  .close:hover,
+  .close:focus {
+    transform: rotate(90deg);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateY(-50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .terms-content h3 {
+    color: #667eea;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .terms-content h3:first-child {
+    margin-top: 0;
+  }
+
+  .terms-content p, .terms-content ul {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: #374151;
+  }
+
+  .terms-content ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+  }
+
+  .terms-content ul li {
+    margin-bottom: 0.5rem;
+  }
+
+  .checkbox-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s;
+  }
+
+  .checkbox-wrapper:hover {
+    border-color: #667eea;
+  }
+
+  .checkbox-wrapper.error {
+    border-color: #ef4444;
+    background-color: #fef2f2;
+    animation: shake 0.5s;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+
+  .checkbox-wrapper input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .checkbox-wrapper label {
+    cursor: pointer;
+    color: #374151;
+    line-height: 1.5;
+  }
+
+  .checkbox-wrapper label a {
+    color: #667eea;
+    text-decoration: underline;
+    font-weight: 600;
+  }
+
+  .checkbox-wrapper label a:hover {
+    color: #764ba2;
   }
 </style>
 </head>
@@ -350,45 +518,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <input type="text" name="occupation" value="<?= htmlspecialchars($_POST['occupation'] ?? '') ?>" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400" required>
         </div>
 
-              <div>
-              <label class="block text-sm font-semibold mb-1">
-                <i class="fas fa-lock text-blue-600 mr-2"></i>Password
-              </label>
-              <div class="relative">
-                <input type="password" 
-                      name="password" 
-                      id="password"
-                      class="w-full border p-2 pr-10 rounded focus:ring-2 focus:ring-blue-400" 
-                      required>
-                <button type="button" 
-                        onclick="togglePassword('password', 'togglePasswordIcon')"
-                        class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
-                  <i id="togglePasswordIcon" class="fas fa-eye"></i>
-                </button>
-              </div>
-              <div id="passwordCheck" class="input-feedback" style="display: none;"></div>
-            </div>
+        <div>
+          <label class="block text-sm font-semibold mb-1">
+            <i class="fas fa-lock text-blue-600 mr-2"></i>Password
+          </label>
+          <div class="relative">
+            <input type="password" 
+                  name="password" 
+                  id="password"
+                  class="w-full border p-2 pr-10 rounded focus:ring-2 focus:ring-blue-400" 
+                  required>
+            <button type="button" 
+                    onclick="togglePassword('password', 'togglePasswordIcon')"
+                    class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
+              <i id="togglePasswordIcon" class="fas fa-eye"></i>
+            </button>
+          </div>
+          <div id="passwordCheck" class="input-feedback" style="display: none;"></div>
+        </div>
 
-            <!-- Confirm Password Field with Toggle -->
-            <div>
-              <label class="block text-sm font-semibold mb-1">
-                <i class="fas fa-check-circle text-blue-600 mr-2"></i>Confirm Password
-              </label>
-              <div class="relative">
-                <input type="password" 
-                      name="confirm_password" 
-                      id="confirm_password"
-                      class="w-full border p-2 pr-10 rounded focus:ring-2 focus:ring-blue-400" 
-                      required>
-                <button type="button" 
-                        onclick="togglePassword('confirm_password', 'toggleConfirmPasswordIcon')"
-                        class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
-                  <i id="toggleConfirmPasswordIcon" class="fas fa-eye"></i>
-                </button>
-              </div>
-              <div id="confirmPasswordCheck" class="input-feedback" style="display: none;"></div>
-            </div>
+        <div>
+          <label class="block text-sm font-semibold mb-1">
+            <i class="fas fa-check-circle text-blue-600 mr-2"></i>Confirm Password
+          </label>
+          <div class="relative">
+            <input type="password" 
+                  name="confirm_password" 
+                  id="confirm_password"
+                  class="w-full border p-2 pr-10 rounded focus:ring-2 focus:ring-blue-400" 
+                  required>
+            <button type="button" 
+                    onclick="togglePassword('confirm_password', 'toggleConfirmPasswordIcon')"
+                    class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
+              <i id="toggleConfirmPasswordIcon" class="fas fa-eye"></i>
+            </button>
+          </div>
+          <div id="confirmPasswordCheck" class="input-feedback" style="display: none;"></div>
+        </div>
 
+      </div>
+
+      <!-- Terms and Conditions Checkbox -->
+      <div class="checkbox-wrapper" id="termsCheckboxWrapper">
+        <input type="checkbox" name="terms_accepted" id="terms_accepted" value="1">
+        <label for="terms_accepted">
+          I agree to the <a href="#" id="openTermsModal">Terms and Conditions</a> and Privacy Policy
+        </label>
+      </div>
+      <div id="termsError" class="input-feedback error" style="display: none;">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>You must accept the Terms and Conditions to register</span>
       </div>
 
       <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition" id="submitBtn">
@@ -403,6 +582,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
   </div>
 
+  <!-- Terms and Conditions Modal -->
+  <div id="termsModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="text-2xl font-bold">Terms and Conditions</h2>
+        <span class="close" id="closeModal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="terms-content">
+          <h3>1. Acceptance of Terms</h3>
+          <p>By creating an account with Halili Dental Clinic, you agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not register or use our services.</p>
+
+          <h3>2. User Account</h3>
+          <p>You are responsible for:</p>
+          <ul>
+            <li>Maintaining the confidentiality of your account credentials</li>
+            <li>All activities that occur under your account</li>
+            <li>Providing accurate and complete information during registration</li>
+            <li>Updating your information to keep it current and accurate</li>
+          </ul>
+
+          <h3>3. Privacy and Data Protection</h3>
+          <p>We collect and process your personal information in accordance with applicable data privacy laws. Your information will be used for:</p>
+          <ul>
+            <li>Providing dental services and appointment management</li>
+            <li>Communication regarding your appointments and treatment</li>
+            <li>Maintaining your medical records</li>
+            <li>Improving our services</li>
+          </ul>
+
+          <h3>4. Appointment Policy</h3>
+          <ul>
+            <li>Appointments must be cancelled at least 24 hours in advance</li>
+            <li>Late cancellations or no-shows may incur charges</li>
+            <li>We reserve the right to cancel appointments due to emergencies or unforeseen circumstances</li>
+          </ul>
+
+          <h3>5. Medical Information</h3>
+          <p>You agree to provide accurate medical history and health information. Failure to disclose relevant medical information may affect your treatment and our ability to provide appropriate care.</p>
+
+          <h3>6. Payment Terms</h3>
+          <ul>
+            <li>Payment is due at the time of service unless other arrangements have been made</li>
+            <li>We accept various payment methods as displayed at our clinic</li>
+            <li>Outstanding balances may be subject to collection procedures</li>
+          </ul>
+
+          <h3>7. Limitation of Liability</h3>
+          <p>Halili Dental Clinic shall not be liable for any indirect, incidental, special, or consequential damages arising from the use of our services or website.</p>
+
+          <h3>8. Changes to Terms</h3>
+          <p>We reserve the right to modify these terms at any time. Continued use of our services after changes constitutes acceptance of the modified terms.</p>
+
+          <h3>9. Contact Information</h3>
+          <p>For questions about these Terms and Conditions, please contact us at our clinic or through the contact information provided on our website.</p>
+
+          <p class="mt-6 text-sm text-gray-600">Last Updated: December 2024</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="acceptTermsBtn" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition">
+          Accept & Close
+        </button>
+      </div>
+    </div>
+  </div>
+
 <script>
   let usernameCheckTimeout;
   let emailCheckTimeout;
@@ -410,6 +656,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   let isEmailAvailable = false;
   let isPasswordValid = false;
   let doPasswordsMatch = false;
+
+  // Modal functionality
+  const termsModal = document.getElementById('termsModal');
+  const openTermsModalLink = document.getElementById('openTermsModal');
+  const closeModalBtn = document.getElementById('closeModal');
+  const acceptTermsBtn = document.getElementById('acceptTermsBtn');
+  const termsCheckbox = document.getElementById('terms_accepted');
+  const termsCheckboxWrapper = document.getElementById('termsCheckboxWrapper');
+  const termsError = document.getElementById('termsError');
+
+  openTermsModalLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    termsModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  });
+
+  closeModalBtn.addEventListener('click', function() {
+    termsModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  });
+
+  acceptTermsBtn.addEventListener('click', function() {
+    termsCheckbox.checked = true;
+    termsCheckboxWrapper.classList.remove('error');
+    termsError.style.display = 'none';
+    termsModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  });
+
+  // Close modal when clicking outside
+  window.addEventListener('click', function(e) {
+    if (e.target === termsModal) {
+      termsModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+  });
 
   // Username availability check
   document.getElementById('username').addEventListener('input', function() {
@@ -556,14 +838,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     const hasNumber = /[0-9]/.test(password);
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
-    let messages = [];
-    let allValid = true;
-
-    if (!hasMinLength) {
-      messages.push('At least 6 characters');
-      allValid = false;
-    }
-
     // Show strength indicator
     const strength = [hasMinLength, hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar].filter(Boolean).length;
 
@@ -577,7 +851,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       feedback.className = 'input-feedback info';
       feedback.innerHTML = '<i class="fas fa-info-circle"></i><span>Weak password. Add uppercase, numbers, or symbols</span>';
       input.classList.remove('input-error', 'input-success');
-      isPasswordValid = true; // Still valid, just weak
+      isPasswordValid = true;
     } else if (strength < 4) {
       feedback.className = 'input-feedback success';
       feedback.innerHTML = '<i class="fas fa-check-circle"></i><span>Medium strength password</span>';
@@ -593,7 +867,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     updateSubmitButton();
-    checkPasswordMatch(); // Also check if passwords match when password changes
+    checkPasswordMatch();
   });
 
   // Confirm password validation
@@ -656,22 +930,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     let shouldDisable = false;
     
-    // Check username
     if (username.length >= 3 && !isUsernameAvailable) {
       shouldDisable = true;
     }
     
-    // Check email
     if (email && !isEmailAvailable) {
       shouldDisable = true;
     }
     
-    // Check password
     if (password && !isPasswordValid) {
       shouldDisable = true;
     }
     
-    // Check password match
     if (confirmPassword && !doPasswordsMatch) {
       shouldDisable = true;
     }
@@ -691,6 +961,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirm_password').value;
+    const termsAccepted = document.getElementById('terms_accepted').checked;
+    
+    // Check terms and conditions first
+    if (!termsAccepted) {
+      e.preventDefault();
+      termsCheckboxWrapper.classList.add('error');
+      termsError.style.display = 'flex';
+      termsCheckboxWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      // Remove error styling after 3 seconds
+      setTimeout(() => {
+        if (!document.getElementById('terms_accepted').checked) {
+          termsCheckboxWrapper.classList.remove('error');
+        }
+      }, 3000);
+      
+      return false;
+    }
     
     if (username.length >= 3 && !isUsernameAvailable) {
       e.preventDefault();
@@ -716,20 +1004,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       return false;
     }
   });
+
+  // Remove error styling when checkbox is checked
+  termsCheckbox.addEventListener('change', function() {
+    if (this.checked) {
+      termsCheckboxWrapper.classList.remove('error');
+      termsError.style.display = 'none';
+    }
+  });
+
   function togglePassword(inputId, iconId) {
-  const input = document.getElementById(inputId);
-  const icon = document.getElementById(iconId);
-  
-  if (input.type === 'password') {
-    input.type = 'text';
-    icon.classList.remove('fa-eye');
-    icon.classList.add('fa-eye-slash');
-  } else {
-    input.type = 'password';
-    icon.classList.remove('fa-eye-slash');
-    icon.classList.add('fa-eye');
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.classList.remove('fa-eye');
+      icon.classList.add('fa-eye-slash');
+    } else {
+      input.type = 'password';
+      icon.classList.remove('fa-eye-slash');
+      icon.classList.add('fa-eye');
+    }
   }
-}
 </script>
 
 </body>
